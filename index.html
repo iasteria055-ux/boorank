@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOO BOARD</title>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,900;1,900&display=swap');
+        
+        :root {
+            --dj-purple: #351c61;
+            --dj-yellow: #f8c117;
+            --dj-orange: #ea5920;
+            --dj-cyan: #1ebfd4;
+            --dj-red: #e62253;
+            --dj-bg: #f9f9fb;
+            --dj-grid: #dedede;
+            --white: #ffffff;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Pretendard', sans-serif; 
+            background-color: #1a1a24; /* 외부 여백 어두운 색 */
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; padding: 20px 0; /* 좌우 패딩 줄임 */
+        }
+        
+        /* 메인 게임 프레임 - 너비 확장 */
+        .game-frame {
+            width: 100%; max-width: 800px; /* 게시판 폭에 맞춰 너비 확장 */
+            background-color: var(--white);
+            background-image: 
+                linear-gradient(var(--dj-grid) 1px, transparent 1px), 
+                linear-gradient(90deg, var(--dj-grid) 1px, transparent 1px);
+            background-size: 30px 30px;
+            border: 12px solid var(--dj-purple);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+        }
+        
+        /* DJMAX 특유의 배경 가이드라인 & 크로스헤어 HUD */
+        .hud-line-v { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--dj-purple); opacity: 0.25; }
+        .hud-line-h { position: absolute; left: 0; right: 0; height: 1px; background: var(--dj-purple); opacity: 0.25; }
+        .hud-cross { position: absolute; color: var(--dj-purple); font-weight: 900; font-size: 16px; opacity: 0.5; z-index: 1; }
+        
+        /* ✦ 반짝이 (Star) 애니메이션 설정 ✦ */
+        .star-dec {
+            position: absolute;
+            font-size: 14px;
+            z-index: 2;
+            pointer-events: none; /* 클릭 방해 금지 */
+            animation: twinkle 3s infinite ease-in-out;
+            opacity: 0.8;
+        }
+        .star-red { color: var(--dj-red); }
+        .star-blue { color: var(--dj-cyan); animation-delay: 1s; }
+        .star-yellow { color: var(--dj-yellow); animation-delay: 2s; }
+
+        @keyframes twinkle {
+            0%, 100% { transform: scale(0.8) rotate(0deg); opacity: 0.3; }
+            50% { transform: scale(1.2) rotate(15deg); opacity: 1; text-shadow: 0 0 8px currentColor; }
+        }
+        
+        /* 통통 튀는 세련된 텍스트 호버 효과 */
+        .bouncy-text {
+            display: inline-block;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.3s, text-shadow 0.3s;
+            transform-origin: bottom center;
+        }
+        .bouncy-text:hover {
+            transform: translateY(-2px) scale(1.03);
+            text-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            cursor: default;
+        }
+
+        /* 큰 배경 텍스트 (타이포그래피 데코) */
+        .bg-text {
+            position: absolute; font-size: 140px; font-family: 'Montserrat', sans-serif;
+            font-weight: 900; font-style: italic; color: transparent;
+            -webkit-text-stroke: 2px rgba(53,28,97,0.06);
+            top: 25%; left: 10%; transform: rotate(-5deg); z-index: 1;
+            pointer-events: none; user-select: none; white-space: nowrap;
+        }
+        
+        /* 컨텐츠 래퍼 */
+        .content-wrap { position: relative; padding: 40px; z-index: 10; }
+
+        /* 타이틀 영역 */
+        .header { margin-bottom: 35px; position: relative; z-index: 10; display: inline-block; cursor: default; }
+        .header h1 { 
+            font-size: 76px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
+            color: var(--white); text-transform: uppercase; 
+            text-shadow: 3px 3px 0 var(--dj-purple), 6px 6px 0 var(--dj-purple), 9px 9px 0 var(--dj-purple); 
+            line-height: 0.9; position: relative; z-index: 5;
+            letter-spacing: -3px;
+        }
+        .header h1 .bouncy-text:hover {
+            transform: translateY(-4px) scale(1.02) rotate(-2deg);
+        }
+        .header h1 span { color: var(--dj-yellow); }
+        
+        /* 기하학적 컬러 블록 데코 */
+        .block-cyan { position: absolute; width: 60px; height: 35px; background: var(--dj-cyan); top: -15px; left: -20px; z-index: 1; }
+        .block-orange { position: absolute; width: 50px; height: 50px; background: var(--dj-orange); bottom: -10px; right: -20px; z-index: 6; mix-blend-mode: multiply; }
+        .block-lines { position: absolute; width: 80px; height: 20px; background: repeating-linear-gradient(90deg, var(--dj-purple), var(--dj-purple) 2px, transparent 2px, transparent 6px); top: 15px; right: -40px; z-index: 1; opacity: 0.5; }
+
+        /* 유튜브 영역 */
+        .yt-box { 
+            background: var(--dj-purple); border: 4px solid var(--dj-purple); 
+            box-shadow: 8px 8px 0 rgba(53, 28, 97, 0.2); margin-bottom: 35px; 
+            padding: 4px; border-radius: 4px; overflow: hidden; position: relative; z-index: 10;
+        }
+
+        /* 탭 메뉴 (버튼에도 통통 튀는 호버 추가) */
+        .tab-menu { display: flex; gap: 15px; margin-bottom: 25px; position: relative; z-index: 10; }
+        .tab-btn { 
+            flex: 1; padding: 16px; background: var(--white); 
+            border: 3px solid var(--dj-purple); box-shadow: 5px 5px 0 var(--dj-purple); 
+            font-size: 18px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
+            color: var(--dj-purple); cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .tab-btn:hover { transform: translateY(-4px); box-shadow: 5px 9px 0 var(--dj-purple); }
+        .tab-btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--dj-purple); transition: all 0.1s; }
+        .tab-btn.active { background: var(--dj-purple); color: var(--dj-yellow); transform: translateY(0); box-shadow: 5px 5px 0 var(--dj-purple); }
+        .tab-btn#btnQuest.active { background: var(--dj-purple); color: var(--dj-cyan); }
+
+        /* 리스트 영역 - 스크롤 기능 추가 */
+        .list-container { 
+            display: flex; flex-direction: column; gap: 12px; position: relative; z-index: 10; 
+            max-height: 500px; /* 높이 제한 설정 */
+            overflow-y: auto; /* 세로 스크롤 활성화 */
+            padding-right: 10px; /* 스크롤바 여백 */
+        }
+        
+        /* 스크롤바 커스텀 (크롬/사파리) */
+        .list-container::-webkit-scrollbar { width: 8px; }
+        .list-container::-webkit-scrollbar-track { background: rgba(53, 28, 97, 0.1); border-radius: 4px; }
+        .list-container::-webkit-scrollbar-thumb { background: var(--dj-purple); border-radius: 4px; }
+        .list-container::-webkit-scrollbar-thumb:hover { background: var(--dj-orange); }
+
+        .rank-row { 
+            display: flex; align-items: center; background: var(--white); 
+            border: 2px solid var(--dj-purple); padding: 14px 15px; 
+            box-shadow: 4px 4px 0 rgba(53, 28, 97, 0.15); font-weight: 900; 
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s; position: relative;
+        }
+        .rank-row::before {
+            content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 8px;
+            background: var(--dj-purple);
+        }
+        .giver-list .rank-row::before { background: var(--dj-orange); }
+        .quest-list .rank-row::before { background: var(--dj-cyan); }
+        
+        .rank-row:hover { transform: translateX(6px); box-shadow: -2px 6px 0 rgba(53, 28, 97, 0.2); }
+        .rank-num { font-size: 26px; color: #ccc; width: 55px; font-style: italic; font-family: 'Montserrat', sans-serif; padding-left: 10px; }
+        .rank-name { flex: 1; font-size: 18px; color: var(--dj-purple); }
+        .rank-val { font-size: 20px; font-style: italic; font-family: 'Montserrat', sans-serif; text-align: right; }
+        
+        .val-giver { color: var(--dj-orange); }
+        .val-giver .bouncy-text:hover { color: var(--dj-purple); }
+        
+        .val-quest { color: var(--dj-cyan); }
+        .val-quest .bouncy-text:hover { color: var(--dj-purple); }
+    </style>
+</head>
+<body>
+    <div class="game-frame">
+        <!-- 은은하게 반짝이는 별모양 데코레이션 -->
+        <div class="star-dec star-red" style="top: 120px; left: 150px;">✦</div>
+        <div class="star-dec star-blue" style="top: 80px; right: 200px;">✦</div>
+        <div class="star-dec star-yellow" style="bottom: 180px; left: 80px;">✦</div>
+        <div class="star-dec star-red" style="bottom: 90px; right: 120px;">✦</div>
+        <div class="star-dec star-blue" style="top: 400px; left: 50px;">✦</div>
+        <div class="star-dec star-yellow" style="top: 320px; right: 60px;">✦</div>
+
+        <!-- 배경 HUD 꾸미기 요소 -->
+        <div class="hud-line-v" style="left: 100px;"></div>
+        <div class="hud-line-v" style="right: 80px;"></div>
+        <div class="hud-line-h" style="top: 250px;"></div>
+        <div class="hud-line-h" style="bottom: 80px;"></div>
+        <div class="hud-cross" style="top: 242px; left: 92px;">+</div>
+        <div class="hud-cross" style="bottom: 72px; right: 72px;">+</div>
+        
+        <div class="bg-text">RANKING</div>
+
+        <!-- 메인 컨텐츠 -->
+        <div class="content-wrap">
+            <div class="header">
+                <div class="block-cyan"></div>
+                <div class="block-orange"></div>
+                <div class="block-lines"></div>
+                <h1><span class="bouncy-text">BOO</span><br><span class="bouncy-text" style="color: var(--dj-yellow);">BOARD</span></h1>
+            </div>
+
+            <div class="yt-box">
+                <!-- 요청하신 유튜브 태그 원본 -->
+                <iframe width="100%" height="200" src="https://www.youtube.com/embed/vnTFdNZQ0UQ?si=iRSunb6wWGX7SGp5&amp;start=25&autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+
+            <div class="tab-menu">
+                <button class="tab-btn active" id="btnGiver" onclick="show('giver')">DONATION</button>
+                <button class="tab-btn" id="btnQuest" onclick="show('quest')">QUEST</button>
+            </div>
+
+            <div id="giver" class="list-container giver-list">
+                <div class="rank-row"><div class="rank-num">01</div><div class="rank-name"><span class="bouncy-text">팥쥐</span></div><div class="rank-val val-giver"><span class="bouncy-text">4,100,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">02</div><div class="rank-name"><span class="bouncy-text">노괴의검</span></div><div class="rank-val val-giver"><span class="bouncy-text">1,730,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">03</div><div class="rank-name"><span class="bouncy-text">스맵</span></div><div class="rank-val val-giver"><span class="bouncy-text">1,032,771,192 MN</span></div></div><div class="rank-row"><div class="rank-num">04</div><div class="rank-name"><span class="bouncy-text">용용살겄지</span></div><div class="rank-val val-giver"><span class="bouncy-text">1,000,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">05</div><div class="rank-name"><span class="bouncy-text">헤일메리</span></div><div class="rank-val val-giver"><span class="bouncy-text">846,703,237 MN</span></div></div><div class="rank-row"><div class="rank-num">06</div><div class="rank-name"><span class="bouncy-text">pppp3</span></div><div class="rank-val val-giver"><span class="bouncy-text">500,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">07</div><div class="rank-name"><span class="bouncy-text">a1b2c3p</span></div><div class="rank-val val-giver"><span class="bouncy-text">300,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">08</div><div class="rank-name"><span class="bouncy-text">쿵</span></div><div class="rank-val val-giver"><span class="bouncy-text">200,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">09</div><div class="rank-name"><span class="bouncy-text">초우코송이</span></div><div class="rank-val val-giver"><span class="bouncy-text">200,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">10</div><div class="rank-name"><span class="bouncy-text">하루묭</span></div><div class="rank-val val-giver"><span class="bouncy-text">150,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">11</div><div class="rank-name"><span class="bouncy-text">정력왕랄프</span></div><div class="rank-val val-giver"><span class="bouncy-text">116,158,524 MN</span></div></div><div class="rank-row"><div class="rank-num">12</div><div class="rank-name"><span class="bouncy-text">미또형이야</span></div><div class="rank-val val-giver"><span class="bouncy-text">100,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">13</div><div class="rank-name"><span class="bouncy-text">부동생</span></div><div class="rank-val val-giver"><span class="bouncy-text">100,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">14</div><div class="rank-name"><span class="bouncy-text">코쓰레기에미</span></div><div class="rank-val val-giver"><span class="bouncy-text">59,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">15</div><div class="rank-name"><span class="bouncy-text">꺼!</span></div><div class="rank-val val-giver"><span class="bouncy-text">50,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">16</div><div class="rank-name"><span class="bouncy-text">우주성범흑삘</span></div><div class="rank-val val-giver"><span class="bouncy-text">40,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">17</div><div class="rank-name"><span class="bouncy-text">여러분들</span></div><div class="rank-val val-giver"><span class="bouncy-text">33,333,333 MN</span></div></div><div class="rank-row"><div class="rank-num">18</div><div class="rank-name"><span class="bouncy-text">넷마블</span></div><div class="rank-val val-giver"><span class="bouncy-text">30,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">19</div><div class="rank-name"><span class="bouncy-text">염태몬</span></div><div class="rank-val val-giver"><span class="bouncy-text">22,222,222 MN</span></div></div><div class="rank-row"><div class="rank-num">20</div><div class="rank-name"><span class="bouncy-text">GEN주쿵이</span></div><div class="rank-val val-giver"><span class="bouncy-text">19,468,753 MN</span></div></div><div class="rank-row"><div class="rank-num">21</div><div class="rank-name"><span class="bouncy-text">정그레이스</span></div><div class="rank-val val-giver"><span class="bouncy-text">10,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">22</div><div class="rank-name"><span class="bouncy-text">부우의변호사</span></div><div class="rank-val val-giver"><span class="bouncy-text">77,777 MN</span></div></div>
+            </div>
+
+            <div id="quest" class="list-container quest-list" style="display:none;">
+                <div class="rank-row"><div class="rank-num">01</div><div class="rank-name"><span class="bouncy-text">초우코송이</span></div><div class="rank-val val-quest"><span class="bouncy-text">818,555,555 MN</span></div></div><div class="rank-row"><div class="rank-num">02</div><div class="rank-name"><span class="bouncy-text">염바다</span></div><div class="rank-val val-quest"><span class="bouncy-text">769,555,555 MN</span></div></div><div class="rank-row"><div class="rank-num">03</div><div class="rank-name"><span class="bouncy-text">부동생</span></div><div class="rank-val val-quest"><span class="bouncy-text">305,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">04</div><div class="rank-name"><span class="bouncy-text">염보야놀자</span></div><div class="rank-val val-quest"><span class="bouncy-text">221,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">05</div><div class="rank-name"><span class="bouncy-text">아사람</span></div><div class="rank-val val-quest"><span class="bouncy-text">213,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">06</div><div class="rank-name"><span class="bouncy-text">787632</span></div><div class="rank-val val-quest"><span class="bouncy-text">185,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">07</div><div class="rank-name"><span class="bouncy-text">쿵</span></div><div class="rank-val val-quest"><span class="bouncy-text">160,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">08</div><div class="rank-name"><span class="bouncy-text">용기천주</span></div><div class="rank-val val-quest"><span class="bouncy-text">150,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">09</div><div class="rank-name"><span class="bouncy-text">노괴의검</span></div><div class="rank-val val-quest"><span class="bouncy-text">145,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">10</div><div class="rank-name"><span class="bouncy-text">구라시와탈</span></div><div class="rank-val val-quest"><span class="bouncy-text">145,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">11</div><div class="rank-name"><span class="bouncy-text">게토스구루</span></div><div class="rank-val val-quest"><span class="bouncy-text">115,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">12</div><div class="rank-name"><span class="bouncy-text">염보스</span></div><div class="rank-val val-quest"><span class="bouncy-text">104,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">13</div><div class="rank-name"><span class="bouncy-text">GEN주쿵이</span></div><div class="rank-val val-quest"><span class="bouncy-text">101,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">14</div><div class="rank-name"><span class="bouncy-text">ㅇㅇ!</span></div><div class="rank-val val-quest"><span class="bouncy-text">99,555,555 MN</span></div></div><div class="rank-row"><div class="rank-num">15</div><div class="rank-name"><span class="bouncy-text">아일라이큐</span></div><div class="rank-val val-quest"><span class="bouncy-text">90,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">16</div><div class="rank-name"><span class="bouncy-text">최강내로남불</span></div><div class="rank-val val-quest"><span class="bouncy-text">89,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">17</div><div class="rank-name"><span class="bouncy-text">피통왕통키</span></div><div class="rank-val val-quest"><span class="bouncy-text">79,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">18</div><div class="rank-name"><span class="bouncy-text">조해</span></div><div class="rank-val val-quest"><span class="bouncy-text">75,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">19</div><div class="rank-name"><span class="bouncy-text">정그레이스</span></div><div class="rank-val val-quest"><span class="bouncy-text">70,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">20</div><div class="rank-name"><span class="bouncy-text">옥종이</span></div><div class="rank-val val-quest"><span class="bouncy-text">70,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">21</div><div class="rank-name"><span class="bouncy-text">brownsuya!</span></div><div class="rank-val val-quest"><span class="bouncy-text">65,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">22</div><div class="rank-name"><span class="bouncy-text">개같이부활</span></div><div class="rank-val val-quest"><span class="bouncy-text">64,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">23</div><div class="rank-name"><span class="bouncy-text">Tierney</span></div><div class="rank-val val-quest"><span class="bouncy-text">59,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">24</div><div class="rank-name"><span class="bouncy-text">Bernnn</span></div><div class="rank-val val-quest"><span class="bouncy-text">55,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">25</div><div class="rank-name"><span class="bouncy-text">콜란트</span></div><div class="rank-val val-quest"><span class="bouncy-text">55,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">26</div><div class="rank-name"><span class="bouncy-text">모르는척</span></div><div class="rank-val val-quest"><span class="bouncy-text">55,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">27</div><div class="rank-name"><span class="bouncy-text">보신사</span></div><div class="rank-val val-quest"><span class="bouncy-text">47,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">28</div><div class="rank-name"><span class="bouncy-text">염태몬</span></div><div class="rank-val val-quest"><span class="bouncy-text">45,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">29</div><div class="rank-name"><span class="bouncy-text">보동생연합</span></div><div class="rank-val val-quest"><span class="bouncy-text">45,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">30</div><div class="rank-name"><span class="bouncy-text">스맵</span></div><div class="rank-val val-quest"><span class="bouncy-text">45,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">31</div><div class="rank-name"><span class="bouncy-text">군손</span></div><div class="rank-val val-quest"><span class="bouncy-text">40,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">32</div><div class="rank-name"><span class="bouncy-text">영호턕용</span></div><div class="rank-val val-quest"><span class="bouncy-text">40,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">33</div><div class="rank-name"><span class="bouncy-text">동백꽃2</span></div><div class="rank-val val-quest"><span class="bouncy-text">35,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">34</div><div class="rank-name"><span class="bouncy-text">akak11</span></div><div class="rank-val val-quest"><span class="bouncy-text">35,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">35</div><div class="rank-name"><span class="bouncy-text">ㄹㅇ?</span></div><div class="rank-val val-quest"><span class="bouncy-text">35,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">36</div><div class="rank-name"><span class="bouncy-text">물소꺼져</span></div><div class="rank-val val-quest"><span class="bouncy-text">30,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">37</div><div class="rank-name"><span class="bouncy-text">애홍이</span></div><div class="rank-val val-quest"><span class="bouncy-text">30,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">38</div><div class="rank-name"><span class="bouncy-text">힘</span></div><div class="rank-val val-quest"><span class="bouncy-text">30,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">39</div><div class="rank-name"><span class="bouncy-text">리트리버</span></div><div class="rank-val val-quest"><span class="bouncy-text">30,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">40</div><div class="rank-name"><span class="bouncy-text">YBxYXL</span></div><div class="rank-val val-quest"><span class="bouncy-text">30,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">41</div><div class="rank-name"><span class="bouncy-text">랄</span></div><div class="rank-val val-quest"><span class="bouncy-text">25,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">42</div><div class="rank-name"><span class="bouncy-text">단애장</span></div><div class="rank-val val-quest"><span class="bouncy-text">25,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">43</div><div class="rank-name"><span class="bouncy-text">으악이네</span></div><div class="rank-val val-quest"><span class="bouncy-text">25,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">44</div><div class="rank-name"><span class="bouncy-text">미또형이야</span></div><div class="rank-val val-quest"><span class="bouncy-text">25,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">45</div><div class="rank-name"><span class="bouncy-text">별풍</span></div><div class="rank-val val-quest"><span class="bouncy-text">25,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">46</div><div class="rank-name"><span class="bouncy-text">신과함께</span></div><div class="rank-val val-quest"><span class="bouncy-text">25,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">47</div><div class="rank-name"><span class="bouncy-text">라면말이개</span></div><div class="rank-val val-quest"><span class="bouncy-text">21,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">48</div><div class="rank-name"><span class="bouncy-text">알라딘oo</span></div><div class="rank-val val-quest"><span class="bouncy-text">21,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">49</div><div class="rank-name"><span class="bouncy-text">보라보라보라섬</span></div><div class="rank-val val-quest"><span class="bouncy-text">20,000,000 MN</span></div></div><div class="rank-row"><div class="rank-num">50</div><div class="rank-name"><span class="bouncy-text">빵지니갤러리</span></div><div class="rank-val val-quest"><span class="bouncy-text">20,000,000 MN</span></div></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function show(id) {
+            document.getElementById('giver').style.display = (id === 'giver') ? 'flex' : 'none';
+            document.getElementById('quest').style.display = (id === 'quest') ? 'flex' : 'none';
+            
+            // 호버 애니메이션이 걸려있으므로 active 상태 토글 시 깔끔하게 처리
+            document.getElementById('btnGiver').className = (id === 'giver') ? 'tab-btn active' : 'tab-btn';
+            document.getElementById('btnQuest').className = (id === 'quest') ? 'tab-btn active' : 'tab-btn';
+        }
+    </script>
+</body>
+</html>
