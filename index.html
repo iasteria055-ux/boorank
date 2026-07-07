@@ -15,7 +15,6 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        /* 기본 바디 설정 */
         body {
             font-family: 'Pretendard', sans-serif;
             background-color: var(--dj-bg);
@@ -23,7 +22,6 @@
             height: 100vh; padding: 2vh 10px; overflow: hidden;
         }
 
-        /* 메인 프레임 */
         .game-frame {
             width: 100%; max-width: 800px; height: 100%;
             display: flex; flex-direction: column;
@@ -69,7 +67,6 @@
         .hud-side.left { left: 15px; transform: translateY(-50%) rotate(180deg); }
         .hud-side.right { right: 15px; }
 
-        /* 이퀄라이저 */
         .eq-bars { display: flex; gap: 3px; align-items: flex-end; height: 16px; opacity: 0.8; }
         .eq-bar { width: 4px; background: var(--dj-cyan); border-radius: 2px; animation: eq-play 1s infinite alternate; }
         .eq-bar:nth-child(1) { background: var(--dj-magenta); animation-delay: 0.1s; }
@@ -108,7 +105,6 @@
         }
         .yt-box iframe { transform: skewX(2deg); display: block; }
 
-        /* 탭 메뉴 */
         .tab-menu { display: flex; gap: 20px; margin-bottom: 25px; position: relative; z-index: 10; flex-shrink: 0; }
         .tab-btn {
             flex: 1; padding: 14px; background: var(--white);
@@ -122,7 +118,6 @@
         .tab-btn.active { background: var(--dj-purple); color: var(--dj-yellow); box-shadow: 4px 4px 0 var(--dj-yellow); border-color: var(--dj-purple); }
         .tab-btn#btnQuest.active { color: var(--dj-cyan); box-shadow: 4px 4px 0 var(--dj-cyan); }
 
-        /* 리스트 영역 */
         .list-container {
             display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 10;
             flex: 1; min-height: 0; overflow-y: auto; padding-right: 15px;
@@ -140,17 +135,25 @@
         .quest-list .rank-row { border-left-color: var(--dj-cyan); }
         .rank-row:hover { transform: translateX(6px); box-shadow: -2px 5px 0 rgba(53, 28, 97, 0.2); background: #fdfdfd; }
 
-        /* TOP 3 특별 디자인 */
+        /* =========================================================
+           TOP 3 특별 디자인 (크기 완벽 통일) 
+           ========================================================= */
         .rank-row.top-1 { background: linear-gradient(90deg, #fff9e6, #ffffff); border-color: #d4af37; border-left-color: #d4af37; box-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
-        .rank-row.top-1 .rank-num { color: #d4af37; font-size: 26px; text-shadow: 1px 1px 0 rgba(0,0,0,0.1); width: 85px; }
         .rank-row.top-2 { background: linear-gradient(90deg, #f5f5f5, #ffffff); border-color: #a8a9ad; border-left-color: #a8a9ad; }
-        .rank-row.top-2 .rank-num { color: #a8a9ad; font-size: 22px; width: 80px; }
         .rank-row.top-3 { background: linear-gradient(90deg, #fff0e6, #ffffff); border-color: #cd7f32; border-left-color: #cd7f32; }
-        .rank-row.top-3 .rank-num { color: #cd7f32; font-size: 20px; width: 75px; }
 
-        .rank-num { font-size: 22px; color: #ccc; width: 45px; font-style: italic; font-family: 'Montserrat', sans-serif; }
+        /* TOP 1, 2, 3 글자 폰트 크기를 일반 행(22px)과 완전히 똑같이 맞춤 */
+        .rank-row.top-1 .rank-num { color: #d4af37; font-size: 22px; width: 75px; text-shadow: 1px 1px 0 rgba(0,0,0,0.1); }
+        .rank-row.top-2 .rank-num { color: #a8a9ad; font-size: 22px; width: 75px; }
+        .rank-row.top-3 .rank-num { color: #cd7f32; font-size: 22px; width: 75px; }
+
+        /* 모든 랭킹 숫자 공통 세팅 (줄바꿈 방지) */
+        .rank-num { 
+            font-size: 22px; color: #ccc; width: 45px; flex-shrink: 0; 
+            font-style: italic; font-family: 'Montserrat', sans-serif; 
+            white-space: nowrap; /* 절대 두 줄로 나뉘지 않음 */
+        }
         
-        /* 닉네임 텍스트 넘침 방지 처리 */
         .rank-name { flex: 1; font-size: 18px; color: var(--dj-purple); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 10px; }
         .rank-val { font-size: 19px; font-style: italic; font-family: 'Montserrat', sans-serif; text-align: right; white-space: nowrap; }
 
@@ -168,19 +171,16 @@
 
         /* ==============================================================
            📱 모바일 최적화 (반응형 미디어 쿼리) 
-           이 아래 부분이 모바일 화면 깨짐을 방지하는 핵심 코드입니다!
            ============================================================== */
         @media (max-width: 650px) {
             .game-frame { border-width: 6px; border-radius: 12px; }
-            .content-wrap { padding: 40px 15px 20px; } /* 모바일에서는 엄청 큰 좌우 여백을 대폭 줄임 */
+            .content-wrap { padding: 40px 15px 20px; }
             
-            /* 모바일에서 HUD 요소 공간 절약 */
             .hud-side { display: none; } 
             .hud-overlay { top: 10px; bottom: 10px; left: 10px; right: 10px; }
             .hud-top { top: 10px; left: 10px; right: 10px; }
             .hud-bottom { bottom: 10px; left: 10px; right: 10px; }
 
-            /* 상단 타이틀 겹침 방지 */
             .header h1 { font-size: 44px; text-shadow: 2px 2px 0 var(--dj-purple), 4px 4px 0 rgba(0,0,0,0.1); }
             .block-cyan { width: 30px; height: 20px; top: -5px; left: -5px; }
             .block-orange { width: 30px; height: 30px; bottom: -5px; right: -5px; }
@@ -188,18 +188,15 @@
             .top-subtitle { font-size: 10px; margin-bottom: 2px; }
             .top-subtitle .barcode { font-size: 10px; }
 
-            /* 유튜브 박스 겹침 방지 */
             .yt-box { margin-bottom: 20px; box-shadow: 4px 4px 0 rgba(53, 28, 97, 0.3), -2px -2px 0 var(--dj-cyan); }
-            .yt-box iframe { height: 160px; } /* 유튜브 모바일 높이 축소 */
+            .yt-box iframe { height: 160px; }
 
-            /* 탭 버튼 모바일 최적화 */
             .tab-menu { gap: 10px; margin-bottom: 15px; }
             .tab-btn { font-size: 15px; padding: 10px; border-width: 2px; box-shadow: 2px 2px 0 var(--dj-purple); transform: skewX(-5deg); }
             .tab-btn span { transform: skewX(5deg); }
             .tab-btn.active { box-shadow: 2px 2px 0 var(--dj-yellow); }
             .tab-btn#btnQuest.active { box-shadow: 2px 2px 0 var(--dj-cyan); }
 
-            /* 랭킹 리스트 여백 축소 */
             .list-container { padding-right: 5px; gap: 6px; }
             .rank-row { padding: 8px 10px; border-width: 1px; border-left-width: 5px; }
 
@@ -208,10 +205,10 @@
             .rank-name { font-size: 15px; }
             .rank-val { font-size: 14px; min-width: 80px; }
 
-            /* TOP 3 텍스트 겹침 방지 (1ST, 2ND 너무 크던거 축소) */
-            .rank-row.top-1 .rank-num { font-size: 16px; width: 60px; }
-            .rank-row.top-2 .rank-num { font-size: 14px; width: 55px; }
-            .rank-row.top-3 .rank-num { font-size: 13px; width: 50px; }
+            /* TOP 3 크기를 다른 일반 랭킹들과 완전히 똑같이 맞춤 */
+            .rank-row.top-1 .rank-num,
+            .rank-row.top-2 .rank-num,
+            .rank-row.top-3 .rank-num { font-size: 15px; width: 55px; }
         }
     </style>
 </head>
@@ -242,14 +239,12 @@
         </div>
 
         <div class="content-wrap">
-            <!-- 서브 타이틀 바코드 -->
             <div class="top-subtitle">
                 <span>YGOSU</span>
                 <span class="barcode">|||| || ||| |</span>
                 <span>DATA ARCHIVE</span>
             </div>
 
-            <!-- 타이틀 -->
             <div class="header">
                 <div class="block-cyan"></div>
                 <div class="block-orange"></div>
@@ -257,32 +252,29 @@
                 <h1><span class="bouncy-text">BOO</span><br><span class="bouncy-text">BOARD</span></h1>
             </div>
 
-            <!-- 유튜브 -->
             <div class="yt-box">
                 <iframe width="100%" height="200" src="https://www.youtube.com/embed/vnTFdNZQ0UQ?si=iRSunb6wWGX7SGp5&amp;start=25&autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
 
-            <!-- 탭 버튼 -->
             <div class="tab-menu">
                 <button class="tab-btn active" id="btnGiver" onclick="show('giver')"><span>DONATION</span></button>
                 <button class="tab-btn" id="btnQuest" onclick="show('quest')"><span>QUEST</span></button>
             </div>
 
-            <!-- 리스트 -->
             <div id="giver" class="list-container giver-list">
                 
         <div class="rank-row top-1">
-            <div class="rank-num">🥇 1ST</div>
+            <div class="rank-num">🥇 01</div>
             <div class="rank-name"><span class="bouncy-text">팥쥐</span></div>
             <div class="rank-val val-giver"><span class="bouncy-text">4,100,000,000 MN</span></div>
         </div>
         <div class="rank-row top-2">
-            <div class="rank-num">🥈 2ND</div>
+            <div class="rank-num">🥈 02</div>
             <div class="rank-name"><span class="bouncy-text">노괴의검</span></div>
             <div class="rank-val val-giver"><span class="bouncy-text">1,730,000,000 MN</span></div>
         </div>
         <div class="rank-row top-3">
-            <div class="rank-num">🥉 3RD</div>
+            <div class="rank-num">🥉 03</div>
             <div class="rank-name"><span class="bouncy-text">스맵</span></div>
             <div class="rank-val val-giver"><span class="bouncy-text">1,032,771,192 MN</span></div>
         </div>
@@ -385,17 +377,17 @@
             <div id="quest" class="list-container quest-list" style="display:none;">
                 
         <div class="rank-row top-1">
-            <div class="rank-num">🥇 1ST</div>
+            <div class="rank-num">🥇 01</div>
             <div class="rank-name"><span class="bouncy-text">초우코송이</span></div>
             <div class="rank-val val-quest"><span class="bouncy-text">818,555,555 MN</span></div>
         </div>
         <div class="rank-row top-2">
-            <div class="rank-num">🥈 2ND</div>
+            <div class="rank-num">🥈 02</div>
             <div class="rank-name"><span class="bouncy-text">염바다</span></div>
             <div class="rank-val val-quest"><span class="bouncy-text">769,555,555 MN</span></div>
         </div>
         <div class="rank-row top-3">
-            <div class="rank-num">🥉 3RD</div>
+            <div class="rank-num">🥉 03</div>
             <div class="rank-name"><span class="bouncy-text">부동생</span></div>
             <div class="rank-val val-quest"><span class="bouncy-text">305,000,000 MN</span></div>
         </div>
