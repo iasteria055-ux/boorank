@@ -7,29 +7,29 @@
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,900;1,900&display=swap');
-        
+
         :root {
-            --dj-purple: #351c61; --dj-yellow: #f8c117; --dj-orange: #ea5920; 
-            --dj-cyan: #1ebfd4; --dj-magenta: #e62253; --dj-bg: #f2f3f7; 
+            --dj-purple: #351c61; --dj-yellow: #f8c117; --dj-orange: #ea5920;
+            --dj-cyan: #1ebfd4; --dj-magenta: #e62253; --dj-bg: #f2f3f7;
             --dj-grid: #e8eaef; --white: #ffffff; --black: #111111;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        /* 외부 여백 화이트 톤으로 변경 */
-        body { 
-            font-family: 'Pretendard', sans-serif; 
-            background-color: var(--dj-bg); 
+
+        /* 기본 바디 설정 */
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: var(--dj-bg);
             display: flex; justify-content: center; align-items: center;
-            height: 100vh; padding: 2vh 10px; overflow: hidden; 
+            height: 100vh; padding: 2vh 10px; overflow: hidden;
         }
-        
-        /* 메인 프레임 테두리 솔리드 딥 퍼플 적용 */
+
+        /* 메인 프레임 */
         .game-frame {
             width: 100%; max-width: 800px; height: 100%;
             display: flex; flex-direction: column;
             background-color: var(--white);
-            background-image: 
-                linear-gradient(var(--dj-grid) 1px, transparent 1px), 
+            background-image:
+                linear-gradient(var(--dj-grid) 1px, transparent 1px),
                 linear-gradient(90deg, var(--dj-grid) 1px, transparent 1px);
             background-size: 40px 40px;
             border: 12px solid var(--dj-purple);
@@ -38,13 +38,10 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.1), inset 0 0 0 3px #f0f2f5;
         }
 
-        /* =========================================
-           HUD 오버레이 (텍스트 변경)
-           ========================================= */
+        /* HUD 오버레이 */
         .hud-overlay {
             position: absolute; top: 18px; bottom: 18px; left: 18px; right: 18px;
-            pointer-events: none; z-index: 5;
-            border: 1px solid rgba(53, 28, 97, 0.1);
+            pointer-events: none; z-index: 5; border: 1px solid rgba(53, 28, 97, 0.1);
         }
         .hud-corner { position: absolute; width: 12px; height: 12px; border: 2px solid var(--dj-purple); }
         .hud-corner.tl { top: -2px; left: -2px; border-right: none; border-bottom: none; }
@@ -54,7 +51,7 @@
 
         .hud-top { position: absolute; top: 15px; left: 15px; right: 15px; display: flex; align-items: center; gap: 15px; }
         .hud-bottom { position: absolute; bottom: 15px; left: 15px; right: 15px; display: flex; align-items: center; gap: 15px; }
-        
+
         .hud-badge {
             border: 2px solid var(--dj-purple); padding: 2px 10px;
             font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 900;
@@ -62,10 +59,10 @@
         }
         .hud-line { flex: 1; height: 1px; background: var(--dj-purple); opacity: 0.2; }
         .hud-cross { font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 900; color: var(--dj-magenta); }
-        
+
         .hud-side {
             position: absolute; top: 50%; transform: translateY(-50%);
-            font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 900; 
+            font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 900;
             color: var(--dj-purple); letter-spacing: 6px; opacity: 0.3;
             writing-mode: vertical-rl; text-orientation: mixed;
         }
@@ -80,13 +77,10 @@
         .eq-bar:nth-child(3) { background: var(--dj-cyan); animation-delay: 0.0s; }
         .eq-bar:nth-child(4) { background: var(--dj-orange); animation-delay: 0.4s; }
         .eq-bar:nth-child(5) { background: var(--dj-purple); animation-delay: 0.2s; }
-        
         @keyframes eq-play { 0% { height: 4px; } 100% { height: 16px; } }
-        /* ========================================= */
 
         .content-wrap { position: relative; padding: 65px 45px 40px; z-index: 10; display: flex; flex-direction: column; flex: 1; min-height: 0; }
 
-        /* 타이틀 위 시스템 서브 타이틀 */
         .top-subtitle {
             font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 900;
             color: var(--dj-purple); letter-spacing: 2px; opacity: 0.6;
@@ -94,34 +88,31 @@
         }
         .top-subtitle .barcode { font-size: 14px; letter-spacing: 3px; color: var(--dj-cyan); opacity: 0.8; }
 
-        /* 타이틀 팝한 컬러 & 백그라운드 블록 */
         .header { margin-bottom: 25px; position: relative; z-index: 10; display: inline-block; cursor: default; align-self: flex-start; flex-shrink: 0; }
-        
         .block-cyan { position: absolute; width: 50px; height: 30px; background: var(--dj-cyan); top: -10px; left: -10px; z-index: 1; }
         .block-orange { position: absolute; width: 45px; height: 45px; background: var(--dj-orange); bottom: -5px; right: -15px; z-index: 1; }
         .block-lines { position: absolute; width: 60px; height: 15px; background: repeating-linear-gradient(90deg, var(--dj-purple), var(--dj-purple) 2px, transparent 2px, transparent 6px); top: 15px; right: -70px; z-index: 1; opacity: 0.4; }
 
-        .header h1 { 
+        .header h1 {
             font-size: 76px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
             text-transform: uppercase; line-height: 0.9; position: relative; z-index: 5;
-            letter-spacing: -3px;
-            color: var(--dj-yellow);
+            letter-spacing: -3px; color: var(--dj-yellow);
             text-shadow: 4px 4px 0 var(--dj-purple), 8px 8px 0 rgba(0,0,0,0.1);
         }
 
-        .yt-box { 
-            background: var(--black); border: 4px solid var(--dj-purple); 
-            box-shadow: 8px 8px 0 rgba(53, 28, 97, 0.3), -4px -4px 0 var(--dj-cyan); 
+        .yt-box {
+            background: var(--black); border: 4px solid var(--dj-purple);
+            box-shadow: 8px 8px 0 rgba(53, 28, 97, 0.3), -4px -4px 0 var(--dj-cyan);
             margin-bottom: 30px; padding: 4px; overflow: hidden; position: relative; z-index: 10; flex-shrink: 0;
-            transform: skewX(-2deg); 
+            transform: skewX(-2deg);
         }
         .yt-box iframe { transform: skewX(2deg); display: block; }
 
         /* 탭 메뉴 */
         .tab-menu { display: flex; gap: 20px; margin-bottom: 25px; position: relative; z-index: 10; flex-shrink: 0; }
-        .tab-btn { 
-            flex: 1; padding: 14px; background: var(--white); 
-            border: 3px solid var(--dj-purple); box-shadow: 4px 4px 0 var(--dj-purple); 
+        .tab-btn {
+            flex: 1; padding: 14px; background: var(--white);
+            border: 3px solid var(--dj-purple); box-shadow: 4px 4px 0 var(--dj-purple);
             font-size: 20px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
             color: var(--dj-purple); cursor: pointer; transform: skewX(-10deg); transition: all 0.2s; position: relative; overflow: hidden;
         }
@@ -132,17 +123,16 @@
         .tab-btn#btnQuest.active { color: var(--dj-cyan); box-shadow: 4px 4px 0 var(--dj-cyan); }
 
         /* 리스트 영역 */
-        .list-container { 
-            display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 10; 
-            flex: 1; min-height: 0; overflow-y: auto; padding-right: 15px; 
+        .list-container {
+            display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 10;
+            flex: 1; min-height: 0; overflow-y: auto; padding-right: 15px;
         }
-        
         .list-container::-webkit-scrollbar { width: 8px; }
         .list-container::-webkit-scrollbar-track { background: rgba(53, 28, 97, 0.05); border-radius: 4px; }
         .list-container::-webkit-scrollbar-thumb { background: var(--dj-purple); border-radius: 4px; }
 
-        .rank-row { 
-            display: flex; align-items: center; background: var(--white); 
+        .rank-row {
+            display: flex; align-items: center; background: var(--white);
             border: 2px solid var(--dj-purple); border-left: 8px solid var(--dj-purple);
             padding: 12px 15px; font-weight: 900; transition: all 0.2s; flex-shrink: 0; position: relative;
         }
@@ -159,44 +149,81 @@
         .rank-row.top-3 .rank-num { color: #cd7f32; font-size: 20px; width: 75px; }
 
         .rank-num { font-size: 22px; color: #ccc; width: 45px; font-style: italic; font-family: 'Montserrat', sans-serif; }
-        .rank-name { flex: 1; font-size: 18px; color: var(--dj-purple); }
-        .rank-val { font-size: 19px; font-style: italic; font-family: 'Montserrat', sans-serif; text-align: right; }
         
-        /* [복구됨] 개별 요소에 마우스를 올렸을 때 통통 튀는 효과 */
-        .bouncy-text { 
-            display: inline-block; 
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s, text-shadow 0.2s; 
+        /* 닉네임 텍스트 넘침 방지 처리 */
+        .rank-name { flex: 1; font-size: 18px; color: var(--dj-purple); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 10px; }
+        .rank-val { font-size: 19px; font-style: italic; font-family: 'Montserrat', sans-serif; text-align: right; white-space: nowrap; }
+
+        .bouncy-text {
+            display: inline-block;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s, text-shadow 0.2s;
         }
-        .bouncy-text:hover { 
-            transform: translateY(-3px) scale(1.05); 
-            cursor: default; 
-            text-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-        
+        .bouncy-text:hover { transform: translateY(-3px) scale(1.05); cursor: default; text-shadow: 0 4px 8px rgba(0,0,0,0.15); }
         .val-giver { color: var(--dj-orange); }
         .val-quest { color: var(--dj-cyan); }
-        
-        /* 닉네임, 숫자 마우스 호버 시 보라색으로 강조 */
         .rank-name .bouncy-text:hover { color: var(--dj-magenta); }
         .val-giver .bouncy-text:hover { color: var(--dj-purple); }
         .val-quest .bouncy-text:hover { color: var(--dj-purple); }
-        
-        /* 메인 타이틀 호버 시 살짝 더 튀게 */
         .header h1 .bouncy-text:hover { transform: translateY(-4px) scale(1.02) rotate(-2deg); }
+
+        /* ==============================================================
+           📱 모바일 최적화 (반응형 미디어 쿼리) 
+           이 아래 부분이 모바일 화면 깨짐을 방지하는 핵심 코드입니다!
+           ============================================================== */
+        @media (max-width: 650px) {
+            .game-frame { border-width: 6px; border-radius: 12px; }
+            .content-wrap { padding: 40px 15px 20px; } /* 모바일에서는 엄청 큰 좌우 여백을 대폭 줄임 */
+            
+            /* 모바일에서 HUD 요소 공간 절약 */
+            .hud-side { display: none; } 
+            .hud-overlay { top: 10px; bottom: 10px; left: 10px; right: 10px; }
+            .hud-top { top: 10px; left: 10px; right: 10px; }
+            .hud-bottom { bottom: 10px; left: 10px; right: 10px; }
+
+            /* 상단 타이틀 겹침 방지 */
+            .header h1 { font-size: 44px; text-shadow: 2px 2px 0 var(--dj-purple), 4px 4px 0 rgba(0,0,0,0.1); }
+            .block-cyan { width: 30px; height: 20px; top: -5px; left: -5px; }
+            .block-orange { width: 30px; height: 30px; bottom: -5px; right: -5px; }
+            .block-lines { display: none; }
+            .top-subtitle { font-size: 10px; margin-bottom: 2px; }
+            .top-subtitle .barcode { font-size: 10px; }
+
+            /* 유튜브 박스 겹침 방지 */
+            .yt-box { margin-bottom: 20px; box-shadow: 4px 4px 0 rgba(53, 28, 97, 0.3), -2px -2px 0 var(--dj-cyan); }
+            .yt-box iframe { height: 160px; } /* 유튜브 모바일 높이 축소 */
+
+            /* 탭 버튼 모바일 최적화 */
+            .tab-menu { gap: 10px; margin-bottom: 15px; }
+            .tab-btn { font-size: 15px; padding: 10px; border-width: 2px; box-shadow: 2px 2px 0 var(--dj-purple); transform: skewX(-5deg); }
+            .tab-btn span { transform: skewX(5deg); }
+            .tab-btn.active { box-shadow: 2px 2px 0 var(--dj-yellow); }
+            .tab-btn#btnQuest.active { box-shadow: 2px 2px 0 var(--dj-cyan); }
+
+            /* 랭킹 리스트 여백 축소 */
+            .list-container { padding-right: 5px; gap: 6px; }
+            .rank-row { padding: 8px 10px; border-width: 1px; border-left-width: 5px; }
+
+            /* 모바일에서 글자 및 숫자 크기 대폭 축소 (겹침 방지) */
+            .rank-num { width: 30px; font-size: 15px; }
+            .rank-name { font-size: 15px; }
+            .rank-val { font-size: 14px; min-width: 80px; }
+
+            /* TOP 3 텍스트 겹침 방지 (1ST, 2ND 너무 크던거 축소) */
+            .rank-row.top-1 .rank-num { font-size: 16px; width: 60px; }
+            .rank-row.top-2 .rank-num { font-size: 14px; width: 55px; }
+            .rank-row.top-3 .rank-num { font-size: 13px; width: 50px; }
+        }
     </style>
 </head>
 <body>
     <div class="game-frame">
-        
-        <!-- =========================================
-             HUD 오버레이
-             ========================================= -->
+
+        <!-- HUD 오버레이 -->
         <div class="hud-overlay">
             <div class="hud-corner tl"></div>
             <div class="hud-corner tr"></div>
             <div class="hud-corner bl"></div>
             <div class="hud-corner br"></div>
-
             <div class="hud-top">
                 <div class="hud-badge">MINERAL STORAGE</div>
                 <div class="hud-line"></div>
@@ -205,27 +232,24 @@
                 </div>
                 <div class="hud-cross">+</div>
             </div>
-            
             <div class="hud-bottom">
                 <div class="hud-cross">+</div>
                 <div class="hud-line"></div>
                 <div class="hud-badge">LEADERBOARD</div>
             </div>
-
             <div class="hud-side left">S Y S T E M &nbsp; O N L I N E</div>
             <div class="hud-side right">B O O &nbsp; B O A R D &nbsp; R A N K I N G</div>
         </div>
-        <!-- ========================================= -->
 
         <div class="content-wrap">
-            
-            <!-- 타이틀 윗공간 채워주는 서브 타이틀 바코드 -->
+            <!-- 서브 타이틀 바코드 -->
             <div class="top-subtitle">
                 <span>YGOSU</span>
                 <span class="barcode">|||| || ||| |</span>
                 <span>DATA ARCHIVE</span>
             </div>
 
+            <!-- 타이틀 -->
             <div class="header">
                 <div class="block-cyan"></div>
                 <div class="block-orange"></div>
@@ -233,15 +257,18 @@
                 <h1><span class="bouncy-text">BOO</span><br><span class="bouncy-text">BOARD</span></h1>
             </div>
 
+            <!-- 유튜브 -->
             <div class="yt-box">
                 <iframe width="100%" height="200" src="https://www.youtube.com/embed/vnTFdNZQ0UQ?si=iRSunb6wWGX7SGp5&amp;start=25&autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
 
+            <!-- 탭 버튼 -->
             <div class="tab-menu">
                 <button class="tab-btn active" id="btnGiver" onclick="show('giver')"><span>DONATION</span></button>
                 <button class="tab-btn" id="btnQuest" onclick="show('quest')"><span>QUEST</span></button>
             </div>
 
+            <!-- 리스트 -->
             <div id="giver" class="list-container giver-list">
                 
         <div class="rank-row top-1">
@@ -355,7 +382,6 @@
             <div class="rank-val val-giver"><span class="bouncy-text">77,777 MN</span></div>
         </div>
             </div>
-
             <div id="quest" class="list-container quest-list" style="display:none;">
                 
         <div class="rank-row top-1">
@@ -536,7 +562,7 @@
         <div class="rank-row ">
             <div class="rank-num">36</div>
             <div class="rank-name"><span class="bouncy-text">물소꺼져</span></div>
-            <div class="rank-val val-quest"><span class="bouncy-text">30,000,000 MN</span></div>
+            <div class="rank-val val-quest"><span class="bouncy-text">35,000,000 MN</span></div>
         </div>
         <div class="rank-row ">
             <div class="rank-num">37</div>
