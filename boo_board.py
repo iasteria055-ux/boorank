@@ -120,9 +120,9 @@ def get_quest_achievers():
     user_names = {}
     post_urls = []
     comment_counts = {}
-    earliest_comment = {}   # 각 유저의 가장 이른 댓글 시간
+    earliest_comment = {}
 
-    # 게시글 수집 (기존과 동일)
+    # 1. 게시글 수집
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
         results = executor.map(process_board_page, range(1, 6))
         for page_posts in results:
@@ -132,7 +132,7 @@ def get_quest_achievers():
                     today_posters.add(p["mem_id"])
                     user_names[p["mem_id"]] = p["name"]
 
-    # 댓글 수집
+    # 2. 댓글 수집
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
         results = executor.map(get_comments_from_post, post_urls)
         for comments in results:
@@ -140,27 +140,22 @@ def get_quest_achievers():
                 m_id = c["mem_id"]
                 user_names[m_id] = c["name"]
                 comment_counts[m_id] = comment_counts.get(m_id, 0) + 1
-                # 가장 이른 시간 기록
                 if m_id not in earliest_comment or c["time"] < earliest_comment[m_id]:
                     earliest_comment[m_id] = c["time"]
 
-    # 조건 만족자 추출
+    # 3. 조건 만족자 필터링 및 정렬
     achievers = []
     for m_id, c_count in comment_counts.items():
         if m_id in today_posters and c_count >= 20:
             achievers.append({
                 "mem_id": m_id,
                 "name": user_names[m_id],
-                "earliest_time": earliest_comment.get(m_id, datetime.max)
+                "earliest": earliest_comment.get(m_id, datetime.max)
             })
 
-    # 이른 시간 순으로 정렬 (가장 먼저 달성한 사람이 1등)
-    achievers.sort(key=lambda x: x["earliest_time"])
-    # 결과에서 'earliest_time'은 제거하고 val="달성" 추가
-    result = []
-for a in achievers:
-    result.append({"mem_id": a["mem_id"], "name": a["name"], "val": "CLEAR"})
-return result
+    # 가장 먼저 달성한 사람 순으로 정렬
+    achievers.sort(key=lambda x: x["earliest"])
+    return [{"mem_id": a["mem_id"], "name": a["name"], "val": "CLEAR"} for a in achievers]
 # ---------- FULL 모드 (미네랄 창고) ----------
 def fetch_storage_page(page_num):
     url = f"https://ygosu.com/board/pan_boo/?mode=mineral_storage&page={page_num}"
