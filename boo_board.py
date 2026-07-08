@@ -188,82 +188,48 @@ def fetch_storage_page(page_num):
     url = f"https://ygosu.com/board/pan_boo/?mode=mineral_storage&page={page_num}"
     giver_data = []
     quest_data = []
+
+    # 코랩 코드에서 사용한 정규식
+    pattern_giver = r'\d{2}-\d{2}-\d{2}\s*\([월화수목금토일]\)\s*\d{2}:\d{2}\s*(.*?)\+\s*([0-9,]+)'
+    pattern_quest = r'\d{2}-\d{2}-\d{2}\s*\([월화수목금토일]\)\s*\d{2}:\d{2}\s*(.*?)-\s*([0-9,]+)'
+    system_keywords = ["게시물", "댓글", "출석", "이벤트", "추천", "복권", "환전", "시스템"]
+
     try:
         res = requests.get(url, headers=HEADERS, timeout=10)
-        if res.status_code != 200:
-            return {"donation": [], "quest": [], "is_empty": True}
-        
+        res.encoding = 'utf-8'
         soup = BeautifulSoup(res.text, 'html.parser')
-        rows = soup.find_all('tr')
-        if len(rows) == 0:
-            return {"donation": [], "quest": [], "is_empty": True}
-        
-        valid_rows = 0
-        for row in rows:
-            if is_system_row(row):
-                continue
-            
-            a_tag = row.find('a', href=True)
-            # mem_id 추출 (onclick → href → 텍스트)
-            onclick = a_tag.get('onclick', '')
-            match = re.search(r"show_nick_dropdown\([^,]+,\s*'([^']+)'", onclick)
-            if match:
-                mem_id = match.group(1)
-            else:
-                href = a_tag.get('href', '')
-                m = re.search(r'member=([^&"\' ]+)', href)
-                if m:
-                    mem_id = m.group(1)
-                else:
-                    mem_id = a_tag.get_text(strip=True)  # fallback
-            
-            nick = a_tag.get_text(strip=True)
-            if nick == "XOXA":
-                nick = "초우코송이"
-            
+
+        for row in soup.find_all('tr'):
             row_text = " ".join(row.stripped_strings)
-            
-            # 금액 추출 (클래스 우선, 텍스트 정규식 보조)
-            plus_td = row.find('td', class_='plus')
-            minus_td = row.find('td', class_='minus')
-            
-            if plus_td:
-                val_text = plus_td.get_text(strip=True).replace(',', '').replace('+', '')
-                try:
-                    val = int(val_text)
-                    giver_data.append({'name': nick, 'mem_id': mem_id, 'val': val})
-                    valid_rows += 1
-                    continue
-                except:
-                    pass
-            elif minus_td:
-                val_text = minus_td.get_text(strip=True).replace(',', '').replace('-', '')
-                try:
-                    val = int(val_text)
-                    quest_data.append({'name': nick, 'mem_id': mem_id, 'val': val})
-                    valid_rows += 1
-                    continue
-                except:
-                    pass
-            else:
-                # 텍스트에서 +/- 찾기
-                m_plus = re.search(r'\+\s*([0-9,]+)', row_text)
-                m_minus = re.search(r'-\s*([0-9,]+)', row_text)
-                if m_plus:
-                    val = int(m_plus.group(1).replace(',', ''))
-                    giver_data.append({'name': nick, 'mem_id': mem_id, 'val': val})
-                    valid_rows += 1
-                elif m_minus:
-                    val = int(m_minus.group(1).replace(',', ''))
-                    quest_data.append({'name': nick, 'mem_id': mem_id, 'val': val})
-                    valid_rows += 1
-        
-        # 유효한 로우가 하나도 없으면 빈 페이지로 간주
-        is_empty = (valid_rows == 0)
-        return {"donation": giver_data, "quest": quest_data, "is_empty": is_empty}
+
+            # 기부 내역 (+)
+            m_giver = re.search(pattern_giver, row_text)
+            if m_giver:
+                mid_text = m_giver.group(1).strip()
+                val = int(m_giver.group(2).replace(',', ''))
+                if not any(kw in mid_text for kw in system_keywords):
+                    parts = mid_text.split()
+                    if parts:
+                        nick = parts[0]
+                        if nick not in ["운영자", "시스템", ""]:
+                            if nick == "XOXA":
+                                nick = "초우코송이"
+                            giver_data.append({'name': nick, 'val': val})
+
+            # 일퀘 지급 내역 (-)
+            m_quest = re.search(pattern_quest, row_text)
+            if m_quest:
+                mid_text = m_quest.group(1).strip()
+                val = int(m_quest.group(2).replace(',', ''))
+                if "에게" in mid_text:
+                    parts = mid_text.split('에게')[0].split()
+                    if parts:
+                        nick = parts[-1]
+                        if nick not in ["운영자", "시스템", ""]:
+                            quest_data.append({'name': nick, 'val': val})
+        return {"donation": giver_data, "quest": quest_data}
     except Exception as e:
-        print(f"페이지 {page_num} 오류: {e}")
-        return {"donation": [], "quest": [], "is_empty": True}
+        return {"donation": [], "quest": []}
 
 def get_total_pages():
     """창고 게시판의 마지막 페이지 번호를 가져온다."""
@@ -294,7 +260,6 @@ def get_storage_rankings():
     raw_giver = []
     raw_quest = []
 
-    # 페이지 1부터 total_pages까지 병렬 처리 (최대 20스레드)
     with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
         results = executor.map(fetch_storage_page, range(1, total_pages + 1))
         for res in results:
@@ -303,26 +268,12 @@ def get_storage_rankings():
 
     print(f"✅ 수집 완료: 기부 {len(raw_giver)}건, 지급 {len(raw_quest)}건. 집계 중...")
 
-    # 집계
-    df_giver = pd.DataFrame(raw_giver)
-    df_quest = pd.DataFrame(raw_quest)
+    # 코랩과 동일하게 name 기준으로 그룹핑 (mem_id 없이도 정확)
+    df_giver = pd.DataFrame(raw_giver).groupby('name', as_index=False).sum().sort_values('val', ascending=False).head(50) if raw_giver else pd.DataFrame(columns=['name', 'val'])
+    df_quest = pd.DataFrame(raw_quest).groupby('name', as_index=False).sum().sort_values('val', ascending=False).head(50) if raw_quest else pd.DataFrame(columns=['name', 'val'])
 
-    if not df_giver.empty:
-        df_giver = df_giver.groupby('mem_id', as_index=False).agg(
-            {'name': 'first', 'val': 'sum'}
-        ).sort_values('val', ascending=False).head(50)
-        donation_ranking = df_giver.to_dict('records')
-    else:
-        donation_ranking = []
-
-    if not df_quest.empty:
-        df_quest = df_quest.groupby('mem_id', as_index=False).agg(
-            {'name': 'first', 'val': 'sum'}
-        ).sort_values('val', ascending=False).head(50)
-        quest_ranking = df_quest.to_dict('records')
-    else:
-        quest_ranking = []
-
+    donation_ranking = df_giver.to_dict('records')
+    quest_ranking = df_quest.to_dict('records')
     return donation_ranking, quest_ranking
 
 # ==========================================
