@@ -17,10 +17,10 @@ jobs:
         pip install -r requirements.txt
     - name: 🌗 30분 FAST 크롤링 실행
       run: python boo_board.py fast
-    - name: 깃허브에 저장
-      run: |
-        git config --global user.name 'GitHub Actions Bot'
-        git config --global user.email 'action@github.com'
-        git add index.html
-        git commit -m "🌗 Auto FAST update" || echo "No changes to commit"
-        git push
+- name: 깃허브에 저장
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add data.json
+          git commit -m "🔄 Update data.json" || echo "No changes to commit"
+          git push
