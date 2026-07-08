@@ -157,58 +157,43 @@ def get_quest_achievers():
 def fetch_storage_page(page_num):
     url = f"https://ygosu.com/board/pan_boo/?mode=mineral_storage&page={page_num}"
     system_keywords = ["게시물", "댓글", "출석", "이벤트", "추천", "복권", "환전", "시스템", "당첨", "보상"]
-
     for attempt in range(3):
         try:
             time.sleep(random.uniform(0.3, 0.8))
             res = requests.get(url, headers=HEADERS, timeout=15)
             res.encoding = 'utf-8'
             soup = BeautifulSoup(res.text, 'html.parser')
-
             giver_data = []
             quest_data = []
-
-            # 창고 테이블의 각 행 (tr) 처리
             for row in soup.find_all('tr'):
                 cols = row.find_all('td')
                 if len(cols) < 4:
-                    continue   # 최소 4개의 열이 있어야 함 (날짜, 사유, 입금, 출금)
-
-                # 0: 날짜, 1: 사유, 2: 입금(+), 3: 출금(-)
-                date_text = cols[0].get_text(strip=True)
-                reason_text = cols[1].get_text(strip=True)
-                plus_text = cols[2].get_text(strip=True)   # + 금액
-                minus_text = cols[3].get_text(strip=True)  # - 금액
-
-                # 시스템 키워드 필터
+                    continue
+                reason_text = cols[1].get_text(strip=True)   # 사유
+                plus_text = cols[2].get_text(strip=True)     # + 금액
+                minus_text = cols[3].get_text(strip=True)    # - 금액
                 if any(kw in reason_text for kw in system_keywords):
                     continue
-
-                # --- 기부 (+) ---
-                if plus_text and plus_text.startswith('+'):
+                # 기부 (+)
+                if plus_text.startswith('+'):
                     try:
                         val = int(plus_text.lstrip('+').replace(',', ''))
-                        # 닉네임: 사유의 첫 단어
                         nick = reason_text.split()[0] if reason_text else ""
                         if nick not in ["운영자", "시스템", ""]:
-                            if nick == "XOXA":
-                                nick = "초우코송이"
+                            if nick == "XOXA": nick = "초우코송이"
                             giver_data.append({'name': nick, 'val': val})
                     except:
                         pass
-
-                # --- 지급 (-) ---
-                if minus_text and minus_text.startswith('-'):
+                # 지급 (-)
+                if minus_text.startswith('-'):
                     try:
                         val = int(minus_text.lstrip('-').replace(',', ''))
-                        # 닉네임: "에게" 앞 마지막 단어
                         if "에게" in reason_text:
                             nick = reason_text.split('에게')[0].split()[-1]
                             if nick not in ["운영자", "시스템", ""]:
                                 quest_data.append({'name': nick, 'val': val})
                     except:
                         pass
-
             return {"donation": giver_data, "quest": quest_data}
         except Exception as e:
             print(f"  ⚠️ 페이지 {page_num} 재시도 {attempt+1}/3 - {e}")
@@ -216,22 +201,17 @@ def fetch_storage_page(page_num):
     return {"donation": [], "quest": []}
 
 def get_storage_rankings():
-    print("🔥 [FULL] 미네랄 창고 크롤링 시작 (코랩 검증 정규식 사용)")
-    # 창고는 보통 110~120페이지 사이, 안전하게 120까지 시도
-    total_pages = 120
+    print("🔥 [FULL] 미네랄 창고 크롤링 시작 (정확한 td 파싱)")
     raw_giver = []
     raw_quest = []
 
-    for page in range(1, total_pages + 1):
-        print(f"⏳ 페이지 {page}/{total_pages} 처리 중...", end=" ")
+    # 전체 페이지 수 자동 감지 (또는 120으로 고정)
+    for page in range(1, 121):
+        print(f"⏳ 페이지 {page} 처리 중...", end=" ")
         result = fetch_storage_page(page)
-        g_count = len(result["donation"])
-        q_count = len(result["quest"])
-        print(f"기부 {g_count}건, 지급 {q_count}건")
+        print(f"기부 {len(result['donation'])}건, 지급 {len(result['quest'])}건")
         raw_giver.extend(result["donation"])
         raw_quest.extend(result["quest"])
-
-    print(f"\n✅ 전체 수집 완료: 기부 {len(raw_giver)}건, 지급 {len(raw_quest)}건")
 
     df_giver = pd.DataFrame(raw_giver)
     df_quest = pd.DataFrame(raw_quest)
