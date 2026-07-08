@@ -173,21 +173,15 @@ def get_quest_achievers():
 # ==========================================
 def is_system_row(row):
     """수수료, 운영자 메시지 등 시스템 로우인지 판별"""
-    # a 태그가 없으면 무조건 시스템 메시지
     a_tag = row.find('a', href=True)
     if not a_tag:
         return True
-    
     nick = a_tag.get_text(strip=True)
-    # 특정 닉네임/키워드 제외
     if nick in ["운영자", "시스템", ""]:
         return True
-    
     row_text = " ".join(row.stripped_strings)
-    # 수수료 관련 키워드가 포함되어 있으면 시스템 로우로 간주
     if any(kw in row_text for kw in ["미네랄 출금 수수료", "출금 수수료", "수수료", "이벤트", "공지"]):
         return True
-    
     return False
 
 def fetch_storage_page(page_num):
