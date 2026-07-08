@@ -2,7 +2,7 @@ name: Midnight FULL Update
 
 on:
   schedule:
-    - cron: '0 15 * * *'   # UTC 15:00 = 한국시간 00:00
+    - cron: '0 15 * * *'
   workflow_dispatch:
 
 permissions:
