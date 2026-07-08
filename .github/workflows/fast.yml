@@ -2,32 +2,29 @@ name: 30min FAST Update
 
 on:
   schedule:
-    - cron: '15,45 * * * *'   # 매시간 15분, 45분
+    - cron: '*/30 * * * *'   # 30분마다 (0,30분)
   workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-update-fast
+  cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    concurrency:
-      group: data-update-fast
-      cancel-in-progress: false
-
     steps:
       - uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-
-      - name: Install dependencies
-        run: |
+      - run: |
           python -m pip install --upgrade pip
           pip install requests beautifulsoup4 pandas
-
-      - name: 🚀 FAST 크롤링 실행 (일퀘 달성자)
+      - name: 🚀 FAST 크롤링 실행
         run: python boo_board.py fast
-
       - name: 깃허브에 저장
         run: |
           git config --global user.name "github-actions[bot]"
