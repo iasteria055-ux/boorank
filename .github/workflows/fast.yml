@@ -2,7 +2,7 @@ name: 30min FAST Update
 
 on:
   schedule:
-    - cron: '*/30 * * * *'   # 30분마다 (0,30분)
+    - cron: '15,45 * * * *'
   workflow_dispatch:
 
 permissions:
