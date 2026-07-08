@@ -150,7 +150,7 @@ for page in range(1, 16):
             post_a = tr.select_one('.tit a')
             if post_a:
                 post_url = post_a['href']
-                if not post_url.startswith('http'): post_url = "https://ygosu.com" + post_url
+                if not post_url.startswith('http'): post_url = "https://ygosu.com/board/pan_boo" + post_url
                 try:
                     p_res = session.get(post_url)
                     p_res.encoding = 'utf-8'
