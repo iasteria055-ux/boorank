@@ -22,31 +22,67 @@ def process_board_page(page_num):
         res = requests.get(url, headers=HEADERS, timeout=5)
         soup = BeautifulSoup(res.text, 'html.parser')
         posts = []
-        for tr in soup.find_all('tr'):
-            date_td = tr.find('td', class_='date')
+
+        # 게시글 테이블이 어떤 구조인지에 따라 적절히 탐색
+        # 보통은 div.board_list > table > tbody > tr
+        for tr in soup.select('div.board_list tr, table.board_list tr, tr:has(td.tit)'):
+            # 날짜 찾기: 모든 td 중에서 시간 패턴 (HH:MM, 전, 방금, MM-DD) 포함된 텍스트
+            date_td = tr.find('td', string=re.compile(r'(\d{2}:\d{2}|전|방금|\d{2}-\d{2})'))
             if not date_td:
                 continue
             date_text = date_td.get_text(strip=True)
-            is_today = ":" in date_text or "전" in date_text or "방금" in date_text
 
-            a_tag = tr.find('a', onclick=re.compile(r'show_nick_dropdown'))
+            # 오늘 날짜인지 판단: ':' 또는 '전' 또는 '방금'이 있으면 오늘
+            is_today = (':' in date_text) or ('전' in date_text) or ('방금' in date_text)
+
+            # 닉네임 a 태그 찾기 (onclick이 없을 수도 있으니 href도 고려)
+            a_tag = tr.find('a', href=re.compile(r'(minilog|pan_boo.*member)'))
+            if not a_tag:
+                # onclick으로 찾기
+                a_tag = tr.find('a', onclick=re.compile(r'show_nick_dropdown'))
+            if not a_tag:
+                # 그냥 text가 있는 a 태그 (부정확할 수 있음)
+                a_tag = tr.find('a', href=True)
+                if a_tag and not a_tag.get_text(strip=True):
+                    a_tag = None
             if not a_tag:
                 continue
 
-            mem_id = re.search(r"show_nick_dropdown\([^,]+,\s*'([^']+)'", a_tag.get('onclick', ''))
-            mem_id = mem_id.group(1) if mem_id else a_tag.get_text(strip=True)
             name = a_tag.get_text(strip=True)
+            mem_id = None
 
-            link_tag = tr.find('td', class_='tit')
-            if link_tag and link_tag.find('a'):
+            # mem_id 추출 시도 1: onclick
+            onclick = a_tag.get('onclick', '')
+            match = re.search(r"show_nick_dropdown\([^,]+,\s*'([^']+)'", onclick)
+            if match:
+                mem_id = match.group(1)
+            else:
+                # 추출 시도 2: href에서 member 파라미터
+                href = a_tag.get('href', '')
+                m = re.search(r'member=([^&"\' ]+)', href)
+                if m:
+                    mem_id = m.group(1)
+                else:
+                    # fallback: 닉네임을 mem_id로 사용 (중복 가능성)
+                    mem_id = name
+
+            # 게시글 링크 찾기
+            link_tag = tr.select_one('td.tit a, a.post_link, a[href*="board/read"]')
+            if not link_tag:
+                # 아무 링크나
+                link_tag = a_tag  # 대체로 닉네임 a와 게시글 a가 다름. 더 정밀한 탐색 필요
+            post_url = link_tag.get('href', '') if link_tag else ''
+
+            if post_url:
                 posts.append({
-                    "url": link_tag.find('a')['href'],
+                    "url": post_url,
                     "is_today": is_today,
                     "mem_id": mem_id,
                     "name": name
                 })
         return posts
-    except:
+    except Exception as e:
+        print(f"페이지 {page_num} 파싱 오류: {e}")
         return []
 
 def get_comments_from_post(post_url):
@@ -56,20 +92,45 @@ def get_comments_from_post(post_url):
         res = requests.get(post_url, headers=HEADERS, timeout=5)
         soup = BeautifulSoup(res.text, 'html.parser')
         today_comments = []
-        for li in soup.find_all('li', class_='normal_reply'):
-            time_div = li.find('div', class_='time')
-            if not time_div:
+
+        # 댓글 리스트: li.comment, li.reply, li.normal_reply 등 가능
+        comment_items = soup.select('li.comment, li.reply, li.normal_reply, div.comment_item')
+        for item in comment_items:
+            # 시간 표시 요소: div.time, span.time, span.date
+            time_el = item.select_one('div.time, span.time, span.date')
+            if not time_el:
                 continue
-            time_text = time_div.get_text(strip=True)
-            if any(kw in time_text for kw in ["전", "방금", ":"]):
-                a_tag = li.find('a', onclick=re.compile(r'show_nick_dropdown'))
-                if a_tag:
-                    mem_id = re.search(r"show_nick_dropdown\([^,]+,\s*'([^']+)'", a_tag.get('onclick', ''))
-                    mem_id = mem_id.group(1) if mem_id else a_tag.get_text(strip=True)
-                    name = a_tag.get_text(strip=True)
-                    today_comments.append({"mem_id": mem_id, "name": name})
+            time_text = time_el.get_text(strip=True)
+
+            # 오늘 댓글 여부 판단
+            if not any(kw in time_text for kw in ['전', '방금', ':']):
+                continue
+
+            # 닉네임과 mem_id 추출 (게시글과 동일한 방식)
+            a_tag = item.find('a', onclick=re.compile(r'show_nick_dropdown'))
+            if not a_tag:
+                a_tag = item.find('a', href=re.compile(r'minilog|member'))
+            if not a_tag:
+                continue
+
+            name = a_tag.get_text(strip=True)
+            mem_id = None
+            onclick = a_tag.get('onclick', '')
+            match = re.search(r"show_nick_dropdown\([^,]+,\s*'([^']+)'", onclick)
+            if match:
+                mem_id = match.group(1)
+            else:
+                href = a_tag.get('href', '')
+                m = re.search(r'member=([^&"\' ]+)', href)
+                if m:
+                    mem_id = m.group(1)
+                else:
+                    mem_id = name
+
+            today_comments.append({"mem_id": mem_id, "name": name})
         return today_comments
-    except:
+    except Exception as e:
+        # print(f"댓글 수집 오류: {e}")  # 필요시 로그
         return []
 
 def get_quest_achievers():
