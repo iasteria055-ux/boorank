@@ -158,9 +158,9 @@ def get_quest_achievers():
     achievers.sort(key=lambda x: x["earliest_time"])
     # 결과에서 'earliest_time'은 제거하고 val="달성" 추가
     result = []
-    for a in achievers:
-        result.append({"mem_id": a["mem_id"], "name": a["name"], "val": "달성"})
-    return result
+for a in achievers:
+    result.append({"mem_id": a["mem_id"], "name": a["name"], "val": "CLEAR"})
+return result
 # ---------- FULL 모드 (미네랄 창고) ----------
 def fetch_storage_page(page_num):
     url = f"https://ygosu.com/board/pan_boo/?mode=mineral_storage&page={page_num}"
