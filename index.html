@@ -215,7 +215,6 @@
             </div>
             <div class="hud-bottom">
                 <div class="hud-cross">+</div><div class="hud-line"></div>
-                <div class="hud-badge" id="update-time">UPDATING...</div>
             </div>
             <div class="hud-side left">S Y S T E M &nbsp; O N L I N E</div>
             <div class="hud-side right">B O O &nbsp; B O A R D &nbsp; R A N K I N G</div>
@@ -313,8 +312,6 @@
             document.getElementById('giver').innerHTML = createRows(data.donation_ranking, "val-giver", "giver");
             document.getElementById('quest').innerHTML = createRows(data.quest_ranking, "val-quest", "quest");
 
-            if (data.updated_at) {
-                document.getElementById('update-time').innerText = "LAST UPDATED : " + data.updated_at;
             }
         })
         .catch(function(error) {
