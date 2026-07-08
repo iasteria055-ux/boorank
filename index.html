@@ -274,17 +274,14 @@
                 let nameHtml = "";
                 let valHtml = "";
 
-                // 탭 종류에 따른 링크 분기 처리
+// 탭 종류에 따른 링크 분기 처리
                 if (tabType === 'daily') {
-                    // 일퀘 달성자: 클릭 시 창고 선물 창으로 이동
-                    nameHtml = `<a href="https://ygosu.com/board/pan_boo/?mode=mineral_storage&mode2=withdraw&member=${r.name}" target="_blank" class="bouncy-text link-text">${r.name}</a>`;
+                    nameHtml = `<a href="https://ygosu.com/board/pan_boo/?mode=mineral_storage&mode2=withdraw&member=${r.mem_id}" target="_blank" class="bouncy-text link-text">${r.name}</a>`;
                     valHtml = `${r.val} 회`;
                 } else if (tabType === 'giver') {
-                    // 기부왕: 클릭 시 미니로그로 이동
-                    nameHtml = `<a href="https://ygosu.com/minilog/?m=${r.name}" target="_blank" class="bouncy-text link-text">${r.name}</a>`;
+                    nameHtml = `<a href="https://ygosu.com/minilog/?m=${r.mem_id}" target="_blank" class="bouncy-text link-text">${r.name}</a>`;
                     valHtml = `${r.val.toLocaleString()} MN`;
                 } else {
-                    // 일퀘왕: 클릭 이벤트 없음
                     nameHtml = `<span class="bouncy-text">${r.name}</span>`;
                     valHtml = `${r.val.toLocaleString()} MN`;
                 }
