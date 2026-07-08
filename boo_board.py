@@ -59,6 +59,7 @@ def process_board_page(page_num):
         return []
 
 def parse_relative_time(text):
+    """'4시간 전', '방금', '00:51' 등을 현재 시간 기준 datetime으로 변환"""
     now = datetime.now()
     text = text.strip()
     if '방금' in text or '초 전' in text:
@@ -69,11 +70,11 @@ def parse_relative_time(text):
     m = re.search(r'(\d+)시간 전', text)
     if m:
         return now - timedelta(hours=int(m.group(1)))
-    if ':' in text:
-        parts = text.split(':')
-        if len(parts) == 2:
-            h, m = int(parts[0]), int(parts[1])
-            return now.replace(hour=h, minute=m, second=0, microsecond=0)
+    # HH:MM 형태 (오늘 시간)
+    if re.match(r'^\d{2}:\d{2}$', text):
+        h, m = map(int, text.split(':'))
+        return now.replace(hour=h, minute=m, second=0, microsecond=0)
+    # 혹시 모를 다른 패턴은 그냥 현재 시간 반환
     return now
 
 def get_comments_from_post(post_url):
@@ -88,6 +89,7 @@ def get_comments_from_post(post_url):
             if not time_div:
                 continue
             time_text = time_div.get_text(strip=True)
+            # 오늘 댓글 필터
             if not any(kw in time_text for kw in ['전', '방금', ':']):
                 continue
             comment_time = parse_relative_time(time_text)
@@ -103,7 +105,7 @@ def get_comments_from_post(post_url):
                 today_comments.append({
                     "mem_id": mem_id,
                     "name": name,
-                    "time": comment_time
+                    "time": comment_time   # datetime 객체
                 })
         return today_comments
     except:
@@ -115,7 +117,7 @@ def get_quest_achievers():
     user_names = {}
     post_urls = []
     comment_counts = {}
-    earliest_comment = {}
+    earliest_comment = {}   # 각 유저의 가장 이른 댓글 시간
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
         results = executor.map(process_board_page, range(1, 6))
@@ -133,6 +135,7 @@ def get_quest_achievers():
                 m_id = c["mem_id"]
                 user_names[m_id] = c["name"]
                 comment_counts[m_id] = comment_counts.get(m_id, 0) + 1
+                # 가장 이른 시간 저장
                 if m_id not in earliest_comment or c["time"] < earliest_comment[m_id]:
                     earliest_comment[m_id] = c["time"]
 
@@ -145,8 +148,8 @@ def get_quest_achievers():
                 "earliest": earliest_comment.get(m_id, datetime.max)
             })
 
-    # 내림차순 정렬 (가장 늦게 달성한 사람이 1등)
-    achievers.sort(key=lambda x: x["earliest"], reverse=True)
+    # ★ 가장 먼저 댓글을 단 사람부터 1등 (오름차순)
+    achievers.sort(key=lambda x: x["earliest"])
     return [{"mem_id": a["mem_id"], "name": a["name"], "val": "CLEAR"} for a in achievers]
 
 # ========== FULL 모드 (미네랄 창고 → 기부왕, 일퀘왕) ==========
