@@ -16,6 +16,7 @@ HEADERS = {
 # ==========================================
 # 1. [FAST 모드] 일퀘 달성자 (오늘 게시글 1 + 댓글 20)
 # ==========================================
+
 def process_board_page(page_num):
     url = f"https://ygosu.com/board/pan_boo/?page={page_num}"
     try:
@@ -270,6 +271,27 @@ def fetch_storage_page(page_num):
         print(f"페이지 {page_num} 오류: {e}")
         return {"donation": [], "quest": [], "is_empty": True}
 
+def get_total_pages():
+    """창고 게시판의 마지막 페이지 번호를 가져온다."""
+    url = "https://ygosu.com/board/pan_boo/?mode=mineral_storage"
+    try:
+        res = requests.get(url, headers=HEADERS, timeout=10)
+        soup = BeautifulSoup(res.text, 'html.parser')
+        last_page = 1
+        # 하단 페이지네이션에서 마지막 페이지 링크 찾기
+        # 보통 <a href="...page=111">111</a> 형태
+        for a in soup.select('div.paging a, .pagination a, a.page_num'):
+            href = a.get('href', '')
+            if 'page=' in href:
+                match = re.search(r'page=(\d+)', href)
+                if match:
+                    page_num = int(match.group(1))
+                    if page_num > last_page:
+                        last_page = page_num
+        return last_page
+    except:
+        return 120  # 실패 시 기본값 (현재 111이므로 넉넉하게)
+
 def get_storage_rankings():
     print("🔥 [FULL] 미네랄 창고 전체 페이지 확인 중...")
     total_pages = get_total_pages()
@@ -278,7 +300,7 @@ def get_storage_rankings():
     raw_giver = []
     raw_quest = []
 
-    # 페이지 1부터 total_pages까지 병렬 처리
+    # 페이지 1부터 total_pages까지 병렬 처리 (최대 20스레드)
     with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
         results = executor.map(fetch_storage_page, range(1, total_pages + 1))
         for res in results:
@@ -287,7 +309,7 @@ def get_storage_rankings():
 
     print(f"✅ 수집 완료: 기부 {len(raw_giver)}건, 지급 {len(raw_quest)}건. 집계 중...")
 
-    # 집계 (동일)
+    # 집계
     df_giver = pd.DataFrame(raw_giver)
     df_quest = pd.DataFrame(raw_quest)
 
