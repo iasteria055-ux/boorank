@@ -2,10 +2,10 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import pandas as pd
-import time
-import sys
 import json
 import os
+import sys
+import concurrent.futures
 
 # ==========================================
 # 1. 설정 및 세션 초기화
@@ -21,7 +21,6 @@ pattern_giver = r'\d{2}-\d{2}-\d{2}\s*\([월화수목금토일]\)\s*\d{2}:\d{2}\
 pattern_quest = r'\d{2}-\d{2}-\d{2}\s*\([월화수목금토일]\)\s*\d{2}:\d{2}\s*(.*?)-\s*([0-9,]+)'
 system_keywords = ["게시물", "댓글", "출석", "이벤트", "추천", "복권", "환전", "시스템"]
 
-# 실행 모드 판별 (GitHub Actions에서 인자를 전달함)
 run_mode = sys.argv[1] if len(sys.argv) > 1 else 'fast'
 data_file = 'mineral_data.json'
 
@@ -29,14 +28,14 @@ giver_list = []
 quest_list = []
 
 # ==========================================
-# 2. 미네랄 창고 처리 (모드에 따라 분기)
+# 2. 미네랄 창고 처리
 # ==========================================
 if run_mode == 'full' or not os.path.exists(data_file):
-    print("🌕 [FULL 모드] 자정 업데이트: 미네랄 창고 전체 데이터를 수집합니다...")
+    print("🌕 [FULL 모드] 미네랄 창고 데이터 수집 (빠름)...")
     page = 1
     while True:
         try:
-            res = session.get(f"{base_storage_url}{page}")
+            res = session.get(f"{base_storage_url}{page}", timeout=10)
             res.encoding = 'utf-8'
             soup = BeautifulSoup(res.text, 'html.parser')
             
@@ -46,7 +45,6 @@ if run_mode == 'full' or not os.path.exists(data_file):
                 if re.search(r'\d{2}-\d{2}-\d{2}', row_text):
                     has_data = True
                     
-                # [기부왕]
                 m_giver = re.search(pattern_giver, row_text)
                 if m_giver:
                     mid_text = m_giver.group(1).strip()
@@ -67,7 +65,6 @@ if run_mode == 'full' or not os.path.exists(data_file):
                                     mem_id = "705225"
                                 giver_list.append({'name': nick, 'val': val, 'mem_id': mem_id})
                 
-                # [기존 일퀘왕]
                 m_quest = re.search(pattern_quest, row_text)
                 if m_quest:
                     mid_text = m_quest.group(1).strip()
@@ -80,26 +77,23 @@ if run_mode == 'full' or not os.path.exists(data_file):
                                 quest_list.append({'name': nick, 'val': val})
                                 
             if not has_data or page > 5000:
-                print(f"👉 총 {page-1}페이지까지 탐색을 완료했습니다.")
                 break
             page += 1
         except Exception:
             break
             
-    # 모은 데이터를 JSON 파일로 저장 (다음 30분 작업들이 빠르게 불러다 쓰도록)
     with open(data_file, 'w', encoding='utf-8') as f:
         json.dump({'giver': giver_list, 'quest': quest_list}, f, ensure_ascii=False)
 else:
-    print("🌗 [FAST 모드] 30분 업데이트: 저장된 미네랄 창고 데이터를 빠르게 불러옵니다...")
+    print("🌗 [FAST 모드] 파일에서 창고 데이터를 즉시 불러옵니다.")
     try:
         with open(data_file, 'r', encoding='utf-8') as f:
             data = json.load(f)
             giver_list = data.get('giver', [])
             quest_list = data.get('quest', [])
     except:
-        print("데이터 불러오기 실패, 빈 상태로 진행합니다.")
+        pass
 
-# DataFrame 처리
 df_giver = pd.DataFrame(giver_list)
 if not df_giver.empty:
     df_giver = df_giver.groupby('name', as_index=False).agg({'val': 'sum', 'mem_id': 'first'}).sort_values('val', ascending=False).head(50)
@@ -108,18 +102,18 @@ df_quest = pd.DataFrame(quest_list)
 if not df_quest.empty:
     df_quest = df_quest.groupby('name', as_index=False).sum().sort_values('val', ascending=False).head(50)
 
-
 # ==========================================
-# 3. 오늘자 게시판 활동 크롤링 (게시글 & 댓글) -> 이건 무조건 실행
+# 3. 오늘자 게시판 활동 크롤링 (초고속 멀티스레딩 적용)
 # ==========================================
-print("🚀 [공통] 오늘의 게시판 일퀘 활동을 추적합니다...")
+print("🚀 [공통] 오늘의 게시판 일퀘 활동 초고속 스캔 시작...")
 daily_stats = {}
+post_urls = []
 stop_crawling = False
 
 for page in range(1, 16): 
     if stop_crawling: break
     try:
-        res = session.get(f"{board_url}{page}")
+        res = session.get(f"{board_url}{page}", timeout=10)
         res.encoding = 'utf-8'
         soup = BeautifulSoup(res.text, 'html.parser')
         trs = soup.select('tbody tr')
@@ -137,6 +131,7 @@ for page in range(1, 16):
                 stop_crawling = True
                 break
                 
+            # 작성자 1차 카운트
             name_a = tr.select_one('.name a')
             if name_a and 'show_nick_dropdown' in name_a.get('onclick', ''):
                 m = re.search(r"show_nick_dropdown\([^,]+,\s*'([^']+)'", name_a['onclick'])
@@ -147,51 +142,75 @@ for page in range(1, 16):
                         daily_stats[mem_id] = {'name': nick, 'posts': 0, 'comments': 0, 'profile_img': ''}
                     daily_stats[mem_id]['posts'] += 1
             
+            # 들어갈 게시물 URL 찜해두기
             post_a = tr.select_one('.tit a')
             if post_a:
-                post_url = post_a['href']
-                if not post_url.startswith('http'): post_url = "https://ygosu.com/board/pan_boo" + post_url
-                try:
-                    p_res = session.get(post_url)
-                    p_res.encoding = 'utf-8'
-                    p_soup = BeautifulSoup(p_res.text, 'html.parser')
-                    for cmt_name in p_soup.select('.comment_list .name a'):
-                        if 'show_nick_dropdown' in cmt_name.get('onclick', ''):
-                            cm = re.search(r"show_nick_dropdown\([^,]+,\s*'([^']+)'", cmt_name['onclick'])
-                            if cm:
-                                c_mem_id = cm.group(1)
-                                c_nick = cmt_name.text.strip()
-                                if c_mem_id not in daily_stats:
-                                    daily_stats[c_mem_id] = {'name': c_nick, 'posts': 0, 'comments': 0, 'profile_img': ''}
-                                daily_stats[c_mem_id]['comments'] += 1
-                except:
-                    pass
+                url = post_a['href']
+                if not url.startswith('http'): url = "https://ygosu.com" + url
+                post_urls.append(url)
     except:
         break
 
+# --- 💡 멀티스레딩(분신술) 함수: 15개의 게시글을 동시에 들어갑니다 ---
+def get_commenters(url):
+    commenters = []
+    try:
+        # 독립적인 requests 사용으로 안전하게 고속 크롤링
+        p_res = requests.get(url, headers=headers, timeout=5)
+        p_res.encoding = 'utf-8'
+        p_soup = BeautifulSoup(p_res.text, 'html.parser')
+        for cmt_name in p_soup.select('.comment_list .name a'):
+            if 'show_nick_dropdown' in cmt_name.get('onclick', ''):
+                cm = re.search(r"show_nick_dropdown\([^,]+,\s*'([^']+)'", cmt_name['onclick'])
+                if cm:
+                    c_mem_id = cm.group(1)
+                    c_nick = cmt_name.text.strip()
+                    commenters.append((c_mem_id, c_nick))
+    except:
+        pass
+    return commenters
+
+print(f"⚡ 총 {len(post_urls)}개의 게시물에서 댓글을 고속 추출합니다...")
+with concurrent.futures.ThreadPoolExecutor(max_workers=15) as executor:
+    results = executor.map(get_commenters, post_urls)
+
+for cmt_list in results:
+    for c_mem_id, c_nick in cmt_list:
+        if c_mem_id not in daily_stats:
+            daily_stats[c_mem_id] = {'name': c_nick, 'posts': 0, 'comments': 0, 'profile_img': ''}
+        daily_stats[c_mem_id]['comments'] += 1
+
 # ==========================================
-# 4. 일퀘 완료자 필터링 & HTML 생성
+# 4. 일퀘 완료자 필터링 & 미니로그 고속 스캔
 # ==========================================
-completed_users = []
+temp_completed_users = []
 for mem_id, data in daily_stats.items():
     if data['posts'] >= 1 and data['comments'] >= 20:
-        try:
-            m_res = session.get(f"https://ygosu.com/minilog/?m={mem_id}")
-            m_res.encoding = 'utf-8'
-            m_soup = BeautifulSoup(m_res.text, 'html.parser')
-            img_tag = m_soup.select_one('.profile_img')
-            
-            if img_tag and img_tag.get('src'):
-                img_url = img_tag['src']
-                if not img_url.startswith('http'): img_url = "https://ygosu.com" + img_url
-                data['profile_img'] = img_url
-            else:
-                data['profile_img'] = f"https://ui-avatars.com/api/?name={data['name']}&background=351c61&color=fff&bold=true"
-        except:
-            data['profile_img'] = f"https://ui-avatars.com/api/?name={data['name']}&background=351c61&color=fff&bold=true"
-            
         data['mem_id'] = mem_id
-        completed_users.append(data)
+        temp_completed_users.append(data)
+
+def get_profile_img(user_data):
+    mem_id = user_data['mem_id']
+    try:
+        m_res = requests.get(f"https://ygosu.com/minilog/?m={mem_id}", headers=headers, timeout=5)
+        m_res.encoding = 'utf-8'
+        m_soup = BeautifulSoup(m_res.text, 'html.parser')
+        img_tag = m_soup.select_one('.profile_img')
+        
+        if img_tag and img_tag.get('src'):
+            img_url = img_tag['src']
+            if not img_url.startswith('http'): img_url = "https://ygosu.com" + img_url
+            user_data['profile_img'] = img_url
+            return user_data
+    except:
+        pass
+    user_data['profile_img'] = f"https://ui-avatars.com/api/?name={user_data['name']}&background=351c61&color=fff&bold=true"
+    return user_data
+
+print(f"⚡ {len(temp_completed_users)}명의 일퀘 완료자 프로필을 가져옵니다...")
+completed_users = []
+with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+    completed_users = list(executor.map(get_profile_img, temp_completed_users))
 
 completed_users.sort(key=lambda x: (x['comments'], x['posts']), reverse=True)
 
@@ -200,6 +219,9 @@ total_posts_today = sum(d['posts'] for d in daily_stats.values())
 total_comments_today = sum(d['comments'] for d in daily_stats.values())
 total_completed = len(completed_users)
 
+# ==========================================
+# 5. HTML 생성
+# ==========================================
 def generate_rows(df, type_class):
     html = ""
     for i, r in df.reset_index(drop=True).iterrows():
@@ -457,7 +479,7 @@ html_content = f"""<!DOCTYPE html>
                 </div>
                 
                 <div class="yt-box-mini">
-                    <iframe src="https://www.youtube.com/embed/qZlu2j2SiBA?si=5wwDaD9Xf_SeqcLE&autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/vnTFdNZQ0UQ?si=iRSunb6wWGX7SGp5&amp;start=25&autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                 </div>
             </div>
 
