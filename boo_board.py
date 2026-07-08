@@ -119,16 +119,30 @@ def fetch_storage_page(page_num):
         return {"donation": [], "quest": []}
 
 def get_storage_rankings():
-    print("🔥 [FULL] 창고 랭킹 수집 시작 (150페이지 고정 수집)...")
+    print("🔥 [FULL] 창고 랭킹 수집 (완벽 중복 차단 필터 적용)...")
     raw_giver = []
     raw_quest = []
     
-    # 에러가 나도 절대 멈추지 않고 150페이지까지 무조건 긁어옵니다.
+    seen_signatures = set() # 중복 페이지를 감지하는 블랙리스트
+    
     with concurrent.futures.ThreadPoolExecutor(max_workers=15) as executor:
         results = executor.map(fetch_storage_page, range(1, 151))
+        
         for res in results:
-            if res["donation"]: raw_giver.extend(res["donation"])
-            if res["quest"]: raw_quest.extend(res["quest"])
+            if not res["donation"] and not res["quest"]:
+                continue # 빈 페이지는 일단 무시하고 진행
+                
+            # 현재 페이지의 데이터를 문자열로 압축해서 고유 지문 생성
+            page_signature = str(res["donation"]) + str(res["quest"])
+            
+            # 만약 이 지문이 블랙리스트에 있다면? (와이고수가 마지막 페이지를 반복해서 보여주는 상황)
+            if page_signature in seen_signatures:
+                print("🛑 중복 페이지(끝 페이지) 감지! 크롤링을 종료합니다.")
+                break 
+                
+            seen_signatures.add(page_signature)
+            raw_giver.extend(res["donation"])
+            raw_quest.extend(res["quest"])
             
     df_giver = pd.DataFrame(raw_giver).groupby(['mem_id', 'name'], as_index=False).sum().sort_values('val', ascending=False).head(50) if raw_giver else pd.DataFrame(columns=['mem_id', 'name', 'val'])
     df_quest = pd.DataFrame(raw_quest).groupby(['mem_id', 'name'], as_index=False).sum().sort_values('val', ascending=False).head(50) if raw_quest else pd.DataFrame(columns=['mem_id', 'name', 'val'])
