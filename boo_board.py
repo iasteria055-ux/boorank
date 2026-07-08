@@ -115,8 +115,7 @@ def get_quest_achievers():
     today_posters = set()
     user_names = {}
     post_urls = []
-    comment_counts = {}
-    earliest_comment = {}
+    comment_times = {}          # 유저별 모든 댓글 시간 리스트
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
         results = executor.map(process_board_page, range(1, 6))
@@ -133,24 +132,24 @@ def get_quest_achievers():
             for c in comments:
                 m_id = c["mem_id"]
                 user_names[m_id] = c["name"]
-                comment_counts[m_id] = comment_counts.get(m_id, 0) + 1
-                if m_id not in earliest_comment or c["time"] < earliest_comment[m_id]:
-                    earliest_comment[m_id] = c["time"]
+                # 시간이 None이 아닌 경우만 저장
+                if c["time"] is not None:
+                    comment_times.setdefault(m_id, []).append(c["time"])
 
     achievers = []
-    for m_id, c_count in comment_counts.items():
-        if m_id in today_posters and c_count >= 20:
-            earliest = earliest_comment.get(m_id)
-            if earliest is None:
-                earliest = datetime.max
+    for m_id, times in comment_times.items():
+        if m_id in today_posters and len(times) >= 20:
+            # 댓글 시간을 오름차순 정렬한 뒤 20번째 시간을 기준으로 삼음
+            times.sort()
+            completion_time = times[19]   # 20번째 댓글 (0부터 시작)
             achievers.append({
                 "mem_id": m_id,
                 "name": user_names[m_id],
-                "earliest": earliest
+                "completed_at": completion_time
             })
 
-    # 가장 먼저 댓글을 단 사람이 1등 (오름차순)
-    achievers.sort(key=lambda x: x["earliest"])
+    # 완료 시간 기준 오름차순 → 가장 먼저 20개를 채운 사람이 1등
+    achievers.sort(key=lambda x: x["completed_at"])
     return [{"mem_id": a["mem_id"], "name": a["name"], "val": "CLEAR"} for a in achievers]
 
 # ========== FULL 모드 (미네랄 창고 → 기부왕, 일퀘왕) ==========
