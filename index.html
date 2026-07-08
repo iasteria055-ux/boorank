@@ -247,24 +247,22 @@
 
 <script>
     // ─── 탭 전환 함수 ───
-    function show(tab) {
-        document.getElementById('daily').style.display = 'none';
-        document.getElementById('giver').style.display = 'none';
-        document.getElementById('quest').style.display = 'none';
-
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-
-        if (tab === 'daily') {
-            document.getElementById('daily').style.display = 'flex';
-            document.getElementById('btnDaily').classList.add('active');
-        } else if (tab === 'giver') {
-            document.getElementById('giver').style.display = 'flex';
-            document.getElementById('btnGiver').classList.add('active');
-        } else if (tab === 'quest') {
-            document.getElementById('quest').style.display = 'flex';
-            document.getElementById('btnQuest').classList.add('active');
-        }
+function show(tab) {
+    document.getElementById('daily').style.display = 'none';
+    document.getElementById('giver').style.display = 'none';
+    document.getElementById('quest').style.display = 'none';
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    if (tab === 'daily') {
+        document.getElementById('daily').style.display = 'flex';
+        document.getElementById('btnDaily').classList.add('active');
+    } else if (tab === 'giver') {
+        document.getElementById('giver').style.display = 'flex';
+        document.getElementById('btnGiver').classList.add('active');
+    } else if (tab === 'quest') {
+        document.getElementById('quest').style.display = 'flex';
+        document.getElementById('btnQuest').classList.add('active');
     }
+}
 
     // ─── 랭킹 리스트 생성 함수 (이미지·링크 완전 제거) ───
     function createRows(dataList, typeClass, tabType) {
