@@ -155,8 +155,17 @@
         .bouncy-text {
             display: inline-block;
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s, text-shadow 0.2s;
-        }
-        .bouncy-text:hover { transform: translateY(-3px) scale(1.05); cursor: default; text-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+
+        .bouncy-text {
+            display: inline-block;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s, text-shadow 0.2s;
+            cursor: default; /* 마우스를 올려도 기본 화살표 */
+       }
+
+/* 탭 버튼 내부 텍스트만 예외적으로 포인터로 변경 */
+        .tab-btn .bouncy-text {
+            cursor: pointer;
+       }
         
         a.link-text { text-decoration: none; color: inherit; }
         
