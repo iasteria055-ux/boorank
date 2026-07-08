@@ -210,46 +210,38 @@ def fetch_storage_page(page_num):
         return {"donation": [], "quest": [], "is_empty": True}
 
 def get_storage_rankings():
-    print("🔥 [FULL] 미네랄 창고 전체 크롤링 (수수료 제외, 마지막 페이지 자동 감지)...")
+    print("🔥 [FULL] 미네랄 창고 전체 페이지 확인 중...")
+    total_pages = get_total_pages()
+    print(f"📊 총 {total_pages}페이지 발견. 병렬 크롤링 시작...")
+
     raw_giver = []
     raw_quest = []
-    consecutive_empty = 0
-    page = 1
-    max_empty_pages = 3  # 연속 3페이지 비어있으면 종료
 
-    while True:
-        print(f"  ⏳ 페이지 {page} 스캔 중...")
-        result = fetch_storage_page(page)
-        
-        if result["is_empty"]:
-            consecutive_empty += 1
-            print(f"    → 빈 페이지 (연속 {consecutive_empty}/{max_empty_pages})")
-            if consecutive_empty >= max_empty_pages:
-                print(f"  🛑 {page - max_empty_pages}페이지가 마지막입니다. 크롤링 종료.")
-                break
-        else:
-            consecutive_empty = 0
-            raw_giver.extend(result["donation"])
-            raw_quest.extend(result["quest"])
-            print(f"    → 기부 {len(result['donation'])}건, 지급 {len(result['quest'])}건 수집")
-        
-        page += 1
-        time.sleep(0.2)  # 서버 부하 방지
+    # 페이지 1부터 total_pages까지 병렬 처리
+    with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+        results = executor.map(fetch_storage_page, range(1, total_pages + 1))
+        for res in results:
+            raw_giver.extend(res["donation"])
+            raw_quest.extend(res["quest"])
 
-    print(f"✅ 총 {page - 1}페이지 탐색 완료. 데이터 집계 중...")
+    print(f"✅ 수집 완료: 기부 {len(raw_giver)}건, 지급 {len(raw_quest)}건. 집계 중...")
 
-    # mem_id 기준 합산 후 상위 50위
+    # 집계 (동일)
     df_giver = pd.DataFrame(raw_giver)
     df_quest = pd.DataFrame(raw_quest)
 
     if not df_giver.empty:
-        df_giver = df_giver.groupby('mem_id', as_index=False).agg({'name': 'first', 'val': 'sum'}).sort_values('val', ascending=False).head(50)
+        df_giver = df_giver.groupby('mem_id', as_index=False).agg(
+            {'name': 'first', 'val': 'sum'}
+        ).sort_values('val', ascending=False).head(50)
         donation_ranking = df_giver.to_dict('records')
     else:
         donation_ranking = []
 
     if not df_quest.empty:
-        df_quest = df_quest.groupby('mem_id', as_index=False).agg({'name': 'first', 'val': 'sum'}).sort_values('val', ascending=False).head(50)
+        df_quest = df_quest.groupby('mem_id', as_index=False).agg(
+            {'name': 'first', 'val': 'sum'}
+        ).sort_values('val', ascending=False).head(50)
         quest_ranking = df_quest.to_dict('records')
     else:
         quest_ranking = []
