@@ -81,55 +81,88 @@
         /* --- 신규: 랭킹 공간 확보를 위한 상단 가로 배치 레이아웃 --- */
         .top-dashboard-area {
             display: flex; justify-content: space-between; align-items: flex-end;
-            margin-bottom: 20px; gap: 15px;
+            margin-bottom: 25px; gap: 15px;
         }
 
         .header-titles {
             display: flex; flex-direction: column;
+            position: relative;
+        }
+
+        /* 팝아트 데코레이션 요소 대폭 추가 */
+        .deco-dot-matrix {
+            position: absolute; width: 60px; height: 60px; 
+            background-image: radial-gradient(var(--dj-cyan) 20%, transparent 20%);
+            background-size: 8px 8px;
+            top: -20px; left: 180px; z-index: 0; opacity: 0.6;
+        }
+        .deco-star {
+            position: absolute; width: 30px; height: 30px;
+            background: var(--dj-magenta);
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            top: 20px; left: 240px; z-index: 2;
+            animation: spin 6s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        
+        .deco-stripe-box {
+            position: absolute; width: 80px; height: 25px;
+            background: repeating-linear-gradient(-45deg, var(--dj-orange), var(--dj-orange) 4px, transparent 4px, transparent 8px);
+            bottom: -15px; left: -10px; z-index: 0;
+            transform: skewX(-15deg);
         }
 
         .top-subtitle {
             font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 900;
-            color: var(--dj-purple); letter-spacing: 2px; opacity: 0.6;
+            color: var(--dj-purple); letter-spacing: 2px; opacity: 0.8;
             display: flex; align-items: center; gap: 12px; margin-bottom: 5px; margin-left: 5px;
+            position: relative; z-index: 2;
         }
         .top-subtitle .barcode { font-size: 14px; letter-spacing: 3px; color: var(--dj-cyan); opacity: 0.8; }
 
-        .header { position: relative; display: inline-block; cursor: default; }
-        .block-cyan { position: absolute; width: 40px; height: 25px; background: var(--dj-cyan); top: -8px; left: -10px; z-index: 1; }
-        .block-orange { position: absolute; width: 35px; height: 35px; background: var(--dj-orange); bottom: -5px; right: -15px; z-index: 1; border-radius: 50%; }
+        .header { position: relative; display: inline-block; cursor: default; z-index: 2; padding-left: 10px;}
+        .block-cyan { position: absolute; width: 45px; height: 30px; background: var(--dj-cyan); top: -5px; left: -5px; z-index: 1; transform: skewX(-10deg); box-shadow: 3px 3px 0 var(--dj-purple); }
+        .block-orange { position: absolute; width: 40px; height: 40px; background: var(--dj-orange); bottom: -5px; right: -25px; z-index: 1; border-radius: 50%; box-shadow: -3px 3px 0 var(--dj-purple); }
         
         .header h1 {
-            font-size: 58px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
+            font-size: 64px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
             text-transform: uppercase; line-height: 0.85; position: relative; z-index: 5;
             letter-spacing: -2px; color: var(--dj-yellow);
-            text-shadow: 4px 4px 0 var(--dj-purple), 6px 6px 0 rgba(0,0,0,0.1);
+            text-shadow: 4px 4px 0 var(--dj-purple), -2px -2px 0 var(--white), 8px 8px 0 rgba(0,0,0,0.15);
         }
 
         .yt-box-mini {
-            width: 300px; height: 168px; /* 사이즈 대폭 축소 */
-            background: var(--black); border: 4px solid var(--dj-purple);
-            box-shadow: 6px 6px 0 rgba(53, 28, 97, 0.3), -3px -3px 0 var(--dj-cyan);
+            width: 320px; height: 180px; 
+            background: var(--black); border: 5px solid var(--dj-purple);
+            box-shadow: 8px 8px 0 var(--dj-cyan), -4px -4px 0 var(--dj-magenta);
             padding: 4px; overflow: hidden; position: relative; z-index: 10; flex-shrink: 0;
-            transform: skewX(-2deg);
+            transform: skewX(-3deg); transition: transform 0.3s ease;
         }
-        .yt-box-mini iframe { width: 100%; height: 100%; transform: skewX(2deg); display: block; }
+        .yt-box-mini:hover { transform: skewX(0deg) translateY(-2px); box-shadow: 10px 10px 0 var(--dj-cyan), -2px -2px 0 var(--dj-magenta); }
+        .yt-box-mini iframe { width: 100%; height: 100%; transform: skewX(3deg); display: block; transition: transform 0.3s ease;}
+        .yt-box-mini:hover iframe { transform: skewX(0deg); }
 
-        .tab-menu { display: flex; gap: 10px; margin-bottom: 20px; position: relative; z-index: 10; flex-shrink: 0; }
+        .tab-menu { display: flex; gap: 12px; margin-bottom: 20px; position: relative; z-index: 10; flex-shrink: 0; }
         .tab-btn {
-            flex: 1; padding: 12px 5px; background: var(--white);
-            border: 3px solid var(--dj-purple); box-shadow: 3px 3px 0 var(--dj-purple);
-            font-size: 15px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
-            color: var(--dj-purple); cursor: pointer; transform: skewX(-8deg); transition: all 0.2s; position: relative; overflow: hidden;
+            flex: 1; padding: 14px 5px; background: var(--white);
+            border: 3px solid var(--dj-purple); box-shadow: 4px 4px 0 var(--dj-purple);
+            font-size: 16px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
+            color: var(--dj-purple); cursor: pointer; transform: skewX(-10deg); transition: all 0.2s; position: relative; overflow: hidden;
         }
-        .tab-btn span { display: inline-block; transform: skewX(8deg); }
-        .tab-btn:hover { transform: skewX(-8deg) translateY(-2px); box-shadow: 5px 5px 0 var(--dj-magenta); color: var(--dj-magenta); border-color: var(--dj-magenta); }
-        .tab-btn.active { background: var(--dj-purple); color: var(--dj-yellow); box-shadow: 3px 3px 0 var(--dj-yellow); border-color: var(--dj-purple); }
-        .tab-btn#btnQuest.active { color: var(--dj-cyan); box-shadow: 3px 3px 0 var(--dj-cyan); }
+        .tab-btn span { display: inline-block; transform: skewX(10deg); position: relative; z-index: 2;}
+        .tab-btn::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(53, 28, 97, 0.05) 10px, rgba(53, 28, 97, 0.05) 20px);
+            transition: left 0.3s; z-index: 1;
+        }
+        .tab-btn:hover::before { left: 0; }
+        .tab-btn:hover { transform: skewX(-10deg) translateY(-2px); box-shadow: 6px 6px 0 var(--dj-magenta); color: var(--dj-magenta); border-color: var(--dj-magenta); }
+        .tab-btn.active { background: var(--dj-purple); color: var(--dj-yellow); box-shadow: 4px 4px 0 var(--dj-yellow); border-color: var(--dj-purple); }
+        .tab-btn#btnQuest.active { color: var(--dj-cyan); box-shadow: 4px 4px 0 var(--dj-cyan); }
 
         .list-container {
-            display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 10;
-            flex: 1; min-height: 0; overflow-y: auto; padding-right: 15px;
+            display: flex; flex-direction: column; gap: 12px; position: relative; z-index: 10;
+            flex: 1; min-height: 0; overflow-y: auto; padding-right: 15px; padding-left: 5px; padding-bottom: 10px;
         }
         .list-container::-webkit-scrollbar { width: 8px; }
         .list-container::-webkit-scrollbar-track { background: rgba(53, 28, 97, 0.05); border-radius: 4px; }
@@ -137,56 +170,37 @@
 
         .rank-row {
             display: flex; align-items: center; background: var(--white);
-            border: 2px solid var(--dj-purple); border-left: 8px solid var(--dj-purple);
-            padding: 10px 15px; font-weight: 900; transition: all 0.2s; flex-shrink: 0; position: relative;
+            border: 3px solid var(--dj-purple); 
+            padding: 12px 15px; font-weight: 900; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); flex-shrink: 0; position: relative;
+            transform: skewX(-2deg);
         }
-        .daily-list .rank-row { border-left-color: var(--dj-magenta); }
-        .giver-list .rank-row { border-left-color: var(--dj-orange); }
-        .quest-list .rank-row { border-left-color: var(--dj-cyan); }
-        .rank-row:hover { transform: translateX(6px); box-shadow: -2px 5px 0 rgba(53, 28, 97, 0.2); background: #fdfdfd; }
+        
+        /* 랭킹 밋밋함 개선: 탭별 포인트 컬러 및 그림자 강화 */
+        .daily-list .rank-row { box-shadow: 5px 5px 0 var(--dj-magenta); border-left: 8px solid var(--dj-magenta); }
+        .giver-list .rank-row { box-shadow: 5px 5px 0 var(--dj-orange); border-left: 8px solid var(--dj-orange); }
+        .quest-list .rank-row { box-shadow: 5px 5px 0 var(--dj-cyan); border-left: 8px solid var(--dj-cyan); }
+        
+        .rank-row:hover { transform: skewX(-2deg) translateX(6px) translateY(-2px); }
+        .daily-list .rank-row:hover { box-shadow: -2px 6px 0 var(--dj-magenta); background: #fffafb; }
+        .giver-list .rank-row:hover { box-shadow: -2px 6px 0 var(--dj-orange); background: #fffcf7; }
+        .quest-list .rank-row:hover { box-shadow: -2px 6px 0 var(--dj-cyan); background: #f5ffff; }
 
-        .rank-row.top-1 { background: linear-gradient(90deg, #fff9e6, #ffffff); border-color: #d4af37; border-left-color: #d4af37; box-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
-        .rank-row.top-2 { background: linear-gradient(90deg, #f5f5f5, #ffffff); border-color: #a8a9ad; border-left-color: #a8a9ad; }
-        .rank-row.top-3 { background: linear-gradient(90deg, #fff0e6, #ffffff); border-color: #cd7f32; border-left-color: #cd7f32; }
+        /* TOP 3 화려하게 변경 (팝아트 느낌의 패턴 배경) */
+        .rank-row.top-1 { background: repeating-linear-gradient(-45deg, #fff9e6, #fff9e6 8px, #ffffff 8px, #ffffff 16px); border-color: #d4af37; border-left-color: #d4af37; box-shadow: 5px 5px 0 #d4af37; }
+        .rank-row.top-2 { background: repeating-linear-gradient(-45deg, #f5f5f5, #f5f5f5 8px, #ffffff 8px, #ffffff 16px); border-color: #a8a9ad; border-left-color: #a8a9ad; box-shadow: 5px 5px 0 #a8a9ad; }
+        .rank-row.top-3 { background: repeating-linear-gradient(-45deg, #fff0e6, #fff0e6 8px, #ffffff 8px, #ffffff 16px); border-color: #cd7f32; border-left-color: #cd7f32; box-shadow: 5px 5px 0 #cd7f32; }
 
-        .rank-row.top-1 .rank-num { color: #d4af37; font-size: 20px; width: 75px; text-shadow: 1px 1px 0 rgba(0,0,0,0.1); }
-        .rank-row.top-2 .rank-num { color: #a8a9ad; font-size: 20px; width: 75px; }
-        .rank-row.top-3 .rank-num { color: #cd7f32; font-size: 20px; width: 75px; }
+        .rank-row.top-1 .rank-num { color: #d4af37; font-size: 24px; width: 75px; text-shadow: 2px 2px 0 var(--dj-purple); transform: skewX(2deg); }
+        .rank-row.top-2 .rank-num { color: #a8a9ad; font-size: 24px; width: 75px; text-shadow: 2px 2px 0 var(--dj-purple); transform: skewX(2deg); }
+        .rank-row.top-3 .rank-num { color: #cd7f32; font-size: 24px; width: 75px; text-shadow: 2px 2px 0 var(--dj-purple); transform: skewX(2deg); }
 
         .rank-num {
-            font-size: 20px; color: #ccc; width: 45px; flex-shrink: 0;
-            font-style: italic; font-family: 'Montserrat', sans-serif; white-space: nowrap;
+            font-size: 22px; color: var(--dj-purple); width: 45px; flex-shrink: 0;
+            font-style: italic; font-family: 'Montserrat', sans-serif; white-space: nowrap; transform: skewX(2deg);
         }
 
-        .rank-name { flex: 1; font-size: 16px; color: var(--dj-purple); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 10px; }
-        .rank-val { font-size: 18px; font-style: italic; font-family: 'Montserrat', sans-serif; text-align: right; white-space: nowrap; }
-
-        .bouncy-text {
-            display: inline-block;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s, text-shadow 0.2s;
-            cursor: default; /* 마우스를 올려도 기본 화살표 */
-        }
-        
-        .tab-btn .bouncy-text { cursor: pointer; }
-        a.link-text { text-decoration: none; color: inherit; }
-        a.link-text .bouncy-text { cursor: pointer; }
-        
-        .val-giver { color: var(--dj-orange); }
-        .val-quest { color: var(--dj-cyan); }
-        .val-daily { color: var(--dj-magenta); }
-        
-        .bouncy-text:hover { transform: translateY(-3px) scale(1.05); text-shadow: 0 4px 8px rgba(0,0,0,0.15); }
-        .rank-name .bouncy-text:hover { color: var(--dj-magenta); }
-        .val-giver .bouncy-text:hover { color: var(--dj-purple); }
-        .val-quest .bouncy-text:hover { color: var(--dj-purple); }
-        .header h1 .bouncy-text:hover { transform: translateY(-4px) scale(1.02) rotate(-2deg); }
-
-        .marquee-wrap {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 25px;
-            background: var(--dj-purple); color: var(--dj-yellow);
-            display: flex; align-items: center; overflow: hidden; z-index: 20;
-            font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 900; letter-spacing: 2px;
-        }
+        .rank-name { flex: 1; font-size: 17px; color: var(--dj-purple); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 10px; transform: skewX(2deg); }
+        .rank-val { font-size: 19px; font-style: italic; font-family: 'Montserrat', sans-serif; text-align: right; white-space: nowrap; transform: skewX(2deg); }
         .marquee-content { display: flex; white-space: nowrap; animation: scroll-left 15s linear infinite; }
         .marquee-content span { padding: 0 30px; }
         @keyframes scroll-left { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
@@ -201,19 +215,25 @@
             
             /* 모바일에서 레이아웃 다시 세로 배치 */
             .top-dashboard-area { flex-direction: column; align-items: flex-start; gap: 15px; margin-bottom: 15px; }
-            .header h1 { font-size: 42px; text-shadow: 2px 2px 0 var(--dj-purple), 4px 4px 0 rgba(0,0,0,0.1); }
-            .yt-box-mini { width: 100%; height: 180px; transform: skewX(0); }
+            .header h1 { font-size: 48px; text-shadow: 3px 3px 0 var(--dj-purple), 5px 5px 0 rgba(0,0,0,0.1); }
+            
+            /* 모바일 팝아트 데코 조정 */
+            .deco-dot-matrix { left: 140px; top: -10px; width: 40px; height: 40px; background-size: 6px 6px; }
+            .deco-star { left: 180px; top: 15px; width: 20px; height: 20px; }
+            
+            .yt-box-mini { width: 100%; height: 200px; transform: skewX(0); box-shadow: 5px 5px 0 var(--dj-cyan), -3px -3px 0 var(--dj-magenta); }
             .yt-box-mini iframe { transform: skewX(0); }
             
-            .tab-menu { gap: 8px; margin-bottom: 12px; }
-            .tab-btn { font-size: 12px; padding: 10px 2px; transform: skewX(-5deg); }
+            .tab-menu { gap: 8px; margin-bottom: 15px; }
+            .tab-btn { font-size: 13px; padding: 10px 2px; transform: skewX(-5deg); border-width: 2px; box-shadow: 3px 3px 0 var(--dj-purple); }
             .tab-btn span { transform: skewX(5deg); }
-            .list-container { padding-right: 5px; gap: 6px; }
-            .rank-row { padding: 8px 10px; }
-            .rank-num { width: 30px; font-size: 14px; }
-            .rank-name { font-size: 14px; }
-            .rank-val { font-size: 13px; min-width: 70px; }
-            .rank-row.top-1 .rank-num, .rank-row.top-2 .rank-num, .rank-row.top-3 .rank-num { font-size: 15px; width: 50px; }
+            .list-container { padding-right: 5px; gap: 8px; }
+            .rank-row { padding: 10px 10px; transform: skewX(0); border-width: 2px; box-shadow: 3px 3px 0 var(--dj-purple) !important; border-left-width: 6px !important; }
+            .rank-row:hover { transform: translateY(-2px); }
+            .rank-num { width: 35px; font-size: 16px; transform: skewX(0); }
+            .rank-name { font-size: 15px; transform: skewX(0); }
+            .rank-val { font-size: 14px; min-width: 70px; transform: skewX(0); }
+            .rank-row.top-1 .rank-num, .rank-row.top-2 .rank-num, .rank-row.top-3 .rank-num { font-size: 18px; width: 55px; }
         }
         
         /* 강제 커서 제어 */
@@ -244,6 +264,11 @@
         <div class="content-wrap">
             <div class="top-dashboard-area">
                 <div class="header-titles">
+                    <!-- 팝아트 데코레이션 요소 -->
+                    <div class="deco-dot-matrix"></div>
+                    <div class="deco-star"></div>
+                    <div class="deco-stripe-box"></div>
+                    
                     <div class="top-subtitle">
                         <span>YGOSU</span><span class="barcode">|||| || ||| |</span><span>DATA ARCHIVE</span>
                     </div>
