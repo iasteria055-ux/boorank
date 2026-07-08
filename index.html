@@ -249,15 +249,12 @@
 <script>
     // ─── 탭 전환 함수 ───
     function show(tab) {
-        // 1. 모든 리스트 컨테이너 숨기기
         document.getElementById('daily').style.display = 'none';
         document.getElementById('giver').style.display = 'none';
         document.getElementById('quest').style.display = 'none';
 
-        // 2. 모든 탭 버튼 active 클래스 제거
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
 
-        // 3. 선택한 탭만 보이도록 display를 flex로 변경 (CSS flex 레이아웃 유지)
         if (tab === 'daily') {
             document.getElementById('daily').style.display = 'flex';
             document.getElementById('btnDaily').classList.add('active');
@@ -270,7 +267,7 @@
         }
     }
 
-    // ─── 랭킹 리스트 생성 함수 ───
+    // ─── 랭킹 리스트 생성 함수 (이미지 제거) ───
     function createRows(dataList, typeClass, tabType) {
         if (!dataList || dataList.length === 0) {
             return '<div style="text-align:center; padding:20px; color:#999; font-weight:900;">조건을 달성한 사람이 아직 없습니다.</div>';
@@ -285,22 +282,18 @@
             else if (i === 1) { rankClass = "top-2"; rankIcon = "🥈 02"; }
             else if (i === 2) { rankClass = "top-3"; rankIcon = "🥉 03"; }
 
-            let profileImg = `<img src="https://ygosu.com/board/skin/profile/pf_${r.mem_id}.gif" 
-                onerror="this.src='https://image.ygosu.com/images/noimg_profile2.png'" 
-                style="width:26px; height:26px; border-radius:4px; margin-right:8px; vertical-align:middle; border:1px solid #e8eaef; background:#fff;">`;
-
             let nameHtml = "";
             let valHtml = "";
 
             if (tabType === 'daily') {
                 let giftLink = `https://ygosu.com/board/pan_boo/?mode=mineral_storage&mode2=withdraw&member=${r.mem_id}`;
-                nameHtml = `<div style="display:flex; align-items:center;">${profileImg}<a href="${giftLink}" target="_blank" class="bouncy-text link-text">${r.name}</a></div>`;
+                nameHtml = `<a href="${giftLink}" target="_blank" class="bouncy-text link-text">${r.name}</a>`;
                 valHtml = `달성`;
             } else if (tabType === 'giver') {
-                nameHtml = `<div style="display:flex; align-items:center;">${profileImg}<a href="https://ygosu.com/minilog/?m=${r.mem_id}" target="_blank" class="bouncy-text link-text">${r.name}</a></div>`;
+                nameHtml = `<a href="https://ygosu.com/minilog/?m=${r.mem_id}" target="_blank" class="bouncy-text link-text">${r.name}</a>`;
                 valHtml = `${r.val.toLocaleString()} MN`;
             } else {
-                nameHtml = `<div style="display:flex; align-items:center;">${profileImg}<span class="bouncy-text">${r.name}</span></div>`;
+                nameHtml = `<span class="bouncy-text">${r.name}</span>`;
                 valHtml = `${r.val.toLocaleString()} MN`;
             }
 
@@ -335,10 +328,8 @@
         }
     }
 
-    // ─── 초기 실행 ───
     window.onload = () => {
         loadData();
-        // 페이지 로드 시 daily 탭을 보여주도록 display를 flex로 확정
         show('daily');
     };
 </script>
