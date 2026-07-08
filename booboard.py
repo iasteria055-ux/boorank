@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import pandas as pd
-from IPython.display import display, HTML
+
 
 # ==========================================
 # 1. 설정
