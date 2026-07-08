@@ -5,7 +5,7 @@ import sys
 import os
 import re
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 import concurrent.futures
 import time
 import random
@@ -14,7 +14,7 @@ HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 }
 
-# ---------- FAST 모드 (게시글/댓글) ----------
+# ========== FAST 모드 (게시글 + 댓글 → 일퀘 달성자) ==========
 def process_board_page(page_num):
     url = f"https://ygosu.com/board/pan_boo/?page={page_num}"
     try:
@@ -55,14 +55,10 @@ def process_board_page(page_num):
                 "name": name
             })
         return posts
-    except Exception as e:
+    except:
         return []
 
-from datetime import datetime, timedelta
-import re
-
 def parse_relative_time(text):
-    """ '4시간 전', '방금', '00:51' 등을 현재 시간 기준 datetime으로 변환 """
     now = datetime.now()
     text = text.strip()
     if '방금' in text or '초 전' in text:
@@ -94,7 +90,6 @@ def get_comments_from_post(post_url):
             time_text = time_div.get_text(strip=True)
             if not any(kw in time_text for kw in ['전', '방금', ':']):
                 continue
-
             comment_time = parse_relative_time(time_text)
 
             a_tag = li.find('a', onclick=re.compile(r'show_nick_dropdown'))
@@ -108,7 +103,7 @@ def get_comments_from_post(post_url):
                 today_comments.append({
                     "mem_id": mem_id,
                     "name": name,
-                    "time": comment_time   # datetime 객체
+                    "time": comment_time
                 })
         return today_comments
     except:
@@ -120,9 +115,8 @@ def get_quest_achievers():
     user_names = {}
     post_urls = []
     comment_counts = {}
-    earliest_comment = {}   # 각 유저의 가장 이른 댓글 시간
+    earliest_comment = {}
 
-    # 1. 게시글 수집
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
         results = executor.map(process_board_page, range(1, 6))
         for page_posts in results:
@@ -132,7 +126,6 @@ def get_quest_achievers():
                     today_posters.add(p["mem_id"])
                     user_names[p["mem_id"]] = p["name"]
 
-    # 2. 댓글 수집 (시간 포함)
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
         results = executor.map(get_comments_from_post, post_urls)
         for comments in results:
@@ -140,11 +133,9 @@ def get_quest_achievers():
                 m_id = c["mem_id"]
                 user_names[m_id] = c["name"]
                 comment_counts[m_id] = comment_counts.get(m_id, 0) + 1
-                # 가장 이른 댓글 시간 기록
                 if m_id not in earliest_comment or c["time"] < earliest_comment[m_id]:
                     earliest_comment[m_id] = c["time"]
 
-    # 3. 조건 충족자 추출 및 정렬
     achievers = []
     for m_id, c_count in comment_counts.items():
         if m_id in today_posters and c_count >= 20:
@@ -154,10 +145,10 @@ def get_quest_achievers():
                 "earliest": earliest_comment.get(m_id, datetime.max)
             })
 
-    # ★ 가장 이른 댓글 시간 순으로 정렬 → 1등이 가장 빠름
     achievers.sort(key=lambda x: x["earliest"])
     return [{"mem_id": a["mem_id"], "name": a["name"], "val": "CLEAR"} for a in achievers]
-# ---------- FULL 모드 (미네랄 창고) ----------
+
+# ========== FULL 모드 (미네랄 창고 → 기부왕, 일퀘왕) ==========
 def fetch_storage_page(page_num):
     url = f"https://ygosu.com/board/pan_boo/?mode=mineral_storage&page={page_num}"
     system_keywords = ["게시물", "댓글", "출석", "이벤트", "추천", "복권", "환전", "시스템", "당첨", "보상"]
@@ -184,7 +175,8 @@ def fetch_storage_page(page_num):
                         val = int(plus_text.lstrip('+').replace(',', ''))
                         nick = reason_text.split()[0] if reason_text else ""
                         if nick not in ["운영자", "시스템", ""]:
-                            if nick == "XOXA": nick = "초우코송이"
+                            if nick == "XOXA":
+                                nick = "초우코송이"
                             giver_data.append({'name': nick, 'val': val})
                     except:
                         pass
@@ -209,8 +201,7 @@ def get_storage_rankings():
     raw_giver = []
     raw_quest = []
 
-    # 전체 페이지 수 자동 감지 (또는 120으로 고정)
-    for page in range(1, 121):
+    for page in range(1, 150):
         print(f"⏳ 페이지 {page} 처리 중...", end=" ")
         result = fetch_storage_page(page)
         print(f"기부 {len(result['donation'])}건, 지급 {len(result['quest'])}건")
@@ -234,7 +225,7 @@ def get_storage_rankings():
 
     return donation_ranking, quest_ranking
 
-# 메인 실행부
+# ========== 메인 ==========
 def main():
     mode = sys.argv[1] if len(sys.argv) > 1 else 'fast'
     data = {
@@ -246,8 +237,10 @@ def main():
 
     if os.path.exists('data.json'):
         with open('data.json', 'r', encoding='utf-8') as f:
-            try: data = json.load(f)
-            except: pass
+            try:
+                data = json.load(f)
+            except:
+                pass
 
     if mode == 'fast':
         data['quest_board'] = get_quest_achievers()
