@@ -159,9 +159,7 @@ def get_quest_achievers():
 # ---------- FULL 모드 (미네랄 창고) ----------
 def fetch_storage_page(page_num):
     url = f"https://ygosu.com/board/pan_boo/?mode=mineral_storage&page={page_num}"
-    pattern_giver = r'\d{2}-\d{2}-\d{2}\s*\([월화수목금토일]\)\s*\d{2}:\d{2}\s*(.*?)\+\s*([0-9,]+)'
-    pattern_quest = r'\d{2}-\d{2}-\d{2}\s*\([월화수목금토일]\)\s*\d{2}:\d{2}\s*(.*?)-\s*([0-9,]+)'
-    system_keywords = ["게시물", "댓글", "출석", "이벤트", "추천", "복권", "환전", "시스템"]
+    system_keywords = ["게시물", "댓글", "출석", "이벤트", "추천", "복권", "환전", "시스템", "당첨", "보상"]
 
     for attempt in range(3):
         try:
@@ -172,36 +170,48 @@ def fetch_storage_page(page_num):
 
             giver_data = []
             quest_data = []
+
+            # 창고 테이블의 각 행 (tr) 처리
             for row in soup.find_all('tr'):
-                row_text = " ".join(row.stripped_strings)
+                cols = row.find_all('td')
+                if len(cols) < 4:
+                    continue   # 최소 4개의 열이 있어야 함 (날짜, 사유, 입금, 출금)
 
-                # 기부
-                m_giver = re.search(pattern_giver, row_text)
-                if m_giver:
-                    mid_text = m_giver.group(1).strip()
-                    val = int(m_giver.group(2).replace(',', ''))
-                    if not any(kw in mid_text for kw in system_keywords):
-                        parts = mid_text.split()
-                        if parts:
-                            nick = parts[0]
-                            if nick not in ["운영자", "시스템", ""]:
-                                if nick == "XOXA":
-                                    nick = "초우코송이"
-                                # 10억 이상이면 무시
-                                if val <= 1000000000:
-                                    giver_data.append({'name': nick, 'val': val})
+                # 0: 날짜, 1: 사유, 2: 입금(+), 3: 출금(-)
+                date_text = cols[0].get_text(strip=True)
+                reason_text = cols[1].get_text(strip=True)
+                plus_text = cols[2].get_text(strip=True)   # + 금액
+                minus_text = cols[3].get_text(strip=True)  # - 금액
 
-                # 일퀘
-                m_quest = re.search(pattern_quest, row_text)
-                if m_quest:
-                    mid_text = m_quest.group(1).strip()
-                    val = int(m_quest.group(2).replace(',', ''))
-                    if not any(kw in mid_text for kw in system_keywords) and "에게" in mid_text:
-                        parts = mid_text.split('에게')[0].split()
-                        if parts:
-                            nick = parts[-1]
+                # 시스템 키워드 필터
+                if any(kw in reason_text for kw in system_keywords):
+                    continue
+
+                # --- 기부 (+) ---
+                if plus_text and plus_text.startswith('+'):
+                    try:
+                        val = int(plus_text.lstrip('+').replace(',', ''))
+                        # 닉네임: 사유의 첫 단어
+                        nick = reason_text.split()[0] if reason_text else ""
+                        if nick not in ["운영자", "시스템", ""]:
+                            if nick == "XOXA":
+                                nick = "초우코송이"
+                            giver_data.append({'name': nick, 'val': val})
+                    except:
+                        pass
+
+                # --- 지급 (-) ---
+                if minus_text and minus_text.startswith('-'):
+                    try:
+                        val = int(minus_text.lstrip('-').replace(',', ''))
+                        # 닉네임: "에게" 앞 마지막 단어
+                        if "에게" in reason_text:
+                            nick = reason_text.split('에게')[0].split()[-1]
                             if nick not in ["운영자", "시스템", ""]:
                                 quest_data.append({'name': nick, 'val': val})
+                    except:
+                        pass
+
             return {"donation": giver_data, "quest": quest_data}
         except Exception as e:
             print(f"  ⚠️ 페이지 {page_num} 재시도 {attempt+1}/3 - {e}")
