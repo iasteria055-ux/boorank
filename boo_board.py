@@ -87,7 +87,8 @@ def get_comments_from_post(post_url):
         res = requests.get(post_url, headers=HEADERS, timeout=10)
         soup = BeautifulSoup(res.text, 'html.parser')
         today_comments = []
-        for li in soup.find_all('li', class_='normal_reply'):
+        # 댓글 리스트에서 순서 인덱스 부여
+        for idx, li in enumerate(soup.find_all('li', class_='normal_reply')):
             time_div = li.find('div', class_='time')
             if not time_div:
                 continue
@@ -96,7 +97,7 @@ def get_comments_from_post(post_url):
                 continue
             comment_time = parse_relative_time(time_text)
             if comment_time is None:
-                continue   # X일 전 등 오늘 아닌 댓글은 자동 제외
+                continue   # X일 전 등 오늘 아닌 댓글 제외
 
             a_tag = li.find('a', onclick=re.compile(r'show_nick_dropdown'))
             if not a_tag:
@@ -109,7 +110,8 @@ def get_comments_from_post(post_url):
                 today_comments.append({
                     "mem_id": mem_id,
                     "name": name,
-                    "time": comment_time
+                    "time": comment_time,
+                    "comment_index": idx   # 0부터 시작
                 })
         return today_comments
     except Exception as e:
@@ -117,11 +119,11 @@ def get_comments_from_post(post_url):
         return []
 
 def get_quest_achievers():
-    print("🚀 [FAST] 일퀘 달성자 수집 (20번째 댓글 기준)")
+    print("🚀 [FAST] 일퀘 달성자 수집 (20번째 댓글 기준 + DOM 인덱스 보정)")
     today_posters = set()
     user_names = {}
     post_urls = []
-    comment_times = {}
+    comment_data = {}   # 유저별 (time, index) 리스트
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
         results = executor.map(process_board_page, range(1, 6))
@@ -140,24 +142,27 @@ def get_quest_achievers():
             for c in comments:
                 m_id = c["mem_id"]
                 user_names[m_id] = c["name"]
-                comment_times.setdefault(m_id, []).append(c["time"])
+                comment_data.setdefault(m_id, []).append( (c["time"], c["comment_index"]) )
 
     achievers = []
-    for m_id, times in comment_times.items():
-        if m_id in today_posters and len(times) >= 20:
-            times.sort()
-            completion_time = times[19]   # 20번째 댓글
+    for m_id, items in comment_data.items():
+        if m_id in today_posters and len(items) >= 20:
+            # 시간, 인덱스 기준 정렬 → 가장 먼저 달린 댓글부터
+            items.sort(key=lambda x: (x[0], x[1]))
+            completion_time, completion_idx = items[19]   # 20번째 (0부터 시작)
             achievers.append({
                 "mem_id": m_id,
                 "name": user_names[m_id],
-                "completed_at": completion_time
+                "completed_at": completion_time,
+                "comment_idx": completion_idx
             })
-            print(f"  {user_names[m_id]}: 20번째 댓글 시간 = {completion_time}")
+            print(f"  {user_names[m_id]}: 20번째 댓글 시간 = {completion_time}, 인덱스 = {completion_idx}")
 
     if not achievers:
         print("  ❌ 조건을 만족한 사람이 없습니다.")
 
-    achievers.sort(key=lambda x: x["completed_at"])
+    # 정렬: 시간 → 인덱스 순으로 오름차순
+    achievers.sort(key=lambda x: (x["completed_at"], x["comment_idx"]))
     return [{"mem_id": a["mem_id"], "name": a["name"], "val": "CLEAR"} for a in achievers]
 
 # ========== FULL 모드 (미네랄 창고 → 기부왕, 일퀘왕) ==========
