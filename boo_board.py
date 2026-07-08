@@ -119,35 +119,33 @@ def fetch_storage_page(page_num):
         return {"donation": [], "quest": []}
 
 def get_storage_rankings():
-    print("🔥 [FULL] 창고 끝까지 랭킹 수집 시작 (동적 페이지 감지 + 멀티스레딩)...")
+    print("🔥 [FULL] 창고 랭킹 수집 시작 (마지막 페이지 중복 감지 탑재)...")
     raw_giver = []
     raw_quest = []
     
-    page_num = 1
-    keep_going = True
+    last_page_data = None
     
-    # 15명이 한 조가 되어서 페이지를 긁어옵니다.
+    # 15명이 동시에 1페이지부터 200페이지까지 긁습니다.
     with concurrent.futures.ThreadPoolExecutor(max_workers=15) as executor:
-        while keep_going:
-            # 15페이지씩 묶어서 던집니다 (예: 1~15, 16~30...)
-            batch_pages = range(page_num, page_num + 15)
-            results = list(executor.map(fetch_storage_page, batch_pages))
+        results = executor.map(fetch_storage_page, range(1, 201))
+        
+        for res in results:
+            # 방어막: 이번 페이지 데이터가 이전 페이지와 완벽히 똑같다면? (마지막 페이지 반복 현상)
+            current_signature = str(res["donation"]) + str(res["quest"])
             
-            batch_has_data = False
-            for res in results:
-                if res["donation"] or res["quest"]:
-                    raw_giver.extend(res["donation"])
-                    raw_quest.extend(res["quest"])
-                    batch_has_data = True  # 데이터가 하나라도 있으면 계속 진행
+            if current_signature == last_page_data:
+                print("🛑 마지막 페이지 반복 감지! 크롤링을 강제 종료합니다.")
+                break 
+                
+            if not res["donation"] and not res["quest"]:
+                print("🛑 빈 페이지 감지! 크롤링을 종료합니다.")
+                break
+                
+            last_page_data = current_signature
+            raw_giver.extend(res["donation"])
+            raw_quest.extend(res["quest"])
             
-            # 이번 15페이지 묶음을 싹 다 뒤졌는데 기부/일퀘 내역이 단 하나도 없다면? -> 마지막 페이지 도달!
-            if not batch_has_data:
-                print(f"  -> {page_num}페이지 부근에서 데이터 수집 완료. 알아서 멈춥니다.")
-                keep_going = False
-            else:
-                page_num += 15 # 다음 15페이지로 이동
-            
-    # 판다스로 합산 및 상위 50명 정렬
+    # 합산 및 상위 50명 정렬
     df_giver = pd.DataFrame(raw_giver).groupby('name', as_index=False).sum().sort_values('val', ascending=False).head(50) if raw_giver else pd.DataFrame(columns=['name', 'val'])
     df_quest = pd.DataFrame(raw_quest).groupby('name', as_index=False).sum().sort_values('val', ascending=False).head(50) if raw_quest else pd.DataFrame(columns=['name', 'val'])
     
