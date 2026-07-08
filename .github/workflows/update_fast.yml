@@ -1,0 +1,26 @@
+name: 30Min FAST Update
+on:
+  schedule:
+    - cron: '15,45 * * * *' # 매시간 15분, 45분마다 실행 (자정 작업과 겹치지 않게 분리)
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    - run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: 🌗 30분 FAST 크롤링 실행
+      run: python boo_board.py fast
+    - name: 깃허브에 저장
+      run: |
+        git config --global user.name 'GitHub Actions Bot'
+        git config --global user.email 'action@github.com'
+        git add index.html
+        git commit -m "🌗 Auto FAST update" || echo "No changes to commit"
+        git push
