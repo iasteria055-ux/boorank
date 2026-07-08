@@ -21,7 +21,7 @@ def process_board_page(page_num):
         res = requests.get(url, headers=HEADERS, timeout=10)
         soup = BeautifulSoup(res.text, 'html.parser')
         posts = []
-        for tr in soup.select('table.bd_list tr'):
+        for tr in soup.find_all('tr'):
             date_td = tr.find('td', class_='date')
             if not date_td:
                 continue
@@ -59,33 +59,21 @@ def process_board_page(page_num):
         return []
 
 def parse_relative_time(text):
-    """'4시간 전', '방금', '00:51' 등을 현재 시간 기준 datetime으로 변환.
-    실패 시 None을 반환하여 정렬에서 배제되지 않도록 합니다."""
+    """ '방금', 'X분 전', 'X시간 전', 'HH:MM' → datetime """
     now = datetime.now()
     text = text.strip()
-    
-    # 방금 / n초 전
     if '방금' in text or '초 전' in text:
         return now
-    
-    # n분 전
     m = re.search(r'(\d+)\s*분\s*전', text)
     if m:
         return now - timedelta(minutes=int(m.group(1)))
-    
-    # n시간 전
     m = re.search(r'(\d+)\s*시간\s*전', text)
     if m:
         return now - timedelta(hours=int(m.group(1)))
-    
-    # HH:MM (오늘 시간)
-    m = re.match(r'^\s*(\d{1,2}):(\d{2})\s*$', text)
-    if m:
-        h, mi = int(m.group(1)), int(m.group(2))
+    if re.match(r'^\s*\d{1,2}:\d{2}\s*$', text):
+        h, mi = map(int, text.strip().split(':'))
         return now.replace(hour=h, minute=mi, second=0, microsecond=0)
-    
-    # 패턴 매칭 실패 → None 반환 (나중에 필터링하거나 큰 시간으로 간주)
-    return None
+    return None   # 파싱 실패
 
 def get_comments_from_post(post_url):
     if not post_url.startswith('http'):
@@ -99,10 +87,11 @@ def get_comments_from_post(post_url):
             if not time_div:
                 continue
             time_text = time_div.get_text(strip=True)
-            # 오늘 댓글 필터
             if not any(kw in time_text for kw in ['전', '방금', ':']):
                 continue
             comment_time = parse_relative_time(time_text)
+            if comment_time is None:
+                continue   # 파싱 실패한 댓글은 제외
 
             a_tag = li.find('a', onclick=re.compile(r'show_nick_dropdown'))
             if not a_tag:
@@ -115,7 +104,7 @@ def get_comments_from_post(post_url):
                 today_comments.append({
                     "mem_id": mem_id,
                     "name": name,
-                    "time": comment_time   # datetime 객체
+                    "time": comment_time
                 })
         return today_comments
     except:
@@ -127,7 +116,7 @@ def get_quest_achievers():
     user_names = {}
     post_urls = []
     comment_counts = {}
-    earliest_comment = {}   # 각 유저의 가장 이른 댓글 시간
+    earliest_comment = {}
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
         results = executor.map(process_board_page, range(1, 6))
@@ -145,23 +134,22 @@ def get_quest_achievers():
                 m_id = c["mem_id"]
                 user_names[m_id] = c["name"]
                 comment_counts[m_id] = comment_counts.get(m_id, 0) + 1
-                # 가장 이른 시간 저장
                 if m_id not in earliest_comment or c["time"] < earliest_comment[m_id]:
                     earliest_comment[m_id] = c["time"]
 
- achievers = []
+    achievers = []
     for m_id, c_count in comment_counts.items():
         if m_id in today_posters and c_count >= 20:
             earliest = earliest_comment.get(m_id)
             if earliest is None:
-                earliest = datetime.max  # 시간이 없으면 가장 마지막으로
+                earliest = datetime.max
             achievers.append({
                 "mem_id": m_id,
                 "name": user_names[m_id],
                 "earliest": earliest
             })
 
-    # ★ 시간 오름차순 (먼저 달성한 사람이 1등)
+    # 가장 먼저 댓글을 단 사람이 1등 (오름차순)
     achievers.sort(key=lambda x: x["earliest"])
     return [{"mem_id": a["mem_id"], "name": a["name"], "val": "CLEAR"} for a in achievers]
 
