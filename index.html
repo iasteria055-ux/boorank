@@ -247,20 +247,9 @@
     </div>
 
     <script>
-        // 탭 전환 함수
-        function show(id) {
-            document.getElementById('daily').style.display = (id === 'daily') ? 'flex' : 'none';
-            document.getElementById('giver').style.display = (id === 'giver') ? 'flex' : 'none';
-            document.getElementById('quest').style.display = (id === 'quest') ? 'flex' : 'none';
-            
-            document.getElementById('btnDaily').className = (id === 'daily') ? 'tab-btn active' : 'tab-btn';
-            document.getElementById('btnGiver').className = (id === 'giver') ? 'tab-btn active' : 'tab-btn';
-            document.getElementById('btnQuest').className = (id === 'quest') ? 'tab-btn active' : 'tab-btn';
-        }
-
-        // 랭킹 리스트 생성 함수
+// 랭킹 리스트 생성 함수
         function createRows(dataList, typeClass, tabType) {
-            if (!dataList || dataList.length === 0) return '<div style="text-align:center; padding:20px; color:#999; font-weight:900;">데이터를 수집 중입니다...</div>';
+            if (!dataList || dataList.length === 0) return '<div style="text-align:center; padding:20px; color:#999; font-weight:900;">조건을 달성한 사람이 아직 없습니다.</div>';
             
             let html = "";
             dataList.forEach((r, i) => {
@@ -271,16 +260,18 @@
                 else if (i === 1) { rankClass = "top-2"; rankIcon = "🥈 02"; }
                 else if (i === 2) { rankClass = "top-3"; rankIcon = "🥉 03"; }
 
+                // 프로필 사진 (없으면 와이고수 기본 이미지 대체)
+                let profileImg = `<img src="https://ygosu.com/board/skin/profile/pf_${r.mem_id}.gif" onerror="this.src='https://image.ygosu.com/images/noimg_profile2.png'" style="width:26px; height:26px; border-radius:4px; margin-right:8px; vertical-align:middle; border:1px solid #e8eaef; background:#fff;">`;
+
                 let nameHtml = "";
                 let valHtml = "";
 
-// 1. 프로필 이미지 요소 생성 (mem_id 활용)
-                let profileImg = `<img src="https://ygosu.com/board/skin/profile/pf_${r.mem_id}.gif" style="width:28px; height:28px; border-radius:4px; margin-right:10px; vertical-align:middle; border:1px solid #e8eaef; background:#f2f3f7;" onerror="this.style.display='none'">`;
-
-                // 2. 탭 종류에 따른 링크 및 표시 글자(달성) 분기 처리
+                // 탭 종류에 따른 링크 분기 처리
                 if (tabType === 'daily') {
-                    nameHtml = `<div style="display:flex; align-items:center;">${profileImg}<a href="https://ygosu.com/board/pan_boo/?mode=mineral_storage&mode2=withdraw&member=${r.mem_id}" target="_blank" class="bouncy-text link-text">${r.name}</a></div>`;
-                    valHtml = `달성`; // XX 회 대신 '달성' 고정 출력
+                    // 선생님이 주신 '선물 대상자' 자동 지정 링크 완벽 적용
+                    let giftLink = `https://ygosu.com/board/pan_boo/?mode=mineral_storage&mode2=withdraw&member=${r.mem_id}`;
+                    nameHtml = `<div style="display:flex; align-items:center;">${profileImg}<a href="${giftLink}" target="_blank" class="bouncy-text link-text">${r.name}</a></div>`;
+                    valHtml = `달성`;
                 } else if (tabType === 'giver') {
                     nameHtml = `<div style="display:flex; align-items:center;">${profileImg}<a href="https://ygosu.com/minilog/?m=${r.mem_id}" target="_blank" class="bouncy-text link-text">${r.name}</a></div>`;
                     valHtml = `${r.val.toLocaleString()} MN`;
