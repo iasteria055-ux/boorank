@@ -2,38 +2,50 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import pandas as pd
-
+import time
+import datetime
 
 # ==========================================
-# 1. 설정
+# 1. 설정 및 세션 초기화
 # ==========================================
-base_url = "https://ygosu.com/board/pan_boo/?mode=mineral_storage&page="
-max_pages = 109
-headers = {"User-Agent": "Mozilla/5.0"}
+headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"}
+session = requests.Session()
+session.headers.update(headers)
 
+# 기존 미네랄 창고 설정 (최대 페이지 고정 해제)
+base_storage_url = "https://ygosu.com/board/pan_boo/?mode=mineral_storage&page="
 giver_list = []
 quest_list = []
-
 pattern_giver = r'\d{2}-\d{2}-\d{2}\s*\([월화수목금토일]\)\s*\d{2}:\d{2}\s*(.*?)\+\s*([0-9,]+)'
 pattern_quest = r'\d{2}-\d{2}-\d{2}\s*\([월화수목금토일]\)\s*\d{2}:\d{2}\s*(.*?)-\s*([0-9,]+)'
 system_keywords = ["게시물", "댓글", "출석", "이벤트", "추천", "복권", "환전", "시스템"]
 
-print("데이터 수집을 시작합니다...")
+# 신규 게시판 크롤링 (오늘의 일퀘) 설정
+board_url = "https://ygosu.com/board/pan_boo/?page="
+daily_stats = {} # { member_id: {'name': nick, 'posts': 0, 'comments': 0, 'profile_img': ''} }
+
+print("🚀 [1/3] 미네랄 창고 데이터 수집을 시작합니다...")
 
 # ==========================================
-# 2. 데이터 크롤링
+# 2. 미네랄 창고 데이터 크롤링 (자동 동적 탐색)
 # ==========================================
-for page in range(1, max_pages + 1):
-    url = f"{base_url}{page}"
+page = 1
+while True:
     try:
-        res = requests.get(url, headers=headers)
+        res = session.get(f"{base_storage_url}{page}")
         res.encoding = 'utf-8'
         soup = BeautifulSoup(res.text, 'html.parser')
-
+        
+        has_data = False
+        
         for row in soup.find_all('tr'):
             row_text = " ".join(row.stripped_strings)
-
-            # [기부왕] 로직
+            
+            # 날짜 형식이 존재하는지 확인하여 데이터가 있는 유효한 페이지인지 판별
+            if re.search(r'\d{2}-\d{2}-\d{2}', row_text):
+                has_data = True
+                
+            # [기부왕]
             m_giver = re.search(pattern_giver, row_text)
             if m_giver:
                 mid_text = m_giver.group(1).strip()
@@ -43,10 +55,23 @@ for page in range(1, max_pages + 1):
                     if parts:
                         nick = parts[0]
                         if nick not in ["운영자", "시스템", ""]:
-                            if nick == "XOXA": nick = "초우코송이"
-                            giver_list.append({'name': nick, 'val': val})
-
-            # [일퀘왕] 로직
+                            
+                            # 미니로그 아이디(member_id) 추출
+                            mem_id = ""
+                            a_tag = row.find('a', onclick=re.compile(r'show_nick_dropdown'))
+                            if a_tag:
+                                m = re.search(r"show_nick_dropdown\([^,]+,\s*'([^']+)'", a_tag['onclick'])
+                                if m:
+                                    mem_id = m.group(1)
+                                    
+                            # XOXA 유저는 초우코송이로 닉네임 변경 및 미니로그 아이디(705225) 강제 할당
+                            if nick == "XOXA": 
+                                nick = "초우코송이"
+                                mem_id = "705225"
+                                
+                            giver_list.append({'name': nick, 'val': val, 'mem_id': mem_id})
+            
+            # [기존 일퀘왕]
             m_quest = re.search(pattern_quest, row_text)
             if m_quest:
                 mid_text = m_quest.group(1).strip()
@@ -57,222 +82,475 @@ for page in range(1, max_pages + 1):
                         nick = parts[-1]
                         if nick not in ["운영자", "시스템", ""]:
                             quest_list.append({'name': nick, 'val': val})
+                            
+        # 데이터가 없는 빈 페이지(끝 페이지 도달)라면 무한루프 종료
+        if not has_data:
+            print(f"👉 총 {page-1}페이지까지 탐색을 완료했습니다.")
+            break
+            
+        page += 1
+        
+        # 무한 루프 방지용 안전장치 (최대 5000페이지)
+        if page > 5000:
+            break
+            
     except Exception as e:
-        pass
+        break
 
-# 합산 및 정렬 (상위 50명)
-df_giver = pd.DataFrame(giver_list).groupby('name', as_index=False).sum().sort_values('val', ascending=False).head(50)
-df_quest = pd.DataFrame(quest_list).groupby('name', as_index=False).sum().sort_values('val', ascending=False).head(50)
+# 합산 및 정렬 (상위 50명) - 기부자는 mem_id도 함께 보존
+df_giver = pd.DataFrame(giver_list)
+if not df_giver.empty:
+    df_giver = df_giver.groupby('name', as_index=False).agg({'val': 'sum', 'mem_id': 'first'}).sort_values('val', ascending=False).head(50)
+
+df_quest = pd.DataFrame(quest_list)
+if not df_quest.empty:
+    df_quest = df_quest.groupby('name', as_index=False).sum().sort_values('val', ascending=False).head(50)
 
 # ==========================================
-# 3. HTML 생성 (디자인 피드백 반영 완료)
+# 3. 오늘자 게시판 활동 크롤링 (게시글 & 댓글)
 # ==========================================
+print("🚀 [2/3] 오늘의 게시판 활동을 추적합니다 (약 1~2분 소요)...")
+
+stop_crawling = False
+# 오늘 게시물이 최대 15페이지 안에 있다고 가정 (안전장치)
+for page in range(1, 16): 
+    if stop_crawling: break
+    
+    try:
+        res = session.get(f"{board_url}{page}")
+        res.encoding = 'utf-8'
+        soup = BeautifulSoup(res.text, 'html.parser')
+        trs = soup.select('tbody tr')
+        
+        if not trs: break
+        
+        for tr in trs:
+            # 공지사항은 날짜 비교에서 꼬일 수 있으므로 패스
+            if tr.select_one('.notice') or tr.select_one('img[alt="공지"]'): 
+                continue
+            
+            date_td = tr.select_one('.date')
+            if not date_td: continue
+            date_text = date_td.text.strip()
+            
+            # 날짜에 '-' 나 '.' 이 포함되어 있으면 어제 이전 게시물임 (오늘 글은 '14:20' 처럼 시간만 표시됨)
+            if '-' in date_text or '.' in date_text:
+                stop_crawling = True
+                break
+                
+            # --- 작성자 카운트 ---
+            name_a = tr.select_one('.name a')
+            if name_a and 'show_nick_dropdown' in name_a.get('onclick', ''):
+                m = re.search(r"show_nick_dropdown\([^,]+,\s*'([^']+)'", name_a['onclick'])
+                if m:
+                    mem_id = m.group(1)
+                    nick = name_a.text.strip()
+                    if mem_id not in daily_stats:
+                        daily_stats[mem_id] = {'name': nick, 'posts': 0, 'comments': 0, 'profile_img': ''}
+                    daily_stats[mem_id]['posts'] += 1
+            
+            # --- 댓글 카운트를 위해 게시글 접속 ---
+            post_a = tr.select_one('.tit a')
+            if post_a:
+                post_url = post_a['href']
+                if not post_url.startswith('http'):
+                    post_url = "https://ygosu.com" + post_url
+                
+                try:
+                    p_res = session.get(post_url)
+                    p_res.encoding = 'utf-8'
+                    p_soup = BeautifulSoup(p_res.text, 'html.parser')
+                    
+                    # 댓글 작성자들 수집
+                    for cmt_name in p_soup.select('.comment_list .name a'):
+                        if 'show_nick_dropdown' in cmt_name.get('onclick', ''):
+                            cm = re.search(r"show_nick_dropdown\([^,]+,\s*'([^']+)'", cmt_name['onclick'])
+                            if cm:
+                                c_mem_id = cm.group(1)
+                                c_nick = cmt_name.text.strip()
+                                if c_mem_id not in daily_stats:
+                                    daily_stats[c_mem_id] = {'name': c_nick, 'posts': 0, 'comments': 0, 'profile_img': ''}
+                                daily_stats[c_mem_id]['comments'] += 1
+                except Exception as e:
+                    pass
+    except Exception as e:
+        break
+
+# ==========================================
+# 4. 일퀘 완료자 필터링 & 미니로그 프로필 수집
+# ==========================================
+print("🚀 [3/3] 일퀘 완료자 선별 및 프로필 이미지를 수집합니다...")
+
+completed_users = []
+for mem_id, data in daily_stats.items():
+    if data['posts'] >= 1 and data['comments'] >= 20:
+        # 미니로그 접속해서 프로필 사진 긁어오기
+        try:
+            m_res = session.get(f"https://ygosu.com/minilog/?m={mem_id}")
+            m_res.encoding = 'utf-8'
+            m_soup = BeautifulSoup(m_res.text, 'html.parser')
+            img_tag = m_soup.select_one('.profile_img')
+            
+            if img_tag and img_tag.get('src'):
+                img_url = img_tag['src']
+                if not img_url.startswith('http'):
+                    img_url = "https://ygosu.com" + img_url
+                data['profile_img'] = img_url
+            else:
+                # 프로필 사진이 없는 경우 기본 이미지 (알파벳 이니셜 아바타)
+                data['profile_img'] = f"https://ui-avatars.com/api/?name={data['name']}&background=351c61&color=fff&bold=true"
+        except:
+            data['profile_img'] = f"https://ui-avatars.com/api/?name={data['name']}&background=351c61&color=fff&bold=true"
+            
+        data['mem_id'] = mem_id
+        completed_users.append(data)
+
+# 댓글순 -> 게시글순으로 정렬
+completed_users.sort(key=lambda x: (x['comments'], x['posts']), reverse=True)
+
+# 통계 데이터 계산
+total_active_users = len(daily_stats)
+total_posts_today = sum(d['posts'] for d in daily_stats.values())
+total_comments_today = sum(d['comments'] for d in daily_stats.values())
+total_completed = len(completed_users)
+
+# ==========================================
+# 5. HTML 생성 (UI 대규모 개편)
+# ==========================================
+
 def generate_rows(df, type_class):
     html = ""
     for i, r in df.reset_index(drop=True).iterrows():
         rank_class = ""
         rank_icon = f"{i+1:02d}"
-
-        # Top 3 특별 강조
         if i == 0:
             rank_class = "top-1"
-            rank_icon = "🥇 1ST"
+            rank_icon = "🥇 01"
         elif i == 1:
             rank_class = "top-2"
-            rank_icon = "🥈 2ND"
+            rank_icon = "🥈 02"
         elif i == 2:
             rank_class = "top-3"
-            rank_icon = "🥉 3RD"
-
+            rank_icon = "🥉 03"
+            
+        # 미니로그 링크 처리 (mem_id가 있는 기부자만 링크 연결)
+        mem_id = r.get('mem_id', '') if 'mem_id' in r else ''
+        if mem_id:
+            # 타겟을 _blank로 주어 클릭 시 새 창에서 미니로그가 열리도록 적용
+            name_display = f'<a href="https://ygosu.com/minilog/?m={mem_id}" target="_blank" style="color: inherit; text-decoration: none;"><span class="bouncy-text">{r["name"]}</span></a>'
+        else:
+            name_display = f'<span class="bouncy-text">{r["name"]}</span>'
+            
         html += f'''
         <div class="rank-row {rank_class}">
             <div class="rank-num">{rank_icon}</div>
-            <div class="rank-name"><span class="bouncy-text">{r["name"]}</span></div>
+            <div class="rank-name">{name_display}</div>
             <div class="rank-val {type_class}"><span class="bouncy-text">{r["val"]:,} MN</span></div>
         </div>'''
     return html
 
-giver_html = generate_rows(df_giver, "val-giver")
-quest_html = generate_rows(df_quest, "val-quest")
+giver_html = generate_rows(df_giver if not df_giver.empty else pd.DataFrame(), "val-giver")
+quest_html = generate_rows(df_quest if not df_quest.empty else pd.DataFrame(), "val-quest")
 
+# 신규 일퀘 완료자 HTML 생성
+daily_html = ""
+if completed_users:
+    for i, u in enumerate(completed_users):
+        transfer_url = f"https://ygosu.com/board/pan_boo/?mode=mineral_storage&mode2=withdraw&member={u['mem_id']}"
+        daily_html += f'''
+        <a href="{transfer_url}" class="daily-row-link" target="_self">
+            <div class="daily-row completed">
+                <div class="daily-rank">{i+1}</div>
+                <img src="{u['profile_img']}" class="profile-img" alt="profile">
+                <div class="daily-info">
+                    <div class="daily-name">{u['name']}</div>
+                    <div class="daily-stats-text">
+                        <span class="stat-indicator"><span class="dot on"></span> 게시글 {u['posts']}/1 완료</span>
+                        <span class="stat-indicator"><span class="dot on"></span> 댓글 {u['comments']}/20 완료</span>
+                    </div>
+                </div>
+                <div class="action-btn">선물하기</div>
+            </div>
+        </a>
+        '''
+else:
+    daily_html = '''
+    <div style="text-align:center; padding: 40px; color:#888; font-weight:bold;">
+        아직 오늘 일퀘를 완료한 유저가 없습니다.<br><br>게시글 1개, 댓글 20개를 달성해보세요!
+    </div>
+    '''
+
+# 전체 HTML 조합
 html_content = f"""<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BOO BOARD</title>
+    <title>BOO BOARD DASHBOARD</title>
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,900;1,900&display=swap');
-
+        
         :root {{
-            --dj-purple: #351c61; --dj-yellow: #f8c117; --dj-orange: #ea5920;
-            --dj-cyan: #1ebfd4; --dj-magenta: #e62253; --dj-bg: #f2f3f7;
+            --dj-purple: #351c61; --dj-yellow: #f8c117; --dj-orange: #ea5920; 
+            --dj-cyan: #1ebfd4; --dj-magenta: #e62253; --dj-bg: #f2f3f7; 
             --dj-grid: #e8eaef; --white: #ffffff; --black: #111111;
         }}
         * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-
-        /* 외부 여백 화이트 톤으로 변경 */
-        body {{
-            font-family: 'Pretendard', sans-serif;
-            background-color: var(--dj-bg);
+        
+        body {{ 
+            font-family: 'Pretendard', sans-serif; 
+            background-color: var(--dj-bg); 
             display: flex; justify-content: center; align-items: center;
-            height: 100vh; padding: 2vh 10px; overflow: hidden;
+            min-height: 100vh; padding: 2vh 10px;
         }}
-
-        /* 메인 프레임 테두리 솔리드 딥 퍼플 적용 */
+        
         .game-frame {{
-            width: 100%; max-width: 800px; height: 100%;
-            display: flex; flex-direction: column;
+            width: 100%; max-width: 850px; 
             background-color: var(--white);
-            background-image:
-                linear-gradient(var(--dj-grid) 1px, transparent 1px),
+            background-image: 
+                linear-gradient(var(--dj-grid) 1px, transparent 1px), 
                 linear-gradient(90deg, var(--dj-grid) 1px, transparent 1px);
             background-size: 40px 40px;
             border: 12px solid var(--dj-purple);
             border-radius: 20px;
             position: relative; overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1), inset 0 0 0 3px #f0f2f5;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
         }}
 
-        /* 이퀄라이저 (빈 공간 채우기) */
-        .eq-bars {{
-            position: absolute; top: 50px; right: 40px;
-            display: flex; gap: 4px; align-items: flex-end; height: 30px;
-            z-index: 5; opacity: 0.7;
+        .content-wrap {{ position: relative; padding: 40px 30px; z-index: 10; display: flex; flex-direction: column; }}
+
+        /* =========================================
+           상단 헤더 & 유튜브 구역 (가로 배치)
+           ========================================= */
+        .top-header-area {{
+            display: flex; justify-content: space-between; align-items: flex-end;
+            margin-bottom: 25px; gap: 20px;
         }}
-        .eq-bar {{ width: 6px; background: var(--dj-cyan); border-radius: 3px; animation: eq-play 1s infinite alternate; }}
-        .eq-bar:nth-child(1) {{ background: var(--dj-magenta); animation-delay: 0.1s; }}
-        .eq-bar:nth-child(2) {{ background: var(--dj-yellow); animation-delay: 0.3s; }}
-        .eq-bar:nth-child(3) {{ background: var(--dj-cyan); animation-delay: 0.0s; }}
-        .eq-bar:nth-child(4) {{ background: var(--dj-orange); animation-delay: 0.4s; }}
-        .eq-bar:nth-child(5) {{ background: var(--dj-purple); animation-delay: 0.2s; }}
-
-        @keyframes eq-play {{
-            0% {{ height: 5px; }}
-            100% {{ height: 30px; }}
+        
+        .header-titles {{ flex: 1; }}
+        
+        .top-subtitle {{
+            font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 900;
+            color: var(--dj-purple); letter-spacing: 2px; opacity: 0.6;
+            display: flex; align-items: center; gap: 12px; margin-bottom: 5px; margin-left: 5px;
         }}
+        .top-subtitle .barcode {{ font-size: 14px; letter-spacing: 3px; color: var(--dj-cyan); opacity: 0.8; }}
 
-        .content-wrap {{ position: relative; padding: 40px; z-index: 10; display: flex; flex-direction: column; flex: 1; min-height: 0; }}
-
-        /* 타이틀 팝한 컬러 & 백그라운드 블록 */
-        .header {{ margin-bottom: 25px; position: relative; z-index: 10; display: inline-block; cursor: default; align-self: flex-start; flex-shrink: 0; }}
-
-        /* 스카이블루 사각형 */
+        .header {{ position: relative; display: inline-block; cursor: default; }}
         .block-cyan {{ position: absolute; width: 50px; height: 30px; background: var(--dj-cyan); top: -10px; left: -10px; z-index: 1; }}
-        /* 오렌지 사각형 */
         .block-orange {{ position: absolute; width: 45px; height: 45px; background: var(--dj-orange); bottom: -5px; right: -15px; z-index: 1; }}
-        /* 깔끔한 세로 장식선 */
-        .block-lines {{ position: absolute; width: 60px; height: 15px; background: repeating-linear-gradient(90deg, var(--dj-purple), var(--dj-purple) 2px, transparent 2px, transparent 6px); top: 15px; right: -70px; z-index: 1; opacity: 0.4; }}
-
-        .header h1 {{
-            font-size: 76px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
+        
+        .header h1 {{ 
+            font-size: 68px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
             text-transform: uppercase; line-height: 0.9; position: relative; z-index: 5;
-            letter-spacing: -3px;
-            color: var(--dj-yellow);
+            letter-spacing: -3px; color: var(--dj-yellow);
             text-shadow: 4px 4px 0 var(--dj-purple), 8px 8px 0 rgba(0,0,0,0.1);
-        }}
-        .header h1 .bouncy-text:hover {{ transform: translateY(-4px) scale(1.02) rotate(-2deg); }}
-
-        .yt-box {{
-            background: var(--black); border: 4px solid var(--dj-purple);
-            box-shadow: 8px 8px 0 rgba(53, 28, 97, 0.3), -4px -4px 0 var(--dj-cyan);
-            margin-bottom: 30px; padding: 4px; overflow: hidden; position: relative; z-index: 10; flex-shrink: 0;
-            transform: skewX(-2deg);
-        }}
-        .yt-box iframe {{ transform: skewX(2deg); display: block; }}
-
-        /* 탭 메뉴 */
-        .tab-menu {{ display: flex; gap: 20px; margin-bottom: 25px; position: relative; z-index: 10; flex-shrink: 0; }}
-        .tab-btn {{
-            flex: 1; padding: 14px; background: var(--white);
-            border: 3px solid var(--dj-purple); box-shadow: 4px 4px 0 var(--dj-purple);
-            font-size: 20px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
-            color: var(--dj-purple); cursor: pointer; transform: skewX(-10deg); transition: all 0.2s; position: relative; overflow: hidden;
-        }}
-        .tab-btn span {{ display: inline-block; transform: skewX(10deg); }}
-        .tab-btn:hover {{ transform: skewX(-10deg) translateY(-2px); box-shadow: 6px 6px 0 var(--dj-magenta); color: var(--dj-magenta); border-color: var(--dj-magenta); }}
-        .tab-btn:active {{ transform: skewX(-10deg) translate(2px, 2px); box-shadow: 2px 2px 0 var(--dj-purple); }}
-        .tab-btn.active {{ background: var(--dj-purple); color: var(--dj-yellow); box-shadow: 4px 4px 0 var(--dj-yellow); border-color: var(--dj-purple); }}
-        .tab-btn#btnQuest.active {{ color: var(--dj-cyan); box-shadow: 4px 4px 0 var(--dj-cyan); }}
-
-        /* 리스트 영역 */
-        .list-container {{
-            display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 10;
-            flex: 1; min-height: 0; overflow-y: auto; padding-right: 15px;
+            margin: 0;
         }}
 
+        /* 우측 작은 유튜브 박스 */
+        .yt-box-mini {{ 
+            width: 320px; height: 180px; flex-shrink: 0;
+            background: var(--black); border: 4px solid var(--dj-purple); 
+            box-shadow: 6px 6px 0 rgba(53, 28, 97, 0.3), -3px -3px 0 var(--dj-cyan); 
+            padding: 4px; overflow: hidden; transform: skewX(-2deg); 
+        }}
+        .yt-box-mini iframe {{ width: 100%; height: 100%; transform: skewX(2deg); display: block; }}
+
+        /* =========================================
+           대시보드 통계 카드
+           ========================================= */
+        .dashboard-grid {{
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+            margin-bottom: 25px;
+        }}
+        .stat-card {{
+            background: var(--black); border: 2px solid var(--dj-purple); border-radius: 8px;
+            padding: 15px 10px; text-align: center; color: var(--white);
+            box-shadow: 4px 4px 0 rgba(53, 28, 97, 0.2);
+        }}
+        .stat-card.highlight {{ border-color: var(--dj-yellow); box-shadow: 4px 4px 0 rgba(248, 193, 23, 0.3); }}
+        .stat-title {{ font-size: 13px; color: #aaa; margin-bottom: 5px; font-weight: bold; }}
+        .stat-value {{ font-size: 26px; font-weight: 900; color: var(--dj-cyan); font-family: 'Montserrat', sans-serif; }}
+        .stat-card.highlight .stat-value {{ color: var(--dj-yellow); }}
+
+        /* =========================================
+           탭 & 리스트 영역
+           ========================================= */
+        .tab-menu {{ display: flex; gap: 15px; margin-bottom: 20px; }}
+        .tab-btn {{ 
+            flex: 1; padding: 14px; background: var(--white); 
+            border: 3px solid var(--dj-purple); box-shadow: 3px 3px 0 var(--dj-purple); 
+            font-size: 16px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
+            color: var(--dj-purple); cursor: pointer; transform: skewX(-5deg); transition: all 0.2s;
+        }}
+        .tab-btn span {{ display: inline-block; transform: skewX(5deg); }}
+        .tab-btn.active {{ background: var(--dj-purple); color: var(--white); box-shadow: 3px 3px 0 var(--dj-cyan); border-color: var(--dj-purple); }}
+        .tab-btn#btnDaily.active {{ color: #00ff00; box-shadow: 3px 3px 0 #00ff00; }}
+
+        .list-container {{ 
+            display: flex; flex-direction: column; gap: 8px; 
+            max-height: 450px; overflow-y: auto; padding-right: 10px; 
+        }}
+        
         .list-container::-webkit-scrollbar {{ width: 8px; }}
         .list-container::-webkit-scrollbar-track {{ background: rgba(53, 28, 97, 0.05); border-radius: 4px; }}
         .list-container::-webkit-scrollbar-thumb {{ background: var(--dj-purple); border-radius: 4px; }}
 
-        .rank-row {{
-            display: flex; align-items: center; background: var(--white);
+        /* 기존 랭킹 리스트 디자인 */
+        .rank-row {{ 
+            display: flex; align-items: center; background: var(--white); 
             border: 2px solid var(--dj-purple); border-left: 8px solid var(--dj-purple);
-            padding: 12px 15px; font-weight: 900; transition: all 0.2s; flex-shrink: 0; position: relative;
+            padding: 10px 15px; font-weight: 900; flex-shrink: 0;
         }}
         .giver-list .rank-row {{ border-left-color: var(--dj-orange); }}
         .quest-list .rank-row {{ border-left-color: var(--dj-cyan); }}
-        .rank-row:hover {{ transform: translateX(6px); box-shadow: -2px 5px 0 rgba(53, 28, 97, 0.2); background: #fdfdfd; }}
-
-        /* TOP 3 특별 디자인 */
-        .rank-row.top-1 {{ background: linear-gradient(90deg, #fff9e6, #ffffff); border-color: #d4af37; border-left-color: #d4af37; box-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }}
-        .rank-row.top-1 .rank-num {{ color: #d4af37; font-size: 26px; text-shadow: 1px 1px 0 rgba(0,0,0,0.1); width: 85px; }}
+        .rank-row.top-1 {{ background: linear-gradient(90deg, #fff9e6, #ffffff); border-color: #d4af37; border-left-color: #d4af37; }}
         .rank-row.top-2 {{ background: linear-gradient(90deg, #f5f5f5, #ffffff); border-color: #a8a9ad; border-left-color: #a8a9ad; }}
-        .rank-row.top-2 .rank-num {{ color: #a8a9ad; font-size: 22px; width: 80px; }}
         .rank-row.top-3 {{ background: linear-gradient(90deg, #fff0e6, #ffffff); border-color: #cd7f32; border-left-color: #cd7f32; }}
+        .rank-num {{ font-size: 20px; color: #ccc; width: 45px; font-style: italic; font-family: 'Montserrat', sans-serif; white-space: nowrap; }}
+        .rank-row.top-1 .rank-num {{ color: #d4af37; font-size: 20px; width: 75px; }}
+        .rank-row.top-2 .rank-num {{ color: #a8a9ad; font-size: 20px; width: 75px; }}
         .rank-row.top-3 .rank-num {{ color: #cd7f32; font-size: 20px; width: 75px; }}
-
-        .rank-num {{ font-size: 22px; color: #ccc; width: 45px; font-style: italic; font-family: 'Montserrat', sans-serif; }}
-        .rank-name {{ flex: 1; font-size: 18px; color: var(--dj-purple); }}
-        .rank-val {{ font-size: 19px; font-style: italic; font-family: 'Montserrat', sans-serif; text-align: right; }}
-
-        .bouncy-text {{ display: inline-block; transition: transform 0.2s; }}
-        .rank-row:hover .bouncy-text {{ transform: scale(1.05); }}
-
+        .rank-name {{ flex: 1; font-size: 16px; color: var(--dj-purple); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }}
+        .rank-val {{ font-size: 18px; font-style: italic; font-family: 'Montserrat', sans-serif; text-align: right; white-space: nowrap; }}
         .val-giver {{ color: var(--dj-orange); }}
         .val-quest {{ color: var(--dj-cyan); }}
+
+        /* =========================================
+           신규 '오늘의 일퀘' 리스트 (네온 스타일)
+           ========================================= */
+        .daily-list {{ background: #1a1a24; padding: 15px; border-radius: 12px; border: 2px solid var(--dj-purple); }}
+        .daily-row-link {{ text-decoration: none; color: inherit; display: block; }}
+        .daily-row {{ 
+            display: flex; align-items: center; background: #222; 
+            border: 2px solid #333; border-radius: 10px; padding: 12px; 
+            margin-bottom: 8px; transition: all 0.2s;
+        }}
+        .daily-row.completed {{ border-color: #2e8b57; box-shadow: 0 0 10px rgba(46,139,87,0.2); }}
+        .daily-row:hover {{ transform: translateX(5px); border-color: #00ff00; box-shadow: 0 0 12px rgba(0,255,0,0.3); }}
+        
+        .daily-rank {{ width: 30px; font-size: 18px; color: #777; font-weight: 900; font-family: 'Montserrat', sans-serif; font-style: italic; }}
+        .profile-img {{ width: 45px; height: 45px; border-radius: 10px; object-fit: cover; margin-right: 15px; border: 2px solid #555; background: #fff; }}
+        
+        .daily-info {{ flex: 1; display: flex; flex-direction: column; overflow: hidden; }}
+        .daily-name {{ font-size: 16px; font-weight: 900; color: #fff; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+        .daily-stats-text {{ font-size: 12px; color: #aaa; display: flex; gap: 10px; }}
+        
+        .stat-indicator {{ display: inline-flex; align-items: center; gap: 4px; }}
+        .dot {{ width: 8px; height: 8px; border-radius: 50%; background: #555; }}
+        .dot.on {{ background: #00ff00; box-shadow: 0 0 5px #00ff00; }}
+        
+        .action-btn {{ 
+            background: var(--dj-purple); color: #fff; padding: 8px 14px; 
+            border-radius: 6px; font-size: 13px; font-weight: bold; border: 1px solid #555;
+            transition: background 0.2s; white-space: nowrap;
+        }}
+        .daily-row:hover .action-btn {{ background: var(--dj-magenta); border-color: var(--dj-magenta); }}
+        
+        .bouncy-text {{
+            display: inline-block;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s, text-shadow 0.2s;
+        }}
+        .bouncy-text:hover {{ transform: translateY(-3px) scale(1.05); cursor: default; text-shadow: 0 4px 8px rgba(0,0,0,0.15); }}
+        
+        /* 모바일 반응형 */
+        @media (max-width: 700px) {{
+            .content-wrap {{ padding: 25px 15px; }}
+            .top-header-area {{ flex-direction: column; align-items: flex-start; gap: 15px; }}
+            .header h1 {{ font-size: 50px; }}
+            .yt-box-mini {{ width: 100%; height: 180px; transform: skewX(0); }}
+            .yt-box-mini iframe {{ transform: skewX(0); }}
+            
+            .dashboard-grid {{ grid-template-columns: repeat(2, 1fr); }}
+            .stat-value {{ font-size: 22px; }}
+            
+            .tab-btn {{ font-size: 14px; padding: 10px; }}
+            
+            .daily-stats-text {{ flex-direction: column; gap: 2px; }}
+            .action-btn {{ padding: 6px 10px; font-size: 11px; }}
+            .profile-img {{ width: 35px; height: 35px; margin-right: 10px; }}
+            .daily-name {{ font-size: 14px; }}
+        }}
     </style>
 </head>
 <body>
     <div class="game-frame">
-
-        <!-- 이퀄라이저 장식 -->
-        <div class="eq-bars">
-            <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
-        </div>
-
         <div class="content-wrap">
-            <div class="header">
-                <div class="block-cyan"></div>
-                <div class="block-orange"></div>
-                <div class="block-lines"></div>
-                <h1><span class="bouncy-text">BOO</span><br><span class="bouncy-text">BOARD</span></h1>
+            
+            <!-- 상단: 타이틀 & 유튜브 -->
+            <div class="top-header-area">
+                <div class="header-titles">
+                    <div class="top-subtitle">
+                        <span>YGOSU</span>
+                        <span class="barcode">|||| || ||| |</span>
+                        <span>DAILY TRACKER</span>
+                    </div>
+                    <div class="header">
+                        <div class="block-cyan"></div>
+                        <div class="block-orange"></div>
+                        <h1>BOO<br>BOARD</h1>
+                    </div>
+                </div>
+                
+                <div class="yt-box-mini">
+                    <iframe src="https://www.youtube.com/embed/vnTFdNZQ0UQ?si=iRSunb6wWGX7SGp5&amp;start=25&autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                </div>
             </div>
 
-            <div class="yt-box">
-                <iframe width="100%" height="200" src="https://www.youtube.com/embed/vnTFdNZQ0UQ?si=iRSunb6wWGX7SGp5&amp;start=25&autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            <!-- 중단: 대시보드 통계 -->
+            <div class="dashboard-grid">
+                <div class="stat-card highlight">
+                    <div class="stat-title">일퀘 완료자</div>
+                    <div class="stat-value">{total_completed}명</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">오늘 활동 인원</div>
+                    <div class="stat-value">{total_active_users}명</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">오늘 전체 글</div>
+                    <div class="stat-value">{total_posts_today}개</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">오늘 전체 댓글</div>
+                    <div class="stat-value">{total_comments_today}개</div>
+                </div>
             </div>
 
+            <!-- 하단: 탭 메뉴 & 리스트 -->
             <div class="tab-menu">
-                <button class="tab-btn active" id="btnGiver" onclick="show('giver')"><span>DONATION</span></button>
-                <button class="tab-btn" id="btnQuest" onclick="show('quest')"><span>QUEST</span></button>
+                <button class="tab-btn active" id="btnDaily" onclick="show('daily')"><span>DAILY QUEST</span></button>
+                <button class="tab-btn" id="btnGiver" onclick="show('giver')"><span>DONATION</span></button>
+                <button class="tab-btn" id="btnQuest" onclick="show('quest')"><span>ALL QUEST</span></button>
             </div>
 
-            <div id="giver" class="list-container giver-list">
+            <!-- 1. 오늘의 일퀘 탭 (신규) -->
+            <div id="daily" class="list-container daily-list">
+                {daily_html}
+            </div>
+
+            <!-- 2. 기부왕 탭 -->
+            <div id="giver" class="list-container giver-list" style="display:none;">
                 {giver_html}
             </div>
 
+            <!-- 3. 기존 일퀘왕 탭 -->
             <div id="quest" class="list-container quest-list" style="display:none;">
                 {quest_html}
             </div>
+            
         </div>
     </div>
 
     <script>
         function show(id) {{
+            document.getElementById('daily').style.display = (id === 'daily') ? 'flex' : 'none';
             document.getElementById('giver').style.display = (id === 'giver') ? 'flex' : 'none';
             document.getElementById('quest').style.display = (id === 'quest') ? 'flex' : 'none';
+            
+            document.getElementById('btnDaily').className = (id === 'daily') ? 'tab-btn active' : 'tab-btn';
             document.getElementById('btnGiver').className = (id === 'giver') ? 'tab-btn active' : 'tab-btn';
             document.getElementById('btnQuest').className = (id === 'quest') ? 'tab-btn active' : 'tab-btn';
         }}
@@ -283,4 +561,4 @@ html_content = f"""<!DOCTYPE html>
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(html_content)
 
-print("✅ 완성! 코랩에서 'index.html'을 다운로드하세요. 피드백 주신 디자인 개선사항이 모두 적용되었습니다.")
+print("✅ 성공적으로 생성되었습니다! 깃허브에 커밋해주세요.")
