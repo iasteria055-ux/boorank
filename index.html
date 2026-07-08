@@ -267,52 +267,48 @@
         }
     }
 
-    // ─── 랭킹 리스트 생성 함수 (이미지 제거) ───
+    // ─── 랭킹 리스트 생성 함수 (이미지·링크 완전 제거) ───
     function createRows(dataList, typeClass, tabType) {
         if (!dataList || dataList.length === 0) {
             return '<div style="text-align:center; padding:20px; color:#999; font-weight:900;">조건을 달성한 사람이 아직 없습니다.</div>';
         }
 
-        let html = "";
-        dataList.forEach((r, i) => {
-            let rankClass = "";
-            let rankIcon = String(i + 1).padStart(2, '0');
+        var html = "";
+        dataList.forEach(function(r, i) {
+            var rankClass = "";
+            var rankIcon = String(i + 1).padStart(2, '0');
 
             if (i === 0) { rankClass = "top-1"; rankIcon = "🥇 01"; }
             else if (i === 1) { rankClass = "top-2"; rankIcon = "🥈 02"; }
             else if (i === 2) { rankClass = "top-3"; rankIcon = "🥉 03"; }
 
-            let nameHtml = "";
-            let valHtml = "";
-
+            // 닉네임은 무조건 순수 텍스트 (링크 없음)
+            var nameHtml = '<span class="bouncy-text">' + r.name + '</span>';
+            
+            var valHtml = "";
             if (tabType === 'daily') {
-                let giftLink = `https://ygosu.com/board/pan_boo/?mode=mineral_storage&mode2=withdraw&member=${r.mem_id}`;
-                nameHtml = `<a href="${giftLink}" target="_blank" class="bouncy-text link-text">${r.name}</a>`;
-                valHtml = `달성`;
-            } else if (tabType === 'giver') {
-                nameHtml = `<a href="https://ygosu.com/minilog/?m=${r.mem_id}" target="_blank" class="bouncy-text link-text">${r.name}</a>`;
-                valHtml = `${r.val.toLocaleString()} MN`;
+                valHtml = "달성";
             } else {
-                nameHtml = `<span class="bouncy-text">${r.name}</span>`;
-                valHtml = `${r.val.toLocaleString()} MN`;
+                valHtml = r.val.toLocaleString() + " MN";
             }
 
-            html += `
-            <div class="rank-row ${rankClass}">
-                <div class="rank-num">${rankIcon}</div>
-                <div class="rank-name">${nameHtml}</div>
-                <div class="rank-val ${typeClass}"><span class="bouncy-text">${valHtml}</span></div>
-            </div>`;
+            html += '<div class="rank-row ' + rankClass + '">' +
+                    '<div class="rank-num">' + rankIcon + '</div>' +
+                    '<div class="rank-name">' + nameHtml + '</div>' +
+                    '<div class="rank-val ' + typeClass + '"><span class="bouncy-text">' + valHtml + '</span></div>' +
+                    '</div>';
         });
         return html;
     }
 
     // ─── 데이터 불러오기 ───
-    async function loadData() {
-        try {
-            const response = await fetch('data.json?t=' + new Date().getTime());
-            const data = await response.json();
-
+    function loadData() {
+        fetch('data.json?t=' + new Date().getTime())
+        .then(function(response) {
+            if (!response.ok) throw new Error('네트워크 응답 실패');
+            return response.json();
+        })
+        .then(function(data) {
             document.getElementById('daily').innerHTML = createRows(data.quest_board, "val-daily", "daily");
             document.getElementById('giver').innerHTML = createRows(data.donation_ranking, "val-giver", "giver");
             document.getElementById('quest').innerHTML = createRows(data.quest_ranking, "val-quest", "quest");
@@ -320,17 +316,18 @@
             if (data.updated_at) {
                 document.getElementById('update-time').innerText = "LAST UPDATED : " + data.updated_at;
             }
-        } catch (error) {
-            console.error("데이터 연동 실패:", error);
+        })
+        .catch(function(error) {
+            console.error("데이터 로딩 오류:", error);
             document.getElementById('daily').innerHTML = '<div style="text-align:center; padding:20px; color:#999;">데이터를 불러올 수 없습니다.</div>';
             document.getElementById('giver').innerHTML = '<div style="text-align:center; padding:20px; color:#999;">데이터를 불러올 수 없습니다.</div>';
             document.getElementById('quest').innerHTML = '<div style="text-align:center; padding:20px; color:#999;">데이터를 불러올 수 없습니다.</div>';
-        }
+        });
     }
 
-    window.onload = () => {
-        loadData();
+    window.onload = function() {
         show('daily');
+        loadData();
     };
 </script>
 </body>
