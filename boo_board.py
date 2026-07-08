@@ -81,41 +81,32 @@ def parse_relative_time(text):
     return None
 
 def get_comments_from_post(post_url):
-    if not post_url.startswith('http'):
-        post_url = "https://ygosu.com" + post_url
     try:
-        res = requests.get(post_url, headers=HEADERS, timeout=10)
+        res = requests.get("https://ygosu.com" + post_url, headers=HEADERS, timeout=5)
         soup = BeautifulSoup(res.text, 'html.parser')
-        today_comments = []
-        # 댓글 리스트에서 순서 인덱스 부여
-        for idx, li in enumerate(soup.find_all('li', class_='normal_reply')):
-            time_div = li.find('div', class_='time')
-            if not time_div:
-                continue
-            time_text = time_div.get_text(strip=True)
-            if not any(kw in time_text for kw in ['전', '방금', ':']):
-                continue
-            comment_time = parse_relative_time(time_text)
-            if comment_time is None:
-                continue   # X일 전 등 오늘 아닌 댓글 제외
-
+        
+        # 댓글 목록 li들을 다 찾음
+        replies = soup.find_all('li', class_='normal_reply')
+        
+        # 1. 댓글의 실제 작성 시간과 작성자를 추출
+        comment_log = []
+        for li in replies:
+            # 닉네임과 아이디 추출
             a_tag = li.find('a', onclick=re.compile(r'show_nick_dropdown'))
-            if not a_tag:
-                continue
-            onclick = a_tag.get('onclick', '')
-            match = re.search(r"show_nick_dropdown\([^,]+,\s*'[^']*',\s*'([^']+)'", onclick)
-            if match:
-                mem_id = match.group(1)
-                name = a_tag.get_text(strip=True)
-                today_comments.append({
-                    "mem_id": mem_id,
-                    "name": name,
-                    "time": comment_time,
-                    "comment_index": idx   # 0부터 시작
-                })
-        return today_comments
-    except Exception as e:
-        print(f"  [get_comments] 오류: {e} (게시글: {post_url})")
+            if not a_tag: continue
+            
+            # [핵심] 실제 작성 시간 파싱 (와이고수 댓글의 <div class='time'> 값)
+            time_div = li.find('div', class_='time')
+            raw_time = time_div.get_text(strip=True) if time_div else "00:00"
+            
+            onclick_text = a_tag.get('onclick', '')
+            mem_id = re.search(r"show_nick_dropdown\([^,]+,\s*'([^']+)'", onclick_text)
+            mem_id = mem_id.group(1) if mem_id else a_tag.get_text(strip=True)
+            
+            comment_log.append({"mem_id": mem_id, "name": a_tag.get_text(strip=True), "time": raw_time})
+        
+        return comment_log
+    except:
         return []
 
 def get_quest_achievers():
@@ -144,26 +135,20 @@ def get_quest_achievers():
                 user_names[m_id] = c["name"]
                 comment_data.setdefault(m_id, []).append( (c["time"], c["comment_index"]) )
 
-    achievers = []
-    for m_id, items in comment_data.items():
-        if m_id in today_posters and len(items) >= 20:
-            # 시간, 인덱스 기준 정렬 → 가장 먼저 달린 댓글부터
-            items.sort(key=lambda x: (x[0], x[1]))
-            completion_time, completion_idx = items[19]   # 20번째 (0부터 시작)
-            achievers.append({
+  final_achievers = []
+    for m_id, logs in user_comment_logs.items():
+        if len(logs) >= 20:
+            # 20번째 댓글 작성 시간으로 정렬 (와이고수 시간 포맷에 맞춰 비교)
+            logs.sort(key=lambda x: x['time']) 
+            final_achievers.append({
                 "mem_id": m_id,
-                "name": user_names[m_id],
-                "completed_at": completion_time,
-                "comment_idx": completion_idx
+                "name": logs[0]['name'],
+                "time": logs[19]['time'] # 20번째 댓글 시간
             })
-            print(f"  {user_names[m_id]}: 20번째 댓글 시간 = {completion_time}, 인덱스 = {completion_idx}")
-
-    if not achievers:
-        print("  ❌ 조건을 만족한 사람이 없습니다.")
-
-    # 정렬: 시간 → 인덱스 순으로 오름차순
-    achievers.sort(key=lambda x: (x["completed_at"], x["comment_idx"]))
-    return [{"mem_id": a["mem_id"], "name": a["name"], "val": "CLEAR"} for a in achievers]
+    
+    # 시간 순으로 정렬하여 1등부터 순위 매기기
+    final_achievers.sort(key=lambda x: x['time'])
+    return final_achievers
 
 # ========== FULL 모드 (미네랄 창고 → 기부왕, 일퀘왕) ==========
 def fetch_storage_page(page_num):
