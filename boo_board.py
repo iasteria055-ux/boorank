@@ -207,16 +207,28 @@ def fetch_storage_page(page_num):
     return {"donation": [], "quest": []}
 
 def get_storage_rankings():
-    print("🔥 [FULL] 미네랄 창고 크롤링 시작 (코랩 검증 정규식)")
+    print("🔥 [FULL] 미네랄 창고 크롤링 시작 (자동 페이지 감지)")
     raw_giver = []
     raw_quest = []
+    prev_sig = None
 
-    for page in range(1, 121):
-        print(f"⏳ 페이지 {page} 처리 중...", end=" ")
+    for page in range(1, 200):   # 넉넉하게 상한
         result = fetch_storage_page(page)
-        print(f"기부 {len(result['donation'])}건, 지급 {len(result['quest'])}건")
+        g_count = len(result['donation'])
+        q_count = len(result['quest'])
+        print(f"⏳ 페이지 {page} 처리 중... 기부 {g_count}건, 지급 {q_count}건")
+
+        # 중복 페이지이면 중단
+        curr_sig = str(result['donation']) + str(result['quest'])
+        if curr_sig == prev_sig:
+            print(f"🛑 {page-1}페이지가 마지막입니다. 크롤링 종료.")
+            break
+        prev_sig = curr_sig
+
         raw_giver.extend(result["donation"])
         raw_quest.extend(result["quest"])
+
+    # … 이하 동일 (DataFrame 집계)
 
     print(f"✅ 수집 완료: 기부 {len(raw_giver)}건, 지급 {len(raw_quest)}건")
 
