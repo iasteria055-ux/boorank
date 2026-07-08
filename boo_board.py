@@ -59,23 +59,33 @@ def process_board_page(page_num):
         return []
 
 def parse_relative_time(text):
-    """'4시간 전', '방금', '00:51' 등을 현재 시간 기준 datetime으로 변환"""
+    """'4시간 전', '방금', '00:51' 등을 현재 시간 기준 datetime으로 변환.
+    실패 시 None을 반환하여 정렬에서 배제되지 않도록 합니다."""
     now = datetime.now()
     text = text.strip()
+    
+    # 방금 / n초 전
     if '방금' in text or '초 전' in text:
         return now
-    m = re.search(r'(\d+)분 전', text)
+    
+    # n분 전
+    m = re.search(r'(\d+)\s*분\s*전', text)
     if m:
         return now - timedelta(minutes=int(m.group(1)))
-    m = re.search(r'(\d+)시간 전', text)
+    
+    # n시간 전
+    m = re.search(r'(\d+)\s*시간\s*전', text)
     if m:
         return now - timedelta(hours=int(m.group(1)))
-    # HH:MM 형태 (오늘 시간)
-    if re.match(r'^\d{2}:\d{2}$', text):
-        h, m = map(int, text.split(':'))
-        return now.replace(hour=h, minute=m, second=0, microsecond=0)
-    # 혹시 모를 다른 패턴은 그냥 현재 시간 반환
-    return now
+    
+    # HH:MM (오늘 시간)
+    m = re.match(r'^\s*(\d{1,2}):(\d{2})\s*$', text)
+    if m:
+        h, mi = int(m.group(1)), int(m.group(2))
+        return now.replace(hour=h, minute=mi, second=0, microsecond=0)
+    
+    # 패턴 매칭 실패 → None 반환 (나중에 필터링하거나 큰 시간으로 간주)
+    return None
 
 def get_comments_from_post(post_url):
     if not post_url.startswith('http'):
@@ -139,16 +149,19 @@ def get_quest_achievers():
                 if m_id not in earliest_comment or c["time"] < earliest_comment[m_id]:
                     earliest_comment[m_id] = c["time"]
 
-    achievers = []
+ achievers = []
     for m_id, c_count in comment_counts.items():
         if m_id in today_posters and c_count >= 20:
+            earliest = earliest_comment.get(m_id)
+            if earliest is None:
+                earliest = datetime.max  # 시간이 없으면 가장 마지막으로
             achievers.append({
                 "mem_id": m_id,
                 "name": user_names[m_id],
-                "earliest": earliest_comment.get(m_id, datetime.max)
+                "earliest": earliest
             })
 
-    # ★ 가장 먼저 댓글을 단 사람부터 1등 (오름차순)
+    # ★ 시간 오름차순 (먼저 달성한 사람이 1등)
     achievers.sort(key=lambda x: x["earliest"])
     return [{"mem_id": a["mem_id"], "name": a["name"], "val": "CLEAR"} for a in achievers]
 
