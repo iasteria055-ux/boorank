@@ -81,33 +81,46 @@ def fetch_storage_page(page_num):
         soup = BeautifulSoup(res.text, 'html.parser')
 
         for row in soup.find_all('tr'):
-            # 1. 닉네임과 고유 아이디 추출
-            a_tag = row.find('a', onclick=re.compile(r'show_nick_dropdown'))
-            if not a_tag: continue
-            
-            nick = a_tag.get_text(strip=True)
-            if nick in ["운영자", "시스템", ""]: continue
-            if nick == "XOXA": nick = "초우코송이"
-            
-            onclick_text = a_tag.get('onclick', '')
-            id_match = re.search(r"show_nick_dropdown\([^,]+,\s*'([^']+)'", onclick_text)
-            mem_id = id_match.group(1) if id_match else nick
+            # 1. 텍스트 추출 (선생님이 쓰시던 완벽한 원본 방식 복구!)
+            row_text = " ".join(row.stripped_strings)
 
-            # 2. 금액 및 타입(+/-) 정확히 파악
-            row_text = row.get_text()
-            if any(kw in row_text for kw in SYSTEM_KEYWORDS): continue
-            
-            m_plus = re.search(r'\+\s*([0-9,]+)', row_text)
-            m_minus = re.search(r'-\s*([0-9,]+)', row_text)
-            
-            if m_plus and "에게" not in row_text:
-                val = int(m_plus.group(1).replace(',', ''))
-                giver_data.append({'name': nick, 'mem_id': mem_id, 'val': val})
-                
-            elif m_minus and "에게" in row_text:
-                val = int(m_minus.group(1).replace(',', ''))
-                quest_data.append({'name': nick, 'mem_id': mem_id, 'val': val})
-                
+            # 2. 아이디만 핀셋으로 조심스럽게 추출
+            mem_id = None
+            a_tag = row.find('a', onclick=re.compile(r'show_nick_dropdown'))
+            if a_tag:
+                onclick_text = a_tag.get('onclick', '')
+                id_match = re.search(r"show_nick_dropdown\([^,]+,\s*'([^']+)'", onclick_text)
+                if id_match:
+                    mem_id = id_match.group(1)
+
+            # 3. [기부왕] 파싱 (원본 로직)
+            m_giver = re.search(PATTERN_GIVER, row_text)
+            if m_giver:
+                mid_text = m_giver.group(1).strip()
+                val = int(m_giver.group(2).replace(',', ''))
+                if not any(kw in mid_text for kw in SYSTEM_KEYWORDS):
+                    parts = mid_text.split()
+                    if parts:
+                        nick = parts[0]
+                        if nick not in ["운영자", "시스템", ""]:
+                            if nick == "XOXA": nick = "초우코송이"
+                            # 아이디가 안 뽑혔을 경우 닉네임으로 대체하는 방어막
+                            final_id = mem_id if mem_id else nick 
+                            giver_data.append({'name': nick, 'mem_id': final_id, 'val': val})
+
+            # 4. [일퀘왕] 파싱 (원본 로직)
+            m_quest = re.search(PATTERN_QUEST, row_text)
+            if m_quest:
+                mid_text = m_quest.group(1).strip()
+                val = int(m_quest.group(2).replace(',', ''))
+                if "에게" in mid_text:
+                    parts = mid_text.split('에게')[0].split()
+                    if parts:
+                        nick = parts[-1]
+                        if nick not in ["운영자", "시스템", ""]:
+                            final_id = mem_id if mem_id else nick
+                            quest_data.append({'name': nick, 'mem_id': final_id, 'val': val})
+                            
         return {"donation": giver_data, "quest": quest_data}
     except Exception:
         return {"donation": [], "quest": []}
