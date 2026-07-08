@@ -60,7 +60,6 @@ def process_board_page(page_num):
         return []
 
 def parse_relative_time(text):
-    """ '방금', 'X분 전', 'X시간 전', 'HH:MM' → datetime """
     now = datetime.now()
     text = text.strip()
     if '방금' in text or '초 전' in text:
@@ -74,7 +73,6 @@ def parse_relative_time(text):
     if re.match(r'^\s*\d{1,2}:\d{2}\s*$', text):
         h, mi = map(int, text.strip().split(':'))
         return now.replace(hour=h, minute=mi, second=0, microsecond=0)
-    # 파싱 실패 → None
     return None
 
 def get_comments_from_post(post_url):
@@ -115,11 +113,11 @@ def get_comments_from_post(post_url):
         return []
 
 def get_quest_achievers():
-    print("🚀 [FAST] 일퀘 달성자 수집 (게시글 1 + 댓글 20)")
+    print("🚀 [FAST] 일퀘 달성자 수집 (20번째 댓글 기준)")
     today_posters = set()
     user_names = {}
     post_urls = []
-    comment_times = {}      # 유저별 댓글 시간 리스트
+    comment_times = {}
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
         results = executor.map(process_board_page, range(1, 6))
@@ -155,12 +153,130 @@ def get_quest_achievers():
     if not achievers:
         print("  ❌ 조건을 만족한 사람이 없습니다.")
 
-    # 완료 시간 오름차순 → 가장 먼저 20개를 채운 사람이 1등
     achievers.sort(key=lambda x: x["completed_at"])
     return [{"mem_id": a["mem_id"], "name": a["name"], "val": "CLEAR"} for a in achievers]
 
-# ========== FULL 모드 (기존과 동일) ==========
-# ... (생략 - 이전에 제공한 정규식 기반 fetch_storage_page 사용)
+# ========== FULL 모드 (미네랄 창고 → 기부왕, 일퀘왕) ==========
+def fetch_storage_page(page_num):
+    url = f"https://ygosu.com/board/pan_boo/?mode=mineral_storage&page={page_num}"
+    pattern_giver = r'\d{2}-\d{2}-\d{2}\s*\([월화수목금토일]\)\s*\d{2}:\d{2}\s*(.*?)\+\s*([0-9,]+)'
+    pattern_quest = r'\d{2}-\d{2}-\d{2}\s*\([월화수목금토일]\)\s*\d{2}:\d{2}\s*(.*?)-\s*([0-9,]+)'
+    system_keywords = [
+        "게시물", "댓글", "출석", "이벤트", "추천", "복권", "환전", "시스템",
+        "수수료", "당첨", "보상", "지급", "미네랄 출금"
+    ]
 
+    for attempt in range(3):
+        try:
+            time.sleep(random.uniform(0.3, 0.8))
+            res = requests.get(url, headers=HEADERS, timeout=15)
+            res.encoding = 'utf-8'
+            soup = BeautifulSoup(res.text, 'html.parser')
+            giver_data = []
+            quest_data = []
+            for row in soup.find_all('tr'):
+                row_text = " ".join(row.stripped_strings)
+
+                m_giver = re.search(pattern_giver, row_text)
+                if m_giver:
+                    mid_text = m_giver.group(1).strip()
+                    val = int(m_giver.group(2).replace(',', ''))
+                    if not any(kw in mid_text for kw in system_keywords):
+                        parts = mid_text.split()
+                        if parts:
+                            nick = parts[0]
+                            if nick not in ["운영자", "시스템", ""]:
+                                if nick == "XOXA":
+                                    nick = "초우코송이"
+                                giver_data.append({'name': nick, 'val': val})
+
+                m_quest = re.search(pattern_quest, row_text)
+                if m_quest:
+                    mid_text = m_quest.group(1).strip()
+                    val = int(m_quest.group(2).replace(',', ''))
+                    if "에게" in mid_text:
+                        if not any(kw in mid_text for kw in system_keywords):
+                            parts = mid_text.split('에게')[0].split()
+                            if parts:
+                                nick = parts[-1]
+                                if nick not in ["운영자", "시스템", ""]:
+                                    quest_data.append({'name': nick, 'val': val})
+            return {"donation": giver_data, "quest": quest_data}
+        except Exception as e:
+            print(f"  ⚠️ 페이지 {page_num} 재시도 {attempt+1}/3 - {e}")
+            time.sleep(2)
+    return {"donation": [], "quest": []}
+
+def get_storage_rankings():
+    print("🔥 [FULL] 미네랄 창고 크롤링 시작 (중복 페이지 자동 종료)")
+    raw_giver = []
+    raw_quest = []
+    prev_sig = None
+
+    for page in range(1, 200):
+        result = fetch_storage_page(page)
+        g_count = len(result['donation'])
+        q_count = len(result['quest'])
+        print(f"⏳ 페이지 {page} 처리 중... 기부 {g_count}건, 지급 {q_count}건")
+
+        curr_sig = str(result['donation']) + str(result['quest'])
+        if curr_sig == prev_sig:
+            print(f"🛑 {page-1}페이지가 마지막입니다. 크롤링 종료.")
+            break
+        prev_sig = curr_sig
+
+        raw_giver.extend(result["donation"])
+        raw_quest.extend(result["quest"])
+
+    print(f"✅ 수집 완료: 기부 {len(raw_giver)}건, 지급 {len(raw_quest)}건")
+
+    df_giver = pd.DataFrame(raw_giver)
+    df_quest = pd.DataFrame(raw_quest)
+
+    if not df_giver.empty:
+        df_giver = df_giver.groupby('name', as_index=False)['val'].sum().sort_values('val', ascending=False).head(50)
+        donation_ranking = df_giver.to_dict('records')
+    else:
+        donation_ranking = []
+
+    if not df_quest.empty:
+        df_quest = df_quest.groupby('name', as_index=False)['val'].sum().sort_values('val', ascending=False).head(50)
+        quest_ranking = df_quest.to_dict('records')
+    else:
+        quest_ranking = []
+
+    return donation_ranking, quest_ranking
+
+# ========== 메인 ==========
 def main():
-    # ... (동일)
+    mode = sys.argv[1] if len(sys.argv) > 1 else 'fast'
+    data = {
+        "updated_at": "",
+        "quest_board": [],
+        "donation_ranking": [],
+        "quest_ranking": []
+    }
+
+    if os.path.exists('data.json'):
+        with open('data.json', 'r', encoding='utf-8') as f:
+            try:
+                data = json.load(f)
+            except:
+                pass
+
+    if mode == 'fast':
+        data['quest_board'] = get_quest_achievers()
+    elif mode == 'full':
+        donations, quests = get_storage_rankings()
+        data['donation_ranking'] = donations
+        data['quest_ranking'] = quests
+
+    data['updated_at'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    with open('data.json', 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+    print(f"✅ {mode} 모드 완료! data.json 업데이트 성공.")
+
+if __name__ == "__main__":
+    main()
