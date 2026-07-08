@@ -69,9 +69,13 @@ def get_comments_from_post(post_url):
             time_div = li.find('div', class_='time')
             if not time_div:
                 continue
-            time_text = time_div.get_text(strip=True)
+            time_text = time_div.get_text(strip=True)  # 예: "4시간 전", "00:51"
             if not any(kw in time_text for kw in ['전', '방금', ':']):
                 continue
+
+            # 시간 파싱 (간단하게)
+            comment_time = parse_relative_time(time_text)
+
             a_tag = li.find('a', onclick=re.compile(r'show_nick_dropdown'))
             if not a_tag:
                 continue
@@ -80,18 +84,48 @@ def get_comments_from_post(post_url):
             if match:
                 mem_id = match.group(1)
                 name = a_tag.get_text(strip=True)
-                today_comments.append({"mem_id": mem_id, "name": name})
+                today_comments.append({
+                    "mem_id": mem_id,
+                    "name": name,
+                    "time": comment_time   # datetime 객체
+                })
         return today_comments
     except:
         return []
+from datetime import datetime, timedelta
 
+def parse_relative_time(text):
+    """'4시간 전', '방금', '00:51' 등을 현재 시간 기준의 datetime으로 변환"""
+    now = datetime.now()
+    text = text.strip()
+    if '방금' in text or '초 전' in text:
+        return now  # 1분 미만은 그냥 현재로
+    if '분 전' in text:
+        m = re.search(r'(\d+)분 전', text)
+        if m:
+            return now - timedelta(minutes=int(m.group(1)))
+    if '시간 전' in text:
+        m = re.search(r'(\d+)시간 전', text)
+        if m:
+            return now - timedelta(hours=int(m.group(1)))
+    if ':' in text:
+        # HH:MM 형태, 오늘 해당 시간
+        parts = text.split(':')
+        if len(parts) == 2:
+            h, m = int(parts[0]), int(parts[1])
+            return now.replace(hour=h, minute=m, second=0, microsecond=0)
+    # 기본값: 현재
+    return now
+    
 def get_quest_achievers():
     print("🚀 [FAST] 일퀘 달성자 수집 (게시글 1 + 댓글 20)")
     today_posters = set()
     user_names = {}
     post_urls = []
     comment_counts = {}
+    earliest_comment = {}   # 각 유저의 가장 이른 댓글 시간
 
+    # 게시글 수집 (기존과 동일)
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
         results = executor.map(process_board_page, range(1, 6))
         for page_posts in results:
@@ -101,6 +135,7 @@ def get_quest_achievers():
                     today_posters.add(p["mem_id"])
                     user_names[p["mem_id"]] = p["name"]
 
+    # 댓글 수집
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
         results = executor.map(get_comments_from_post, post_urls)
         for comments in results:
@@ -108,17 +143,27 @@ def get_quest_achievers():
                 m_id = c["mem_id"]
                 user_names[m_id] = c["name"]
                 comment_counts[m_id] = comment_counts.get(m_id, 0) + 1
+                # 가장 이른 시간 기록
+                if m_id not in earliest_comment or c["time"] < earliest_comment[m_id]:
+                    earliest_comment[m_id] = c["time"]
 
+    # 조건 만족자 추출
     achievers = []
     for m_id, c_count in comment_counts.items():
         if m_id in today_posters and c_count >= 20:
             achievers.append({
                 "mem_id": m_id,
                 "name": user_names[m_id],
-                "val": "달성"
+                "earliest_time": earliest_comment.get(m_id, datetime.max)
             })
-    return achievers
 
+    # 이른 시간 순으로 정렬 (가장 먼저 달성한 사람이 1등)
+    achievers.sort(key=lambda x: x["earliest_time"])
+    # 결과에서 'earliest_time'은 제거하고 val="달성" 추가
+    result = []
+    for a in achievers:
+        result.append({"mem_id": a["mem_id"], "name": a["name"], "val": "달성"})
+    return result
 # ---------- FULL 모드 (미네랄 창고) ----------
 def fetch_storage_page(page_num):
     url = f"https://ygosu.com/board/pan_boo/?mode=mineral_storage&page={page_num}"
