@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-07-08 19:43:23",
+  "updated_at": "2026-07-08 19:44:30",
   "quest_board": [
     {
       "mem_id": "692736",
@@ -22,18 +22,18 @@
       "val": "CLEAR"
     },
     {
-      "mem_id": "144953",
-      "name": "피통왕통키",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "701501",
-      "name": "염보야놀자",
-      "val": "CLEAR"
-    },
-    {
       "mem_id": "479340",
       "name": "노무연",
+      "val": "CLEAR"
+    },
+    {
+      "mem_id": "590525",
+      "name": "ㄹㅋㄹㅋㄹㅋ",
+      "val": "CLEAR"
+    },
+    {
+      "mem_id": "144953",
+      "name": "피통왕통키",
       "val": "CLEAR"
     },
     {
@@ -42,8 +42,8 @@
       "val": "CLEAR"
     },
     {
-      "mem_id": "590525",
-      "name": "ㄹㅋㄹㅋㄹㅋ",
+      "mem_id": "701501",
+      "name": "염보야놀자",
       "val": "CLEAR"
     }
   ],
