@@ -20,25 +20,36 @@ def process_board_page(page_num):
         soup = BeautifulSoup(res.text, 'html.parser')
         posts = []
         for tr in soup.find_all('tr'):
-            date_td = tr.find('td', class_='date')
-            if not date_td: continue
+            # 날짜 탐지: td 중 ":" 또는 "전" 포함된 텍스트 찾기
+            date_td = tr.find('td', string=re.compile(r'[:\uC804\uBC29\uAE08]'))  # '전', '방금', ':'
+            if not date_td:
+                continue
             date_text = date_td.get_text(strip=True)
+            is_today = bool(re.search(r'[:\uC804\uBC29\uAE08]', date_text))  # '전', '방금', ':'
 
-            # 와이고수 특성: 오늘 작성된 글은 "00:51" 처럼 콜론(:)이 포함됨
-            is_today = ":" in date_text
-
-            a_tag = tr.find('a', onclick=re.compile(r'show_nick_dropdown'))
-            if not a_tag: continue
-
-            mem_id = re.search(r"show_nick_dropdown\([^,]+,\s*'([^']+)'", a_tag.get('onclick', ''))
-            mem_id = mem_id.group(1) if mem_id else a_tag.get_text(strip=True)
+            # 닉네임 찾기: a 태그 중 onclick이 show_nick_dropdown 이거나 단순 닉네임 텍스트
+            a_tag = tr.find('a', href=True)  # 링크가 있는 a 태그 중 닉네임일 가능성
+            if not a_tag:
+                continue
+            mem_id = a_tag.get('data-mem-id')  # 만약 data 속성이 있다면
+            if not mem_id:
+                # onclick에서 추출 시도
+                onclick = a_tag.get('onclick', '')
+                match = re.search(r"mem_id=([^&'\"\s]+)", onclick)
+                if match:
+                    mem_id = match.group(1)
+                else:
+                    # 실패 시 닉네임 텍스트를 임시 mem_id로 사용 (중복 방지 필요)
+                    mem_id = a_tag.get_text(strip=True)
             name = a_tag.get_text(strip=True)
 
-            link_tag = tr.find('td', class_='tit').find('a') if tr.find('td', class_='tit') else None
-            if link_tag and link_tag.get('href'):
-                posts.append({"url": link_tag['href'], "is_today": is_today, "mem_id": mem_id, "name": name})
+            # 게시글 링크
+            link_tag = tr.find('td', class_='tit')
+            if link_tag and link_tag.find('a'):
+                posts.append({"url": link_tag.find('a')['href'], "is_today": is_today, "mem_id": mem_id, "name": name})
         return posts
-    except:
+    except Exception as e:
+        print(f"페이지 {page_num} 파싱 오류: {e}")
         return []
 
 def get_comments_from_post(post_url):
