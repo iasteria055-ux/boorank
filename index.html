@@ -18,12 +18,13 @@
         body {
             font-family: 'Pretendard', sans-serif;
             background-color: var(--dj-bg);
+            background-image: repeating-linear-gradient(45deg, #e8eaef 0, #e8eaef 2px, transparent 2px, transparent 20px);
             display: flex; justify-content: center; align-items: center;
             height: 100vh; padding: 2vh 10px; overflow: hidden;
         }
 
         .game-frame {
-            width: 100%; max-width: 800px; height: 100%;
+            width: 100%; max-width: 850px; height: 100%;
             display: flex; flex-direction: column;
             background-color: var(--white);
             background-image:
@@ -33,7 +34,7 @@
             border: 12px solid var(--dj-purple);
             border-radius: 20px;
             position: relative; overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1), inset 0 0 0 3px #f0f2f5;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15), inset 0 0 0 4px #f0f2f5;
         }
 
         .hud-overlay {
@@ -75,7 +76,17 @@
         .eq-bar:nth-child(5) { background: var(--dj-purple); animation-delay: 0.2s; }
         @keyframes eq-play { 0% { height: 4px; } 100% { height: 16px; } }
 
-        .content-wrap { position: relative; padding: 65px 45px 40px; z-index: 10; display: flex; flex-direction: column; flex: 1; min-height: 0; }
+        .content-wrap { position: relative; padding: 45px 35px 30px; z-index: 10; display: flex; flex-direction: column; flex: 1; min-height: 0; }
+
+        /* --- 신규: 랭킹 공간 확보를 위한 상단 가로 배치 레이아웃 --- */
+        .top-dashboard-area {
+            display: flex; justify-content: space-between; align-items: flex-end;
+            margin-bottom: 20px; gap: 15px;
+        }
+
+        .header-titles {
+            display: flex; flex-direction: column;
+        }
 
         .top-subtitle {
             font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 900;
@@ -84,38 +95,37 @@
         }
         .top-subtitle .barcode { font-size: 14px; letter-spacing: 3px; color: var(--dj-cyan); opacity: 0.8; }
 
-        .header { margin-bottom: 25px; position: relative; z-index: 10; display: inline-block; cursor: default; align-self: flex-start; flex-shrink: 0; }
-        .block-cyan { position: absolute; width: 50px; height: 30px; background: var(--dj-cyan); top: -10px; left: -10px; z-index: 1; }
-        .block-orange { position: absolute; width: 45px; height: 45px; background: var(--dj-orange); bottom: -5px; right: -15px; z-index: 1; }
-        .block-lines { position: absolute; width: 60px; height: 15px; background: repeating-linear-gradient(90deg, var(--dj-purple), var(--dj-purple) 2px, transparent 2px, transparent 6px); top: 15px; right: -70px; z-index: 1; opacity: 0.4; }
-
+        .header { position: relative; display: inline-block; cursor: default; }
+        .block-cyan { position: absolute; width: 40px; height: 25px; background: var(--dj-cyan); top: -8px; left: -10px; z-index: 1; }
+        .block-orange { position: absolute; width: 35px; height: 35px; background: var(--dj-orange); bottom: -5px; right: -15px; z-index: 1; border-radius: 50%; }
+        
         .header h1 {
-            font-size: 76px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
-            text-transform: uppercase; line-height: 0.9; position: relative; z-index: 5;
-            letter-spacing: -3px; color: var(--dj-yellow);
-            text-shadow: 4px 4px 0 var(--dj-purple), 8px 8px 0 rgba(0,0,0,0.1);
+            font-size: 58px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase; line-height: 0.85; position: relative; z-index: 5;
+            letter-spacing: -2px; color: var(--dj-yellow);
+            text-shadow: 4px 4px 0 var(--dj-purple), 6px 6px 0 rgba(0,0,0,0.1);
         }
 
-        .yt-box {
+        .yt-box-mini {
+            width: 300px; height: 168px; /* 사이즈 대폭 축소 */
             background: var(--black); border: 4px solid var(--dj-purple);
-            box-shadow: 8px 8px 0 rgba(53, 28, 97, 0.3), -4px -4px 0 var(--dj-cyan);
-            margin-bottom: 30px; padding: 4px; overflow: hidden; position: relative; z-index: 10; flex-shrink: 0;
+            box-shadow: 6px 6px 0 rgba(53, 28, 97, 0.3), -3px -3px 0 var(--dj-cyan);
+            padding: 4px; overflow: hidden; position: relative; z-index: 10; flex-shrink: 0;
             transform: skewX(-2deg);
         }
-        .yt-box iframe { transform: skewX(2deg); display: block; }
+        .yt-box-mini iframe { width: 100%; height: 100%; transform: skewX(2deg); display: block; }
 
-        .tab-menu { display: flex; gap: 10px; margin-bottom: 25px; position: relative; z-index: 10; flex-shrink: 0; }
+        .tab-menu { display: flex; gap: 10px; margin-bottom: 20px; position: relative; z-index: 10; flex-shrink: 0; }
         .tab-btn {
             flex: 1; padding: 12px 5px; background: var(--white);
-            border: 3px solid var(--dj-purple); box-shadow: 4px 4px 0 var(--dj-purple);
-            font-size: 16px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
-            color: var(--dj-purple); cursor: pointer; transform: skewX(-10deg); transition: all 0.2s; position: relative; overflow: hidden;
+            border: 3px solid var(--dj-purple); box-shadow: 3px 3px 0 var(--dj-purple);
+            font-size: 15px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
+            color: var(--dj-purple); cursor: pointer; transform: skewX(-8deg); transition: all 0.2s; position: relative; overflow: hidden;
         }
-        .tab-btn span { display: inline-block; transform: skewX(10deg); }
-        .tab-btn:hover { transform: skewX(-10deg) translateY(-2px); box-shadow: 6px 6px 0 var(--dj-magenta); color: var(--dj-magenta); border-color: var(--dj-magenta); }
-        .tab-btn:active { transform: skewX(-10deg) translate(2px, 2px); box-shadow: 2px 2px 0 var(--dj-purple); }
-        .tab-btn.active { background: var(--dj-purple); color: var(--dj-yellow); box-shadow: 4px 4px 0 var(--dj-yellow); border-color: var(--dj-purple); }
-        .tab-btn#btnQuest.active { color: var(--dj-cyan); box-shadow: 4px 4px 0 var(--dj-cyan); }
+        .tab-btn span { display: inline-block; transform: skewX(8deg); }
+        .tab-btn:hover { transform: skewX(-8deg) translateY(-2px); box-shadow: 5px 5px 0 var(--dj-magenta); color: var(--dj-magenta); border-color: var(--dj-magenta); }
+        .tab-btn.active { background: var(--dj-purple); color: var(--dj-yellow); box-shadow: 3px 3px 0 var(--dj-yellow); border-color: var(--dj-purple); }
+        .tab-btn#btnQuest.active { color: var(--dj-cyan); box-shadow: 3px 3px 0 var(--dj-cyan); }
 
         .list-container {
             display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 10;
@@ -128,7 +138,7 @@
         .rank-row {
             display: flex; align-items: center; background: var(--white);
             border: 2px solid var(--dj-purple); border-left: 8px solid var(--dj-purple);
-            padding: 12px 15px; font-weight: 900; transition: all 0.2s; flex-shrink: 0; position: relative;
+            padding: 10px 15px; font-weight: 900; transition: all 0.2s; flex-shrink: 0; position: relative;
         }
         .daily-list .rank-row { border-left-color: var(--dj-magenta); }
         .giver-list .rank-row { border-left-color: var(--dj-orange); }
@@ -139,79 +149,76 @@
         .rank-row.top-2 { background: linear-gradient(90deg, #f5f5f5, #ffffff); border-color: #a8a9ad; border-left-color: #a8a9ad; }
         .rank-row.top-3 { background: linear-gradient(90deg, #fff0e6, #ffffff); border-color: #cd7f32; border-left-color: #cd7f32; }
 
-        .rank-row.top-1 .rank-num { color: #d4af37; font-size: 22px; width: 75px; text-shadow: 1px 1px 0 rgba(0,0,0,0.1); }
-        .rank-row.top-2 .rank-num { color: #a8a9ad; font-size: 22px; width: 75px; }
-        .rank-row.top-3 .rank-num { color: #cd7f32; font-size: 22px; width: 75px; }
+        .rank-row.top-1 .rank-num { color: #d4af37; font-size: 20px; width: 75px; text-shadow: 1px 1px 0 rgba(0,0,0,0.1); }
+        .rank-row.top-2 .rank-num { color: #a8a9ad; font-size: 20px; width: 75px; }
+        .rank-row.top-3 .rank-num { color: #cd7f32; font-size: 20px; width: 75px; }
 
         .rank-num {
-            font-size: 22px; color: #ccc; width: 45px; flex-shrink: 0;
-            font-style: italic; font-family: 'Montserrat', sans-serif;
-            white-space: nowrap;
+            font-size: 20px; color: #ccc; width: 45px; flex-shrink: 0;
+            font-style: italic; font-family: 'Montserrat', sans-serif; white-space: nowrap;
         }
 
-        .rank-name { flex: 1; font-size: 18px; color: var(--dj-purple); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 10px; }
-        .rank-val { font-size: 19px; font-style: italic; font-family: 'Montserrat', sans-serif; text-align: right; white-space: nowrap; }
-
-        .bouncy-text {
-            display: inline-block;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s, text-shadow 0.2s;
+        .rank-name { flex: 1; font-size: 16px; color: var(--dj-purple); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 10px; }
+        .rank-val { font-size: 18px; font-style: italic; font-family: 'Montserrat', sans-serif; text-align: right; white-space: nowrap; }
 
         .bouncy-text {
             display: inline-block;
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s, text-shadow 0.2s;
             cursor: default; /* 마우스를 올려도 기본 화살표 */
-       }
-
-/* 탭 버튼 내부 텍스트만 예외적으로 포인터로 변경 */
-        .tab-btn .bouncy-text {
-            cursor: pointer;
-       }
+        }
         
+        .tab-btn .bouncy-text { cursor: pointer; }
         a.link-text { text-decoration: none; color: inherit; }
+        a.link-text .bouncy-text { cursor: pointer; }
         
         .val-giver { color: var(--dj-orange); }
         .val-quest { color: var(--dj-cyan); }
         .val-daily { color: var(--dj-magenta); }
         
+        .bouncy-text:hover { transform: translateY(-3px) scale(1.05); text-shadow: 0 4px 8px rgba(0,0,0,0.15); }
         .rank-name .bouncy-text:hover { color: var(--dj-magenta); }
         .val-giver .bouncy-text:hover { color: var(--dj-purple); }
         .val-quest .bouncy-text:hover { color: var(--dj-purple); }
         .header h1 .bouncy-text:hover { transform: translateY(-4px) scale(1.02) rotate(-2deg); }
 
-        @media (max-width: 650px) {
+        .marquee-wrap {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 25px;
+            background: var(--dj-purple); color: var(--dj-yellow);
+            display: flex; align-items: center; overflow: hidden; z-index: 20;
+            font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 900; letter-spacing: 2px;
+        }
+        .marquee-content { display: flex; white-space: nowrap; animation: scroll-left 15s linear infinite; }
+        .marquee-content span { padding: 0 30px; }
+        @keyframes scroll-left { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        @media (max-width: 700px) {
             .game-frame { border-width: 6px; border-radius: 12px; }
-            .content-wrap { padding: 40px 15px 20px; }
+            .content-wrap { padding: 25px 15px 20px; }
             .hud-side { display: none; }
             .hud-overlay { top: 10px; bottom: 10px; left: 10px; right: 10px; }
             .hud-top { top: 10px; left: 10px; right: 10px; }
             .hud-bottom { bottom: 10px; left: 10px; right: 10px; }
-            .header h1 { font-size: 44px; text-shadow: 2px 2px 0 var(--dj-purple), 4px 4px 0 rgba(0,0,0,0.1); }
-            .block-cyan { width: 30px; height: 20px; top: -5px; left: -5px; }
-            .block-orange { width: 30px; height: 30px; bottom: -5px; right: -5px; }
-            .block-lines { display: none; }
-            .top-subtitle { font-size: 10px; margin-bottom: 2px; }
-            .top-subtitle .barcode { font-size: 10px; }
-            .yt-box { margin-bottom: 20px; box-shadow: 4px 4px 0 rgba(53, 28, 97, 0.3), -2px -2px 0 var(--dj-cyan); }
-            .yt-box iframe { height: 160px; }
-            .tab-menu { gap: 10px; margin-bottom: 15px; }
-            .tab-btn { font-size: 13px; padding: 10px 2px; border-width: 2px; box-shadow: 2px 2px 0 var(--dj-purple); transform: skewX(-5deg); }
+            
+            /* 모바일에서 레이아웃 다시 세로 배치 */
+            .top-dashboard-area { flex-direction: column; align-items: flex-start; gap: 15px; margin-bottom: 15px; }
+            .header h1 { font-size: 42px; text-shadow: 2px 2px 0 var(--dj-purple), 4px 4px 0 rgba(0,0,0,0.1); }
+            .yt-box-mini { width: 100%; height: 180px; transform: skewX(0); }
+            .yt-box-mini iframe { transform: skewX(0); }
+            
+            .tab-menu { gap: 8px; margin-bottom: 12px; }
+            .tab-btn { font-size: 12px; padding: 10px 2px; transform: skewX(-5deg); }
             .tab-btn span { transform: skewX(5deg); }
-            .tab-btn.active { box-shadow: 2px 2px 0 var(--dj-yellow); }
-            .tab-btn#btnQuest.active { box-shadow: 2px 2px 0 var(--dj-cyan); }
             .list-container { padding-right: 5px; gap: 6px; }
-            .rank-row { padding: 8px 10px; border-width: 1px; border-left-width: 5px; }
-            .rank-num { width: 30px; font-size: 15px; }
-            .rank-name { font-size: 15px; }
-            .rank-val { font-size: 14px; min-width: 80px; }
-            .rank-row.top-1 .rank-num, .rank-row.top-2 .rank-num, .rank-row.top-3 .rank-num { font-size: 15px; width: 55px; }
+            .rank-row { padding: 8px 10px; }
+            .rank-num { width: 30px; font-size: 14px; }
+            .rank-name { font-size: 14px; }
+            .rank-val { font-size: 13px; min-width: 70px; }
+            .rank-row.top-1 .rank-num, .rank-row.top-2 .rank-num, .rank-row.top-3 .rank-num { font-size: 15px; width: 50px; }
         }
-   /* 커서 강제로 화살표 유지 */
-.rank-row .bouncy-text:hover,
-.rank-row .bouncy-text,
-.rank-name .bouncy-text:hover,
-.rank-val .bouncy-text:hover {
-    cursor: default !important;
-}
+        
+        /* 강제 커서 제어 */
+        .rank-row .bouncy-text:hover, .rank-row .bouncy-text, .rank-name .bouncy-text:hover, .rank-val .bouncy-text:hover { cursor: default !important; }
+        .tab-btn .bouncy-text:hover, a.link-text .bouncy-text:hover { cursor: pointer !important; }
     </style>
 </head>
 <body>
@@ -229,34 +236,50 @@
             </div>
             <div class="hud-bottom">
                 <div class="hud-cross">+</div><div class="hud-line"></div>
-                <!-- 시간 표시 제거 -->
             </div>
             <div class="hud-side left">S Y S T E M &nbsp; O N L I N E</div>
             <div class="hud-side right">B O O &nbsp; B O A R D &nbsp; R A N K I N G</div>
         </div>
 
         <div class="content-wrap">
-            <div class="top-subtitle">
-                <span>YGOSU</span><span class="barcode">|||| || ||| |</span><span>DATA ARCHIVE</span>
-            </div>
-            <div class="header">
-                <div class="block-cyan"></div><div class="block-orange"></div><div class="block-lines"></div>
-                <h1><span class="bouncy-text">BOO</span><br><span class="bouncy-text">BOARD</span></h1>
-            </div>
+            <div class="top-dashboard-area">
+                <div class="header-titles">
+                    <div class="top-subtitle">
+                        <span>YGOSU</span><span class="barcode">|||| || ||| |</span><span>DATA ARCHIVE</span>
+                    </div>
+                    <div class="header">
+                        <div class="block-cyan"></div><div class="block-orange"></div>
+                        <h1><span class="bouncy-text">BOO</span><br><span class="bouncy-text">BOARD</span></h1>
+                    </div>
+                </div>
 
-            <div class="yt-box">
-                <iframe width="100%" height="200" src="https://www.youtube.com/embed/qZlu2j2SiBA?si=dhhYeFagalAQN563&autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                <div class="yt-box-mini">
+                    <iframe width="100%" height="100%" src="https://www.youtube.com/embed/qZlu2j2SiBA?si=dhhYeFagalAQN563&autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                </div>
             </div>
 
             <div class="tab-menu">
-                <button class="tab-btn active" id="btnDaily" onclick="show('daily')"><span>DAILY QUEST</span></button>
-                <button class="tab-btn" id="btnGiver" onclick="show('giver')"><span>DONATION</span></button>
-                <button class="tab-btn" id="btnQuest" onclick="show('quest')"><span>REWARDS</span></button>
+                <button class="tab-btn active" id="btnDaily" onclick="show('daily')"><span class="bouncy-text">DAILY QUEST</span></button>
+                <button class="tab-btn" id="btnGiver" onclick="show('giver')"><span class="bouncy-text">DONATION</span></button>
+                <button class="tab-btn" id="btnQuest" onclick="show('quest')"><span class="bouncy-text">REWARDS</span></button>
             </div>
 
             <div id="daily" class="list-container daily-list"></div>
             <div id="giver" class="list-container giver-list" style="display:none;"></div>
             <div id="quest" class="list-container quest-list" style="display:none;"></div>
+        </div>
+
+        <div class="marquee-wrap">
+            <div class="marquee-content">
+                <span>/// YGOSU BOO BOARD DATA ARCHIVE ///</span>
+                <span>DAILY QUEST ACHIEVERS</span>
+                <span>DONATION RANKING</span>
+                <span>MINERAL REWARDS</span>
+                <span>/// YGOSU BOO BOARD DATA ARCHIVE ///</span>
+                <span>DAILY QUEST ACHIEVERS</span>
+                <span>DONATION RANKING</span>
+                <span>MINERAL REWARDS</span>
+            </div>
         </div>
     </div>
 
