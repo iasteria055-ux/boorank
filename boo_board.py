@@ -145,13 +145,18 @@ def get_quest_achievers():
                 "earliest": earliest_comment.get(m_id, datetime.max)
             })
 
-    achievers.sort(key=lambda x: x["earliest"])
+    # 내림차순 정렬 (가장 늦게 달성한 사람이 1등)
+    achievers.sort(key=lambda x: x["earliest"], reverse=True)
     return [{"mem_id": a["mem_id"], "name": a["name"], "val": "CLEAR"} for a in achievers]
 
 # ========== FULL 모드 (미네랄 창고 → 기부왕, 일퀘왕) ==========
 def fetch_storage_page(page_num):
     url = f"https://ygosu.com/board/pan_boo/?mode=mineral_storage&page={page_num}"
-    system_keywords = ["게시물", "댓글", "출석", "이벤트", "추천", "복권", "환전", "시스템", "당첨", "보상"]
+    # 코랩과 동일한 정규식
+    pattern_giver = r'\d{2}-\d{2}-\d{2}\s*\([월화수목금토일]\)\s*\d{2}:\d{2}\s*(.*?)\+\s*([0-9,]+)'
+    pattern_quest = r'\d{2}-\d{2}-\d{2}\s*\([월화수목금토일]\)\s*\d{2}:\d{2}\s*(.*?)-\s*([0-9,]+)'
+    system_keywords = ["게시물", "댓글", "출석", "이벤트", "추천", "복권", "환전", "시스템"]
+
     for attempt in range(3):
         try:
             time.sleep(random.uniform(0.3, 0.8))
@@ -160,36 +165,35 @@ def fetch_storage_page(page_num):
             soup = BeautifulSoup(res.text, 'html.parser')
             giver_data = []
             quest_data = []
+
             for row in soup.find_all('tr'):
-                cols = row.find_all('td')
-                if len(cols) < 4:
-                    continue
-                reason_text = cols[1].get_text(strip=True)   # 사유
-                plus_text = cols[2].get_text(strip=True)     # + 금액
-                minus_text = cols[3].get_text(strip=True)    # - 금액
-                if any(kw in reason_text for kw in system_keywords):
-                    continue
+                row_text = " ".join(row.stripped_strings)
+
                 # 기부 (+)
-                if plus_text.startswith('+'):
-                    try:
-                        val = int(plus_text.lstrip('+').replace(',', ''))
-                        nick = reason_text.split()[0] if reason_text else ""
-                        if nick not in ["운영자", "시스템", ""]:
-                            if nick == "XOXA":
-                                nick = "초우코송이"
-                            giver_data.append({'name': nick, 'val': val})
-                    except:
-                        pass
+                m_giver = re.search(pattern_giver, row_text)
+                if m_giver:
+                    mid_text = m_giver.group(1).strip()
+                    val = int(m_giver.group(2).replace(',', ''))
+                    if not any(kw in mid_text for kw in system_keywords):
+                        parts = mid_text.split()
+                        if parts:
+                            nick = parts[0]
+                            if nick not in ["운영자", "시스템", ""]:
+                                if nick == "XOXA":
+                                    nick = "초우코송이"
+                                giver_data.append({'name': nick, 'val': val})
+
                 # 지급 (-)
-                if minus_text.startswith('-'):
-                    try:
-                        val = int(minus_text.lstrip('-').replace(',', ''))
-                        if "에게" in reason_text:
-                            nick = reason_text.split('에게')[0].split()[-1]
+                m_quest = re.search(pattern_quest, row_text)
+                if m_quest:
+                    mid_text = m_quest.group(1).strip()
+                    val = int(m_quest.group(2).replace(',', ''))
+                    if "에게" in mid_text:
+                        parts = mid_text.split('에게')[0].split()
+                        if parts:
+                            nick = parts[-1]
                             if nick not in ["운영자", "시스템", ""]:
                                 quest_data.append({'name': nick, 'val': val})
-                    except:
-                        pass
             return {"donation": giver_data, "quest": quest_data}
         except Exception as e:
             print(f"  ⚠️ 페이지 {page_num} 재시도 {attempt+1}/3 - {e}")
@@ -197,16 +201,18 @@ def fetch_storage_page(page_num):
     return {"donation": [], "quest": []}
 
 def get_storage_rankings():
-    print("🔥 [FULL] 미네랄 창고 크롤링 시작 (정확한 td 파싱)")
+    print("🔥 [FULL] 미네랄 창고 크롤링 시작 (코랩 검증 정규식)")
     raw_giver = []
     raw_quest = []
 
-    for page in range(1, 150):
+    for page in range(1, 121):
         print(f"⏳ 페이지 {page} 처리 중...", end=" ")
         result = fetch_storage_page(page)
         print(f"기부 {len(result['donation'])}건, 지급 {len(result['quest'])}건")
         raw_giver.extend(result["donation"])
         raw_quest.extend(result["quest"])
+
+    print(f"✅ 수집 완료: 기부 {len(raw_giver)}건, 지급 {len(raw_quest)}건")
 
     df_giver = pd.DataFrame(raw_giver)
     df_quest = pd.DataFrame(raw_quest)
