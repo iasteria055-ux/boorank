@@ -28,6 +28,18 @@ def process_board_page(page_num):
             date_text = date_td.get_text(strip=True)
             is_today = (':' in date_text) or ('전' in date_text) or ('방금' in date_text)
 
+            # 게시글 작성 시간 파싱 (HH:MM만 사용)
+            post_time = None
+            if is_today:
+                m = re.search(r'(\d{2}):(\d{2})', date_text)
+                if m:
+                    h, mi = int(m.group(1)), int(m.group(2))
+                    now = datetime.now()
+                    post_time = now.replace(hour=h, minute=mi, second=0, microsecond=0)
+                    # 만약 시간이 미래라면 (예: 23:59 vs 00:01) 전날로 조정
+                    if post_time > now:
+                        post_time -= timedelta(days=1)
+
             name_td = tr.find('td', class_='name')
             if not name_td:
                 continue
@@ -52,7 +64,8 @@ def process_board_page(page_num):
                 "url": link_tag['href'],
                 "is_today": is_today,
                 "mem_id": mem_id,
-                "name": name
+                "name": name,
+                "post_time": post_time   # 게시글 작성 시각 (오늘인 경우만)
             })
         return posts
     except Exception as e:
@@ -81,75 +94,91 @@ def parse_relative_time(text):
     return None
 
 def get_comments_from_post(post_url):
+    if not post_url.startswith('http'):
+        post_url = "https://ygosu.com" + post_url
     try:
-        res = requests.get("https://ygosu.com" + post_url, headers=HEADERS, timeout=5)
+        res = requests.get(post_url, headers=HEADERS, timeout=10)
         soup = BeautifulSoup(res.text, 'html.parser')
-        
-        # 댓글 목록 li들을 다 찾음
-        replies = soup.find_all('li', class_='normal_reply')
-        
-        # 1. 댓글의 실제 작성 시간과 작성자를 추출
-        comment_log = []
-        for li in replies:
-            # 닉네임과 아이디 추출
-            a_tag = li.find('a', onclick=re.compile(r'show_nick_dropdown'))
-            if not a_tag: continue
-            
-            # [핵심] 실제 작성 시간 파싱 (와이고수 댓글의 <div class='time'> 값)
+        today_comments = []
+        for li in soup.find_all('li', class_='normal_reply'):
             time_div = li.find('div', class_='time')
-            raw_time = time_div.get_text(strip=True) if time_div else "00:00"
-            
-            onclick_text = a_tag.get('onclick', '')
-            mem_id = re.search(r"show_nick_dropdown\([^,]+,\s*'([^']+)'", onclick_text)
-            mem_id = mem_id.group(1) if mem_id else a_tag.get_text(strip=True)
-            
-            comment_log.append({"mem_id": mem_id, "name": a_tag.get_text(strip=True), "time": raw_time})
-        
-        return comment_log
-    except:
+            if not time_div:
+                continue
+            time_text = time_div.get_text(strip=True)
+            if not any(kw in time_text for kw in ['전', '방금', ':']):
+                continue
+
+            a_tag = li.find('a', onclick=re.compile(r'show_nick_dropdown'))
+            if not a_tag:
+                continue
+            onclick = a_tag.get('onclick', '')
+            match = re.search(r"show_nick_dropdown\([^,]+,\s*'[^']*',\s*'([^']+)'", onclick)
+            if match:
+                mem_id = match.group(1)
+                name = a_tag.get_text(strip=True)
+                today_comments.append({
+                    "mem_id": mem_id,
+                    "name": name
+                })
+        return today_comments
+    except Exception as e:
+        print(f"  [get_comments] 오류: {e} (게시글: {post_url})")
         return []
 
 def get_quest_achievers():
-    print("🚀 [FAST] 일퀘 달성자 수집 (20번째 댓글 기준 + DOM 인덱스 보정)")
+    print("🚀 [FAST] 일퀘 달성자 수집 (게시글 작성 순 기준)")
     today_posters = set()
     user_names = {}
-    post_urls = []
-    comment_data = {}   # 유저별 (time, index) 리스트
+    post_times = {}   # 게시글 URL -> 작성 시간
+    comment_counts = {}
+    user_earliest_post = {}   # 유저가 댓글을 단 게시글 중 가장 이른 시간
 
+    # 1. 게시글 수집 (post_time 포함)
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
         results = executor.map(process_board_page, range(1, 6))
         for page_posts in results:
             for p in page_posts:
-                post_urls.append(p["url"])
                 if p["is_today"]:
                     today_posters.add(p["mem_id"])
                     user_names[p["mem_id"]] = p["name"]
+                if p["post_time"]:
+                    post_times[p["url"]] = p["post_time"]
 
     print(f"  발견된 오늘 게시글: {len(today_posters)}개")
 
+    # 2. 댓글 수집 및 각 유저의 가장 이른 게시글 시간 기록
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+        # 게시글 URL 리스트를 만들고, 각 URL과 댓글 결과를 매칭
+        post_urls = list(post_times.keys())
         results = executor.map(get_comments_from_post, post_urls)
-        for comments in results:
+        for post_url, comments in zip(post_urls, results):
+            post_time = post_times[post_url]
             for c in comments:
                 m_id = c["mem_id"]
                 user_names[m_id] = c["name"]
-                comment_data.setdefault(m_id, []).append( (c["time"], c["comment_index"]) )
+                comment_counts[m_id] = comment_counts.get(m_id, 0) + 1
+                # 이 유저가 이 게시글에 댓글을 달았으므로, 가장 이른 게시글 시간 업데이트
+                if m_id not in user_earliest_post or post_time < user_earliest_post[m_id]:
+                    user_earliest_post[m_id] = post_time
 
-  final_achievers = []
-    for m_id, logs in user_comment_logs.items():
-        if len(logs) >= 20:
-            # 20번째 댓글 작성 시간으로 정렬 (와이고수 시간 포맷에 맞춰 비교)
-            logs.sort(key=lambda x: x['time']) 
-            final_achievers.append({
+    # 3. 조건 충족자 추출
+    achievers = []
+    for m_id, c_count in comment_counts.items():
+        if m_id in today_posters and c_count >= 20:
+            earliest_time = user_earliest_post.get(m_id, datetime.max)
+            achievers.append({
                 "mem_id": m_id,
-                "name": logs[0]['name'],
-                "time": logs[19]['time'] # 20번째 댓글 시간
+                "name": user_names[m_id],
+                "earliest": earliest_time
             })
-    
-    # 시간 순으로 정렬하여 1등부터 순위 매기기
-    final_achievers.sort(key=lambda x: x['time'])
-    return final_achievers
+            print(f"  {user_names[m_id]}: 가장 이른 게시글 시간 = {earliest_time}")
 
+    if not achievers:
+        print("  ❌ 조건을 만족한 사람이 없습니다.")
+
+    # 4. 정렬: 게시글 작성 시간이 빠른 순서 (먼저 작성된 게시글에서 활동한 사람이 1등)
+    achievers.sort(key=lambda x: x["earliest"])
+    return [{"mem_id": a["mem_id"], "name": a["name"], "val": "CLEAR"} for a in achievers]
 # ========== FULL 모드 (미네랄 창고 → 기부왕, 일퀘왕) ==========
 def fetch_storage_page(page_num):
     url = f"https://ygosu.com/board/pan_boo/?mode=mineral_storage&page={page_num}"
