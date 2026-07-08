@@ -8,28 +8,24 @@ import pandas as pd
 from datetime import datetime
 import concurrent.futures
 import time
+import random
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 }
 
-# ==========================================
-# 1. [FAST 모드] 일퀘 달성자 (오늘 게시글 1 + 댓글 20)
-# ==========================================
-
+# ---------- FAST 모드 (게시글/댓글) ----------
 def process_board_page(page_num):
     url = f"https://ygosu.com/board/pan_boo/?page={page_num}"
     try:
         res = requests.get(url, headers=HEADERS, timeout=10)
         soup = BeautifulSoup(res.text, 'html.parser')
         posts = []
-        # 게시글 목록 테이블: table.bd_list > tbody > tr
         for tr in soup.select('table.bd_list tr'):
             date_td = tr.find('td', class_='date')
             if not date_td:
                 continue
             date_text = date_td.get_text(strip=True)
-            # 오늘 날짜: HH:MM 형태 (예: "00:51") 또는 "전", "방금" 포함
             is_today = (':' in date_text) or ('전' in date_text) or ('방금' in date_text)
 
             name_td = tr.find('td', class_='name')
@@ -38,7 +34,6 @@ def process_board_page(page_num):
             a_tag = name_td.find('a', onclick=True)
             if not a_tag:
                 continue
-            # mem_id 추출 (show_nick_dropdown의 세 번째 인자)
             onclick = a_tag.get('onclick', '')
             match = re.search(r"show_nick_dropdown\([^,]+,\s*'[^']*',\s*'([^']+)'", onclick)
             mem_id = match.group(1) if match else None
@@ -52,17 +47,15 @@ def process_board_page(page_num):
             link_tag = tit_td.find('a')
             if not link_tag or not link_tag.get('href'):
                 continue
-            post_url = link_tag['href']
 
             posts.append({
-                "url": post_url,
+                "url": link_tag['href'],
                 "is_today": is_today,
                 "mem_id": mem_id,
                 "name": name
             })
         return posts
     except Exception as e:
-        print(f"페이지 {page_num} 오류: {e}")
         return []
 
 def get_comments_from_post(post_url):
@@ -72,17 +65,13 @@ def get_comments_from_post(post_url):
         res = requests.get(post_url, headers=HEADERS, timeout=10)
         soup = BeautifulSoup(res.text, 'html.parser')
         today_comments = []
-        # 댓글은 li.normal_reply (class에 공백 있어도 class_='normal_reply'로 잡힘)
         for li in soup.find_all('li', class_='normal_reply'):
-            # 시간
             time_div = li.find('div', class_='time')
             if not time_div:
                 continue
             time_text = time_div.get_text(strip=True)
             if not any(kw in time_text for kw in ['전', '방금', ':']):
-                continue   # 오늘이 아니면 스킵
-
-            # 작성자
+                continue
             a_tag = li.find('a', onclick=re.compile(r'show_nick_dropdown'))
             if not a_tag:
                 continue
@@ -93,11 +82,11 @@ def get_comments_from_post(post_url):
                 name = a_tag.get_text(strip=True)
                 today_comments.append({"mem_id": mem_id, "name": name})
         return today_comments
-    except Exception as e:
+    except:
         return []
 
 def get_quest_achievers():
-    print("🚀 [FAST] 일퀘 달성자 수집 (오늘 게시글 1 + 댓글 20)...")
+    print("🚀 [FAST] 일퀘 달성자 수집 (게시글 1 + 댓글 20)")
     today_posters = set()
     user_names = {}
     post_urls = []
@@ -112,7 +101,7 @@ def get_quest_achievers():
                     today_posters.add(p["mem_id"])
                     user_names[p["mem_id"]] = p["name"]
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=15) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
         results = executor.map(get_comments_from_post, post_urls)
         for comments in results:
             for c in comments:
@@ -130,34 +119,15 @@ def get_quest_achievers():
             })
     return achievers
 
-# ==========================================
-# 2. [FULL 모드] 미네랄 창고 크롤링 (수수료 제외 + 자동 마지막 페이지)
-# ==========================================
-def is_system_row(row):
-    """수수료, 운영자 메시지 등 시스템 로우인지 판별"""
-    a_tag = row.find('a', href=True)
-    if not a_tag:
-        return True
-    nick = a_tag.get_text(strip=True)
-    if nick in ["운영자", "시스템", ""]:
-        return True
-    row_text = " ".join(row.stripped_strings)
-    if any(kw in row_text for kw in ["미네랄 출금 수수료", "출금 수수료", "수수료", "이벤트", "공지"]):
-        return True
-    return False
-
-import time
-import random
-
-def fetch_storage_page(page_num, retries=3):
+# ---------- FULL 모드 (미네랄 창고) ----------
+def fetch_storage_page(page_num):
     url = f"https://ygosu.com/board/pan_boo/?mode=mineral_storage&page={page_num}"
     pattern_giver = r'\d{2}-\d{2}-\d{2}\s*\([월화수목금토일]\)\s*\d{2}:\d{2}\s*(.*?)\+\s*([0-9,]+)'
     pattern_quest = r'\d{2}-\d{2}-\d{2}\s*\([월화수목금토일]\)\s*\d{2}:\d{2}\s*(.*?)-\s*([0-9,]+)'
     system_keywords = ["게시물", "댓글", "출석", "이벤트", "추천", "복권", "환전", "시스템"]
 
-    for attempt in range(retries):
+    for attempt in range(3):
         try:
-            # 0.5~1.5초 랜덤 지연 (서버 부하 분산)
             time.sleep(random.uniform(0.3, 0.8))
             res = requests.get(url, headers=HEADERS, timeout=15)
             res.encoding = 'utf-8'
@@ -194,37 +164,14 @@ def fetch_storage_page(page_num, retries=3):
                                 quest_data.append({'name': nick, 'val': val})
             return {"donation": giver_data, "quest": quest_data}
         except Exception as e:
-            print(f"  ⚠️ 페이지 {page_num} 재시도 {attempt+1}/{retries} - 오류: {e}")
-            time.sleep(2)  # 실패 시 좀 더 기다림
-    print(f"  ❌ 페이지 {page_num} 최종 실패, 빈 리스트 반환")
+            print(f"  ⚠️ 페이지 {page_num} 재시도 {attempt+1}/3 - {e}")
+            time.sleep(2)
     return {"donation": [], "quest": []}
 
-def get_total_pages():
-    """창고 게시판의 마지막 페이지 번호를 가져온다."""
-    url = "https://ygosu.com/board/pan_boo/?mode=mineral_storage"
-    try:
-        res = requests.get(url, headers=HEADERS, timeout=10)
-        soup = BeautifulSoup(res.text, 'html.parser')
-        last_page = 1
-        # 하단 페이지네이션에서 마지막 페이지 링크 찾기
-        # 보통 <a href="...page=111">111</a> 형태
-        for a in soup.select('div.paging a, .pagination a, a.page_num'):
-            href = a.get('href', '')
-            if 'page=' in href:
-                match = re.search(r'page=(\d+)', href)
-                if match:
-                    page_num = int(match.group(1))
-                    if page_num > last_page:
-                        last_page = page_num
-        return last_page
-    except:
-        return 120  # 실패 시 기본값 (현재 111이므로 넉넉하게)
-
 def get_storage_rankings():
-    print("🔥 [FULL] 미네랄 창고 크롤링 시작 (순차 모드, 누락 방지)...")
-    total_pages = get_total_pages()
-    print(f"📊 총 {total_pages}페이지를 순차적으로 수집합니다.\n")
-
+    print("🔥 [FULL] 미네랄 창고 크롤링 시작 (코랩 검증 정규식 사용)")
+    # 창고는 보통 110~120페이지 사이, 안전하게 120까지 시도
+    total_pages = 120
     raw_giver = []
     raw_quest = []
 
@@ -237,9 +184,8 @@ def get_storage_rankings():
         raw_giver.extend(result["donation"])
         raw_quest.extend(result["quest"])
 
-    print(f"\n✅ 전체 수집 완료: 기부 {len(raw_giver)}건, 지급 {len(raw_quest)}건\n")
+    print(f"\n✅ 전체 수집 완료: 기부 {len(raw_giver)}건, 지급 {len(raw_quest)}건")
 
-    # 집계
     df_giver = pd.DataFrame(raw_giver)
     df_quest = pd.DataFrame(raw_quest)
 
@@ -257,9 +203,7 @@ def get_storage_rankings():
 
     return donation_ranking, quest_ranking
 
-# ==========================================
-# 3. 메인 실행부
-# ==========================================
+# 메인 실행부
 def main():
     mode = sys.argv[1] if len(sys.argv) > 1 else 'fast'
     data = {
@@ -271,10 +215,8 @@ def main():
 
     if os.path.exists('data.json'):
         with open('data.json', 'r', encoding='utf-8') as f:
-            try:
-                data = json.load(f)
-            except json.JSONDecodeError:
-                pass
+            try: data = json.load(f)
+            except: pass
 
     if mode == 'fast':
         data['quest_board'] = get_quest_achievers()
