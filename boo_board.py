@@ -69,11 +69,10 @@ def get_comments_from_post(post_url):
             time_div = li.find('div', class_='time')
             if not time_div:
                 continue
-            time_text = time_div.get_text(strip=True)  # 예: "4시간 전", "00:51"
+            time_text = time_div.get_text(strip=True)
             if not any(kw in time_text for kw in ['전', '방금', ':']):
                 continue
 
-            # 시간 파싱 (간단하게)
             comment_time = parse_relative_time(time_text)
 
             a_tag = li.find('a', onclick=re.compile(r'show_nick_dropdown'))
@@ -87,19 +86,19 @@ def get_comments_from_post(post_url):
                 today_comments.append({
                     "mem_id": mem_id,
                     "name": name,
-                    "time": comment_time   # datetime 객체
+                    "time": comment_time
                 })
         return today_comments
     except:
         return []
+
 from datetime import datetime, timedelta
 
 def parse_relative_time(text):
-    """'4시간 전', '방금', '00:51' 등을 현재 시간 기준의 datetime으로 변환"""
     now = datetime.now()
     text = text.strip()
     if '방금' in text or '초 전' in text:
-        return now  # 1분 미만은 그냥 현재로
+        return now
     if '분 전' in text:
         m = re.search(r'(\d+)분 전', text)
         if m:
@@ -109,12 +108,10 @@ def parse_relative_time(text):
         if m:
             return now - timedelta(hours=int(m.group(1)))
     if ':' in text:
-        # HH:MM 형태, 오늘 해당 시간
         parts = text.split(':')
         if len(parts) == 2:
             h, m = int(parts[0]), int(parts[1])
             return now.replace(hour=h, minute=m, second=0, microsecond=0)
-    # 기본값: 현재
     return now
     
 def get_quest_achievers():
@@ -189,12 +186,14 @@ def fetch_storage_page(page_num):
                     mid_text = m_giver.group(1).strip()
                     val = int(m_giver.group(2).replace(',', ''))
                     if not any(kw in mid_text for kw in system_keywords):
-                        parts = mid_text.split()
-                        if parts:
-                            nick = parts[0]
-                            if nick not in ["운영자", "시스템", ""]:
-                                if nick == "XOXA": nick = "초우코송이"
-                                giver_data.append({'name': nick, 'val': val})
+    parts = mid_text.split()
+    if parts:
+        nick = parts[0]
+        if nick not in ["운영자", "시스템", ""]:
+            if nick == "XOXA": nick = "초우코송이"
+            # ★ 10억(1,000,000,000) 이상이면 무시 (비정상 데이터)
+            if val <= 1000000000:
+                giver_data.append({'name': nick, 'val': val})
 
                 # 일퀘 (수정)
 m_quest = re.search(pattern_quest, row_text)
