@@ -180,34 +180,33 @@ def fetch_storage_page(page_num):
             for row in soup.find_all('tr'):
                 row_text = " ".join(row.stripped_strings)
 
-               # 기부
-m_giver = re.search(pattern_giver, row_text)
-if m_giver:
-    mid_text = m_giver.group(1).strip()
-    val = int(m_giver.group(2).replace(',', ''))
-    if not any(kw in mid_text for kw in system_keywords):
-        parts = mid_text.split()
-        if parts:
-            nick = parts[0]
-            if nick not in ["운영자", "시스템", ""]:
-                if nick == "XOXA":
-                    nick = "초우코송이"
-                # 10억 이상이면 무시
-                if val <= 1000000000:
-                    giver_data.append({'name': nick, 'val': val})
-                    
-                # 일퀘 (수정)
-m_quest = re.search(pattern_quest, row_text)
-if m_quest:
-    mid_text = m_quest.group(1).strip()
-    val = int(m_quest.group(2).replace(',', ''))
-    # 시스템 메시지 제외
-    if not any(kw in mid_text for kw in system_keywords) and "에게" in mid_text:
-        parts = mid_text.split('에게')[0].split()
-        if parts:
-            nick = parts[-1]
-            if nick not in ["운영자", "시스템", ""]:
-                quest_data.append({'name': nick, 'val': val})
+                # 기부
+                m_giver = re.search(pattern_giver, row_text)
+                if m_giver:
+                    mid_text = m_giver.group(1).strip()
+                    val = int(m_giver.group(2).replace(',', ''))
+                    if not any(kw in mid_text for kw in system_keywords):
+                        parts = mid_text.split()
+                        if parts:
+                            nick = parts[0]
+                            if nick not in ["운영자", "시스템", ""]:
+                                if nick == "XOXA":
+                                    nick = "초우코송이"
+                                # 10억 이상이면 무시
+                                if val <= 1000000000:
+                                    giver_data.append({'name': nick, 'val': val})
+
+                # 일퀘
+                m_quest = re.search(pattern_quest, row_text)
+                if m_quest:
+                    mid_text = m_quest.group(1).strip()
+                    val = int(m_quest.group(2).replace(',', ''))
+                    if not any(kw in mid_text for kw in system_keywords) and "에게" in mid_text:
+                        parts = mid_text.split('에게')[0].split()
+                        if parts:
+                            nick = parts[-1]
+                            if nick not in ["운영자", "시스템", ""]:
+                                quest_data.append({'name': nick, 'val': val})
             return {"donation": giver_data, "quest": quest_data}
         except Exception as e:
             print(f"  ⚠️ 페이지 {page_num} 재시도 {attempt+1}/3 - {e}")
