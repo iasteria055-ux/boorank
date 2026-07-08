@@ -1,50 +1,50 @@
 {
-  "updated_at": "2026-07-08 19:13:46",
+  "updated_at": "2026-07-08 19:15:22",
   "quest_board": [
     {
-      "mem_id": "707435",
-      "name": "구가구가",
-      "val": "달성"
-    },
-    {
-      "mem_id": "707444",
-      "name": "염바다2",
-      "val": "달성"
+      "mem_id": "692736",
+      "name": "조해",
+      "val": "CLEAR"
     },
     {
       "mem_id": "517711",
       "name": "ㅇㅇ!",
-      "val": "달성"
+      "val": "CLEAR"
     },
     {
-      "mem_id": "701501",
-      "name": "염보야놀자",
-      "val": "달성"
+      "mem_id": "707435",
+      "name": "구가구가",
+      "val": "CLEAR"
     },
     {
-      "mem_id": "692736",
-      "name": "조해",
-      "val": "달성"
+      "mem_id": "707444",
+      "name": "염바다2",
+      "val": "CLEAR"
     },
     {
       "mem_id": "479340",
       "name": "노무연",
-      "val": "달성"
+      "val": "CLEAR"
     },
     {
-      "mem_id": "577520",
-      "name": "물소꺼져",
-      "val": "달성"
+      "mem_id": "701501",
+      "name": "염보야놀자",
+      "val": "CLEAR"
     },
     {
       "mem_id": "590525",
       "name": "ㄹㅋㄹㅋㄹㅋ",
-      "val": "달성"
+      "val": "CLEAR"
     },
     {
       "mem_id": "144953",
       "name": "피통왕통키",
-      "val": "달성"
+      "val": "CLEAR"
+    },
+    {
+      "mem_id": "577520",
+      "name": "물소꺼져",
+      "val": "CLEAR"
     }
   ],
   "donation_ranking": [
