@@ -180,21 +180,22 @@ def fetch_storage_page(page_num):
             for row in soup.find_all('tr'):
                 row_text = " ".join(row.stripped_strings)
 
-                # 기부
-                m_giver = re.search(pattern_giver, row_text)
-                if m_giver:
-                    mid_text = m_giver.group(1).strip()
-                    val = int(m_giver.group(2).replace(',', ''))
-                    if not any(kw in mid_text for kw in system_keywords):
-    parts = mid_text.split()
-    if parts:
-        nick = parts[0]
-        if nick not in ["운영자", "시스템", ""]:
-            if nick == "XOXA": nick = "초우코송이"
-            # ★ 10억(1,000,000,000) 이상이면 무시 (비정상 데이터)
-            if val <= 1000000000:
-                giver_data.append({'name': nick, 'val': val})
-
+               # 기부
+m_giver = re.search(pattern_giver, row_text)
+if m_giver:
+    mid_text = m_giver.group(1).strip()
+    val = int(m_giver.group(2).replace(',', ''))
+    if not any(kw in mid_text for kw in system_keywords):
+        parts = mid_text.split()
+        if parts:
+            nick = parts[0]
+            if nick not in ["운영자", "시스템", ""]:
+                if nick == "XOXA":
+                    nick = "초우코송이"
+                # 10억 이상이면 무시
+                if val <= 1000000000:
+                    giver_data.append({'name': nick, 'val': val})
+                    
                 # 일퀘 (수정)
 m_quest = re.search(pattern_quest, row_text)
 if m_quest:
