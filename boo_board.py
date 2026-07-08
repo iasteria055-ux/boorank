@@ -151,17 +151,18 @@ def fetch_storage_page(page_num):
                                 if nick == "XOXA": nick = "초우코송이"
                                 giver_data.append({'name': nick, 'val': val})
 
-                # 일퀘
-                m_quest = re.search(pattern_quest, row_text)
-                if m_quest:
-                    mid_text = m_quest.group(1).strip()
-                    val = int(m_quest.group(2).replace(',', ''))
-                    if "에게" in mid_text:
-                        parts = mid_text.split('에게')[0].split()
-                        if parts:
-                            nick = parts[-1]
-                            if nick not in ["운영자", "시스템", ""]:
-                                quest_data.append({'name': nick, 'val': val})
+                # 일퀘 (수정)
+m_quest = re.search(pattern_quest, row_text)
+if m_quest:
+    mid_text = m_quest.group(1).strip()
+    val = int(m_quest.group(2).replace(',', ''))
+    # 시스템 메시지 제외
+    if not any(kw in mid_text for kw in system_keywords) and "에게" in mid_text:
+        parts = mid_text.split('에게')[0].split()
+        if parts:
+            nick = parts[-1]
+            if nick not in ["운영자", "시스템", ""]:
+                quest_data.append({'name': nick, 'val': val})
             return {"donation": giver_data, "quest": quest_data}
         except Exception as e:
             print(f"  ⚠️ 페이지 {page_num} 재시도 {attempt+1}/3 - {e}")
