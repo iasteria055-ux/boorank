@@ -3,101 +3,103 @@ from bs4 import BeautifulSoup
 import re
 import pandas as pd
 import time
-import datetime
+import sys
+import json
+import os
 
 # ==========================================
 # 1. 설정 및 세션 초기화
 # ==========================================
-headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"}
+headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
 session = requests.Session()
 session.headers.update(headers)
 
-# 기존 미네랄 창고 설정 (최대 페이지 고정 해제)
 base_storage_url = "https://ygosu.com/board/pan_boo/?mode=mineral_storage&page="
-giver_list = []
-quest_list = []
+board_url = "https://ygosu.com/board/pan_boo/?page="
+
 pattern_giver = r'\d{2}-\d{2}-\d{2}\s*\([월화수목금토일]\)\s*\d{2}:\d{2}\s*(.*?)\+\s*([0-9,]+)'
 pattern_quest = r'\d{2}-\d{2}-\d{2}\s*\([월화수목금토일]\)\s*\d{2}:\d{2}\s*(.*?)-\s*([0-9,]+)'
 system_keywords = ["게시물", "댓글", "출석", "이벤트", "추천", "복권", "환전", "시스템"]
 
-# 신규 게시판 크롤링 (오늘의 일퀘) 설정
-board_url = "https://ygosu.com/board/pan_boo/?page="
-daily_stats = {} # { member_id: {'name': nick, 'posts': 0, 'comments': 0, 'profile_img': ''} }
+# 실행 모드 판별 (GitHub Actions에서 인자를 전달함)
+run_mode = sys.argv[1] if len(sys.argv) > 1 else 'fast'
+data_file = 'mineral_data.json'
 
-print("🚀 [1/3] 미네랄 창고 데이터 수집을 시작합니다...")
+giver_list = []
+quest_list = []
 
 # ==========================================
-# 2. 미네랄 창고 데이터 크롤링 (자동 동적 탐색)
+# 2. 미네랄 창고 처리 (모드에 따라 분기)
 # ==========================================
-page = 1
-while True:
-    try:
-        res = session.get(f"{base_storage_url}{page}")
-        res.encoding = 'utf-8'
-        soup = BeautifulSoup(res.text, 'html.parser')
-        
-        has_data = False
-        
-        for row in soup.find_all('tr'):
-            row_text = " ".join(row.stripped_strings)
+if run_mode == 'full' or not os.path.exists(data_file):
+    print("🌕 [FULL 모드] 자정 업데이트: 미네랄 창고 전체 데이터를 수집합니다...")
+    page = 1
+    while True:
+        try:
+            res = session.get(f"{base_storage_url}{page}")
+            res.encoding = 'utf-8'
+            soup = BeautifulSoup(res.text, 'html.parser')
             
-            # 날짜 형식이 존재하는지 확인하여 데이터가 있는 유효한 페이지인지 판별
-            if re.search(r'\d{2}-\d{2}-\d{2}', row_text):
-                has_data = True
+            has_data = False
+            for row in soup.find_all('tr'):
+                row_text = " ".join(row.stripped_strings)
+                if re.search(r'\d{2}-\d{2}-\d{2}', row_text):
+                    has_data = True
+                    
+                # [기부왕]
+                m_giver = re.search(pattern_giver, row_text)
+                if m_giver:
+                    mid_text = m_giver.group(1).strip()
+                    val = int(m_giver.group(2).replace(',', ''))
+                    if not any(kw in mid_text for kw in system_keywords):
+                        parts = mid_text.split()
+                        if parts:
+                            nick = parts[0]
+                            if nick not in ["운영자", "시스템", ""]:
+                                mem_id = ""
+                                a_tag = row.find('a', onclick=re.compile(r'show_nick_dropdown'))
+                                if a_tag:
+                                    m = re.search(r"show_nick_dropdown\([^,]+,\s*'([^']+)'", a_tag['onclick'])
+                                    if m: mem_id = m.group(1)
+                                        
+                                if nick == "XOXA": 
+                                    nick = "초우코송이"
+                                    mem_id = "705225"
+                                giver_list.append({'name': nick, 'val': val, 'mem_id': mem_id})
                 
-            # [기부왕]
-            m_giver = re.search(pattern_giver, row_text)
-            if m_giver:
-                mid_text = m_giver.group(1).strip()
-                val = int(m_giver.group(2).replace(',', ''))
-                if not any(kw in mid_text for kw in system_keywords):
-                    parts = mid_text.split()
-                    if parts:
-                        nick = parts[0]
-                        if nick not in ["운영자", "시스템", ""]:
-                            
-                            # 미니로그 아이디(member_id) 추출
-                            mem_id = ""
-                            a_tag = row.find('a', onclick=re.compile(r'show_nick_dropdown'))
-                            if a_tag:
-                                m = re.search(r"show_nick_dropdown\([^,]+,\s*'([^']+)'", a_tag['onclick'])
-                                if m:
-                                    mem_id = m.group(1)
-                                    
-                            # XOXA 유저는 초우코송이로 닉네임 변경 및 미니로그 아이디(705225) 강제 할당
-                            if nick == "XOXA": 
-                                nick = "초우코송이"
-                                mem_id = "705225"
+                # [기존 일퀘왕]
+                m_quest = re.search(pattern_quest, row_text)
+                if m_quest:
+                    mid_text = m_quest.group(1).strip()
+                    val = int(m_quest.group(2).replace(',', ''))
+                    if "에게" in mid_text:
+                        parts = mid_text.split('에게')[0].split()
+                        if parts:
+                            nick = parts[-1]
+                            if nick not in ["운영자", "시스템", ""]:
+                                quest_list.append({'name': nick, 'val': val})
                                 
-                            giver_list.append({'name': nick, 'val': val, 'mem_id': mem_id})
-            
-            # [기존 일퀘왕]
-            m_quest = re.search(pattern_quest, row_text)
-            if m_quest:
-                mid_text = m_quest.group(1).strip()
-                val = int(m_quest.group(2).replace(',', ''))
-                if "에게" in mid_text:
-                    parts = mid_text.split('에게')[0].split()
-                    if parts:
-                        nick = parts[-1]
-                        if nick not in ["운영자", "시스템", ""]:
-                            quest_list.append({'name': nick, 'val': val})
-                            
-        # 데이터가 없는 빈 페이지(끝 페이지 도달)라면 무한루프 종료
-        if not has_data:
-            print(f"👉 총 {page-1}페이지까지 탐색을 완료했습니다.")
+            if not has_data or page > 5000:
+                print(f"👉 총 {page-1}페이지까지 탐색을 완료했습니다.")
+                break
+            page += 1
+        except Exception:
             break
             
-        page += 1
-        
-        # 무한 루프 방지용 안전장치 (최대 5000페이지)
-        if page > 5000:
-            break
-            
-    except Exception as e:
-        break
+    # 모은 데이터를 JSON 파일로 저장 (다음 30분 작업들이 빠르게 불러다 쓰도록)
+    with open(data_file, 'w', encoding='utf-8') as f:
+        json.dump({'giver': giver_list, 'quest': quest_list}, f, ensure_ascii=False)
+else:
+    print("🌗 [FAST 모드] 30분 업데이트: 저장된 미네랄 창고 데이터를 빠르게 불러옵니다...")
+    try:
+        with open(data_file, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            giver_list = data.get('giver', [])
+            quest_list = data.get('quest', [])
+    except:
+        print("데이터 불러오기 실패, 빈 상태로 진행합니다.")
 
-# 합산 및 정렬 (상위 50명) - 기부자는 mem_id도 함께 보존
+# DataFrame 처리
 df_giver = pd.DataFrame(giver_list)
 if not df_giver.empty:
     df_giver = df_giver.groupby('name', as_index=False).agg({'val': 'sum', 'mem_id': 'first'}).sort_values('val', ascending=False).head(50)
@@ -106,16 +108,16 @@ df_quest = pd.DataFrame(quest_list)
 if not df_quest.empty:
     df_quest = df_quest.groupby('name', as_index=False).sum().sort_values('val', ascending=False).head(50)
 
-# ==========================================
-# 3. 오늘자 게시판 활동 크롤링 (게시글 & 댓글)
-# ==========================================
-print("🚀 [2/3] 오늘의 게시판 활동을 추적합니다 (약 1~2분 소요)...")
 
+# ==========================================
+# 3. 오늘자 게시판 활동 크롤링 (게시글 & 댓글) -> 이건 무조건 실행
+# ==========================================
+print("🚀 [공통] 오늘의 게시판 일퀘 활동을 추적합니다...")
+daily_stats = {}
 stop_crawling = False
-# 오늘 게시물이 최대 15페이지 안에 있다고 가정 (안전장치)
+
 for page in range(1, 16): 
     if stop_crawling: break
-    
     try:
         res = session.get(f"{board_url}{page}")
         res.encoding = 'utf-8'
@@ -125,20 +127,16 @@ for page in range(1, 16):
         if not trs: break
         
         for tr in trs:
-            # 공지사항은 날짜 비교에서 꼬일 수 있으므로 패스
-            if tr.select_one('.notice') or tr.select_one('img[alt="공지"]'): 
-                continue
+            if tr.select_one('.notice') or tr.select_one('img[alt="공지"]'): continue
             
             date_td = tr.select_one('.date')
             if not date_td: continue
             date_text = date_td.text.strip()
             
-            # 날짜에 '-' 나 '.' 이 포함되어 있으면 어제 이전 게시물임 (오늘 글은 '14:20' 처럼 시간만 표시됨)
             if '-' in date_text or '.' in date_text:
                 stop_crawling = True
                 break
                 
-            # --- 작성자 카운트 ---
             name_a = tr.select_one('.name a')
             if name_a and 'show_nick_dropdown' in name_a.get('onclick', ''):
                 m = re.search(r"show_nick_dropdown\([^,]+,\s*'([^']+)'", name_a['onclick'])
@@ -149,19 +147,14 @@ for page in range(1, 16):
                         daily_stats[mem_id] = {'name': nick, 'posts': 0, 'comments': 0, 'profile_img': ''}
                     daily_stats[mem_id]['posts'] += 1
             
-            # --- 댓글 카운트를 위해 게시글 접속 ---
             post_a = tr.select_one('.tit a')
             if post_a:
                 post_url = post_a['href']
-                if not post_url.startswith('http'):
-                    post_url = "https://ygosu.com" + post_url
-                
+                if not post_url.startswith('http'): post_url = "https://ygosu.com" + post_url
                 try:
                     p_res = session.get(post_url)
                     p_res.encoding = 'utf-8'
                     p_soup = BeautifulSoup(p_res.text, 'html.parser')
-                    
-                    # 댓글 작성자들 수집
                     for cmt_name in p_soup.select('.comment_list .name a'):
                         if 'show_nick_dropdown' in cmt_name.get('onclick', ''):
                             cm = re.search(r"show_nick_dropdown\([^,]+,\s*'([^']+)'", cmt_name['onclick'])
@@ -171,20 +164,17 @@ for page in range(1, 16):
                                 if c_mem_id not in daily_stats:
                                     daily_stats[c_mem_id] = {'name': c_nick, 'posts': 0, 'comments': 0, 'profile_img': ''}
                                 daily_stats[c_mem_id]['comments'] += 1
-                except Exception as e:
+                except:
                     pass
-    except Exception as e:
+    except:
         break
 
 # ==========================================
-# 4. 일퀘 완료자 필터링 & 미니로그 프로필 수집
+# 4. 일퀘 완료자 필터링 & HTML 생성
 # ==========================================
-print("🚀 [3/3] 일퀘 완료자 선별 및 프로필 이미지를 수집합니다...")
-
 completed_users = []
 for mem_id, data in daily_stats.items():
     if data['posts'] >= 1 and data['comments'] >= 20:
-        # 미니로그 접속해서 프로필 사진 긁어오기
         try:
             m_res = session.get(f"https://ygosu.com/minilog/?m={mem_id}")
             m_res.encoding = 'utf-8'
@@ -193,11 +183,9 @@ for mem_id, data in daily_stats.items():
             
             if img_tag and img_tag.get('src'):
                 img_url = img_tag['src']
-                if not img_url.startswith('http'):
-                    img_url = "https://ygosu.com" + img_url
+                if not img_url.startswith('http'): img_url = "https://ygosu.com" + img_url
                 data['profile_img'] = img_url
             else:
-                # 프로필 사진이 없는 경우 기본 이미지 (알파벳 이니셜 아바타)
                 data['profile_img'] = f"https://ui-avatars.com/api/?name={data['name']}&background=351c61&color=fff&bold=true"
         except:
             data['profile_img'] = f"https://ui-avatars.com/api/?name={data['name']}&background=351c61&color=fff&bold=true"
@@ -205,18 +193,12 @@ for mem_id, data in daily_stats.items():
         data['mem_id'] = mem_id
         completed_users.append(data)
 
-# 댓글순 -> 게시글순으로 정렬
 completed_users.sort(key=lambda x: (x['comments'], x['posts']), reverse=True)
 
-# 통계 데이터 계산
 total_active_users = len(daily_stats)
 total_posts_today = sum(d['posts'] for d in daily_stats.values())
 total_comments_today = sum(d['comments'] for d in daily_stats.values())
 total_completed = len(completed_users)
-
-# ==========================================
-# 5. HTML 생성 (UI 대규모 개편)
-# ==========================================
 
 def generate_rows(df, type_class):
     html = ""
@@ -233,10 +215,8 @@ def generate_rows(df, type_class):
             rank_class = "top-3"
             rank_icon = "🥉 03"
             
-        # 미니로그 링크 처리 (mem_id가 있는 기부자만 링크 연결)
         mem_id = r.get('mem_id', '') if 'mem_id' in r else ''
         if mem_id:
-            # 타겟을 _blank로 주어 클릭 시 새 창에서 미니로그가 열리도록 적용
             name_display = f'<a href="https://ygosu.com/minilog/?m={mem_id}" target="_blank" style="color: inherit; text-decoration: none;"><span class="bouncy-text">{r["name"]}</span></a>'
         else:
             name_display = f'<span class="bouncy-text">{r["name"]}</span>'
@@ -252,7 +232,6 @@ def generate_rows(df, type_class):
 giver_html = generate_rows(df_giver if not df_giver.empty else pd.DataFrame(), "val-giver")
 quest_html = generate_rows(df_quest if not df_quest.empty else pd.DataFrame(), "val-quest")
 
-# 신규 일퀘 완료자 HTML 생성
 daily_html = ""
 if completed_users:
     for i, u in enumerate(completed_users):
@@ -280,7 +259,6 @@ else:
     </div>
     '''
 
-# 전체 HTML 조합
 html_content = f"""<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -320,9 +298,6 @@ html_content = f"""<!DOCTYPE html>
 
         .content-wrap {{ position: relative; padding: 40px 30px; z-index: 10; display: flex; flex-direction: column; }}
 
-        /* =========================================
-           상단 헤더 & 유튜브 구역 (가로 배치)
-           ========================================= */
         .top-header-area {{
             display: flex; justify-content: space-between; align-items: flex-end;
             margin-bottom: 25px; gap: 20px;
@@ -349,7 +324,6 @@ html_content = f"""<!DOCTYPE html>
             margin: 0;
         }}
 
-        /* 우측 작은 유튜브 박스 */
         .yt-box-mini {{ 
             width: 320px; height: 180px; flex-shrink: 0;
             background: var(--black); border: 4px solid var(--dj-purple); 
@@ -358,9 +332,6 @@ html_content = f"""<!DOCTYPE html>
         }}
         .yt-box-mini iframe {{ width: 100%; height: 100%; transform: skewX(2deg); display: block; }}
 
-        /* =========================================
-           대시보드 통계 카드
-           ========================================= */
         .dashboard-grid {{
             display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
             margin-bottom: 25px;
@@ -375,9 +346,6 @@ html_content = f"""<!DOCTYPE html>
         .stat-value {{ font-size: 26px; font-weight: 900; color: var(--dj-cyan); font-family: 'Montserrat', sans-serif; }}
         .stat-card.highlight .stat-value {{ color: var(--dj-yellow); }}
 
-        /* =========================================
-           탭 & 리스트 영역
-           ========================================= */
         .tab-menu {{ display: flex; gap: 15px; margin-bottom: 20px; }}
         .tab-btn {{ 
             flex: 1; padding: 14px; background: var(--white); 
@@ -398,7 +366,6 @@ html_content = f"""<!DOCTYPE html>
         .list-container::-webkit-scrollbar-track {{ background: rgba(53, 28, 97, 0.05); border-radius: 4px; }}
         .list-container::-webkit-scrollbar-thumb {{ background: var(--dj-purple); border-radius: 4px; }}
 
-        /* 기존 랭킹 리스트 디자인 */
         .rank-row {{ 
             display: flex; align-items: center; background: var(--white); 
             border: 2px solid var(--dj-purple); border-left: 8px solid var(--dj-purple);
@@ -418,9 +385,6 @@ html_content = f"""<!DOCTYPE html>
         .val-giver {{ color: var(--dj-orange); }}
         .val-quest {{ color: var(--dj-cyan); }}
 
-        /* =========================================
-           신규 '오늘의 일퀘' 리스트 (네온 스타일)
-           ========================================= */
         .daily-list {{ background: #1a1a24; padding: 15px; border-radius: 12px; border: 2px solid var(--dj-purple); }}
         .daily-row-link {{ text-decoration: none; color: inherit; display: block; }}
         .daily-row {{ 
@@ -455,7 +419,6 @@ html_content = f"""<!DOCTYPE html>
         }}
         .bouncy-text:hover {{ transform: translateY(-3px) scale(1.05); cursor: default; text-shadow: 0 4px 8px rgba(0,0,0,0.15); }}
         
-        /* 모바일 반응형 */
         @media (max-width: 700px) {{
             .content-wrap {{ padding: 25px 15px; }}
             .top-header-area {{ flex-direction: column; align-items: flex-start; gap: 15px; }}
@@ -479,7 +442,6 @@ html_content = f"""<!DOCTYPE html>
     <div class="game-frame">
         <div class="content-wrap">
             
-            <!-- 상단: 타이틀 & 유튜브 -->
             <div class="top-header-area">
                 <div class="header-titles">
                     <div class="top-subtitle">
@@ -499,7 +461,6 @@ html_content = f"""<!DOCTYPE html>
                 </div>
             </div>
 
-            <!-- 중단: 대시보드 통계 -->
             <div class="dashboard-grid">
                 <div class="stat-card highlight">
                     <div class="stat-title">일퀘 완료자</div>
@@ -519,24 +480,18 @@ html_content = f"""<!DOCTYPE html>
                 </div>
             </div>
 
-            <!-- 하단: 탭 메뉴 & 리스트 -->
             <div class="tab-menu">
                 <button class="tab-btn active" id="btnDaily" onclick="show('daily')"><span>DAILY QUEST</span></button>
                 <button class="tab-btn" id="btnGiver" onclick="show('giver')"><span>DONATION</span></button>
                 <button class="tab-btn" id="btnQuest" onclick="show('quest')"><span>ALL QUEST</span></button>
             </div>
 
-            <!-- 1. 오늘의 일퀘 탭 (신규) -->
             <div id="daily" class="list-container daily-list">
                 {daily_html}
             </div>
-
-            <!-- 2. 기부왕 탭 -->
             <div id="giver" class="list-container giver-list" style="display:none;">
                 {giver_html}
             </div>
-
-            <!-- 3. 기존 일퀘왕 탭 -->
             <div id="quest" class="list-container quest-list" style="display:none;">
                 {quest_html}
             </div>
@@ -561,4 +516,4 @@ html_content = f"""<!DOCTYPE html>
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(html_content)
 
-print("✅ 성공적으로 생성되었습니다! 깃허브에 커밋해주세요.")
+print("✅ 성공적으로 생성되었습니다!")
