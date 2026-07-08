@@ -274,15 +274,18 @@
                 let nameHtml = "";
                 let valHtml = "";
 
-// 탭 종류에 따른 링크 분기 처리
+// 1. 프로필 이미지 요소 생성 (mem_id 활용)
+                let profileImg = `<img src="https://ygosu.com/board/skin/profile/pf_${r.mem_id}.gif" style="width:28px; height:28px; border-radius:4px; margin-right:10px; vertical-align:middle; border:1px solid #e8eaef; background:#f2f3f7;" onerror="this.style.display='none'">`;
+
+                // 2. 탭 종류에 따른 링크 및 표시 글자(달성) 분기 처리
                 if (tabType === 'daily') {
-                    nameHtml = `<a href="https://ygosu.com/board/pan_boo/?mode=mineral_storage&mode2=withdraw&member=${r.mem_id}" target="_blank" class="bouncy-text link-text">${r.name}</a>`;
-                    valHtml = `${r.val} 회`;
+                    nameHtml = `<div style="display:flex; align-items:center;">${profileImg}<a href="https://ygosu.com/board/pan_boo/?mode=mineral_storage&mode2=withdraw&member=${r.mem_id}" target="_blank" class="bouncy-text link-text">${r.name}</a></div>`;
+                    valHtml = `달성`; // XX 회 대신 '달성' 고정 출력
                 } else if (tabType === 'giver') {
-                    nameHtml = `<a href="https://ygosu.com/minilog/?m=${r.mem_id}" target="_blank" class="bouncy-text link-text">${r.name}</a>`;
+                    nameHtml = `<div style="display:flex; align-items:center;">${profileImg}<a href="https://ygosu.com/minilog/?m=${r.mem_id}" target="_blank" class="bouncy-text link-text">${r.name}</a></div>`;
                     valHtml = `${r.val.toLocaleString()} MN`;
                 } else {
-                    nameHtml = `<span class="bouncy-text">${r.name}</span>`;
+                    nameHtml = `<div style="display:flex; align-items:center;">${profileImg}<span class="bouncy-text">${r.name}</span></div>`;
                     valHtml = `${r.val.toLocaleString()} MN`;
                 }
 
