@@ -60,19 +60,24 @@ def process_board_page(page_num):
         return []
 
 def parse_relative_time(text):
+    """'4시간 전', '방금', '00:51' 등 오늘 시간을 datetime으로 변환
+       'X일 전'은 오늘이 아니므로 None 반환 → 집계 제외"""
     now = datetime.now()
     text = text.strip()
     if '방금' in text or '초 전' in text:
         return now
-    m = re.search(r'(\d+)\s*분\s*전', text)
-    if m:
-        return now - timedelta(minutes=int(m.group(1)))
-    m = re.search(r'(\d+)\s*시간\s*전', text)
-    if m:
-        return now - timedelta(hours=int(m.group(1)))
+    if '분 전' in text:
+        m = re.search(r'(\d+)\s*분\s*전', text)
+        if m:
+            return now - timedelta(minutes=int(m.group(1)))
+    if '시간 전' in text:
+        m = re.search(r'(\d+)\s*시간\s*전', text)
+        if m:
+            return now - timedelta(hours=int(m.group(1)))
     if re.match(r'^\s*\d{1,2}:\d{2}\s*$', text):
         h, mi = map(int, text.strip().split(':'))
         return now.replace(hour=h, minute=mi, second=0, microsecond=0)
+    # 'X일 전', '어제' 등은 오늘이 아니므로 None
     return None
 
 def get_comments_from_post(post_url):
@@ -91,8 +96,7 @@ def get_comments_from_post(post_url):
                 continue
             comment_time = parse_relative_time(time_text)
             if comment_time is None:
-                print(f"    ⚠️ 시간 파싱 실패: '{time_text}' (게시글: {post_url})")
-                continue
+                continue   # X일 전 등 오늘 아닌 댓글은 자동 제외
 
             a_tag = li.find('a', onclick=re.compile(r'show_nick_dropdown'))
             if not a_tag:
