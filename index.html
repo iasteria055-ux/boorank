@@ -11,12 +11,12 @@
         :root {
             --dj-purple: #351c61; 
             --dj-yellow: #f8c117; 
-            /* 도네이션용 붉은 주황색 */
-            --dj-orange: #ea5920; 
-            /* 리워드용 청량하고 선명한 하늘색 */
-            --dj-cyan: #1ebfd4; 
-            /* CLEAR 및 포인트 마젠타 */
-            --dj-magenta: #e62253; 
+            /* 도네이션 숫자: 스크린샷의 강렬한 레드-오렌지 */
+            --dj-orange: #f24b0f; 
+            /* 리워드 숫자: 스크린샷의 쨍하고 짙은 스카이블루 */
+            --dj-cyan: #0ebed4; 
+            /* CLEAR 텍스트: 리듬게임 감성의 딥 마젠타 */
+            --dj-magenta: #d91c49; 
             --dj-bg: #f2f3f7; 
             --dj-grid: #e8eaef; 
             --white: #ffffff; 
@@ -67,6 +67,7 @@
             color: var(--dj-purple); background: var(--white); letter-spacing: 1px;
         }
         .hud-line { flex: 1; height: 1px; background: var(--dj-purple); opacity: 0.2; }
+        .hud-cross { font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 900; color: var(--dj-magenta); }
 
         .eq-bars { display: flex; gap: 3px; align-items: flex-end; height: 14px; opacity: 0.8; }
         .eq-bar { width: 4px; background: var(--dj-cyan); border-radius: 2px; animation: eq-play 1s infinite alternate; }
@@ -77,19 +78,22 @@
         .eq-bar:nth-child(5) { background: var(--dj-purple); animation-delay: 0.2s; }
         @keyframes eq-play { 0% { height: 4px; } 100% { height: 14px; } }
 
-        .content-wrap { position: relative; padding: 40px 30px 40px; z-index: 10; display: flex; flex-direction: column; flex: 1; min-height: 0; }
+        /* 하단 빈 공간 방지를 위해 flex: 1 유지 */
+        .content-wrap { position: relative; padding: 45px 30px 45px; z-index: 10; display: flex; flex-direction: column; flex: 1; min-height: 0; }
 
         /* -------------------------------------
-           상단 헤더 영역 (여백 완전 제거 및 팝아트 밸런스)
+           상단 헤더 영역 (정교한 여백/겹침 조절)
         -------------------------------------- */
         .top-header-area {
-            display: flex; justify-content: space-between; align-items: flex-start; /* flex-end에서 flex-start로 변경하여 위로 밀착 */
-            margin-bottom: 25px; gap: 20px;
+            display: flex; justify-content: space-between; align-items: flex-start;
+            margin-bottom: 20px; gap: 20px;
         }
         
         .header-titles { 
             display: flex; flex-direction: column; 
-            position: relative; padding-top: 5px; /* 타이틀 상단 밀착을 위해 패딩 축소 */
+            position: relative; 
+            /* BOO BOARD 타이틀이 서브타이틀을 덮지 않도록 안전 마진 추가 */
+            padding-top: 10px; 
         }
         
         /* 세련된 팝아트 데코레이션 */
@@ -97,7 +101,7 @@
             position: absolute; width: 60px; height: 60px; 
             background-image: radial-gradient(var(--dj-cyan) 20%, transparent 20%);
             background-size: 8px 8px;
-            top: 10px; left: 160px; z-index: 0; opacity: 0.5;
+            top: 5px; left: 160px; z-index: 0; opacity: 0.5;
         }
         .deco-star {
             position: absolute; width: 25px; height: 25px;
@@ -111,7 +115,7 @@
         .deco-crosshair {
             position: absolute; width: 35px; height: 35px;
             border: 2px solid var(--dj-cyan); border-radius: 50%;
-            top: -15px; left: 120px; z-index: 0; opacity: 0.6;
+            top: -5px; left: 120px; z-index: 0; opacity: 0.6;
             display: flex; justify-content: center; align-items: center;
         }
         .deco-crosshair::before { content: ''; width: 2px; height: 100%; background: var(--dj-cyan); }
@@ -128,12 +132,12 @@
             font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 900;
             color: var(--dj-purple); letter-spacing: 2px; opacity: 0.8;
             display: flex; align-items: center; gap: 12px; 
-            margin-bottom: 0; /* 여백 완전 제거 */
-            margin-left: 5px; position: relative; z-index: 2;
+            /* BOO BOARD 타이틀과의 겹침 방지를 위해 마진 확보 */
+            margin-bottom: 5px; margin-left: 5px; position: relative; z-index: 2;
         }
         .top-subtitle .barcode { font-size: 14px; letter-spacing: 3px; color: var(--dj-cyan); opacity: 0.8; }
 
-        .header { position: relative; display: inline-block; cursor: default; z-index: 2; margin-top: -5px; /* 타이틀간 간격 최소화 */ }
+        .header { position: relative; display: inline-block; cursor: default; z-index: 2; margin-top: 0; }
         .block-cyan { position: absolute; width: 40px; height: 20px; background: var(--dj-cyan); top: -2px; left: -5px; z-index: 1; transform: skewX(-15deg); box-shadow: 2px 2px 0 var(--dj-purple); }
         
         .header h1 { 
@@ -178,34 +182,38 @@
         .tab-btn#btnQuest.active { color: var(--dj-cyan); box-shadow: 4px 4px 0 var(--dj-cyan); }
 
         /* -------------------------------------
-           랭킹 리스트 영역
+           랭킹 리스트 영역 (flex: 1로 하단 여백 완벽히 채움)
         -------------------------------------- */
         .list-container { 
             display: flex; flex-direction: column; gap: 8px; 
+            /* 화면 하단까지 리스트가 꽉 차도록 확장 */
             flex: 1; overflow-y: auto; padding-right: 10px; padding-bottom: 5px;
         }
         .list-container::-webkit-scrollbar { width: 8px; }
         .list-container::-webkit-scrollbar-track { background: rgba(53, 28, 97, 0.05); border-radius: 4px; }
         .list-container::-webkit-scrollbar-thumb { background: var(--dj-purple); border-radius: 4px; }
 
+        /* 4등 이하 리스트 테두리 누락 문제 해결 */
         .rank-row { 
             display: flex; align-items: center; background: var(--white); 
-            border: 1px solid var(--dj-purple); border-left: 6px solid var(--dj-purple);
+            /* 모든 항목에 기본 보라색 테두리 강제 적용 */
+            border: 1px solid var(--dj-purple) !important; 
+            border-left: 6px solid var(--dj-purple) !important;
             padding: 10px 15px; font-weight: 900; flex-shrink: 0;
             transform: skewX(-2deg); 
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s, background-color 0.2s;
         }
         
-        .giver-list .rank-row { border-left-color: var(--dj-orange); box-shadow: 2px 2px 0 var(--dj-orange); }
-        .quest-list .rank-row { border-left-color: var(--dj-cyan); box-shadow: 2px 2px 0 var(--dj-cyan); }
+        .giver-list .rank-row { border-left-color: var(--dj-orange) !important; box-shadow: 2px 2px 0 var(--dj-orange); }
+        .quest-list .rank-row { border-left-color: var(--dj-cyan) !important; box-shadow: 2px 2px 0 var(--dj-cyan); }
         
         .rank-row:hover { transform: skewX(-2deg) translateX(5px) translateY(-1px); }
         .giver-list .rank-row:hover { box-shadow: -2px 4px 0 var(--dj-orange); background: #fffcf7; }
         .quest-list .rank-row:hover { box-shadow: -2px 4px 0 var(--dj-cyan); background: #f5ffff; }
 
-        .rank-row.top-1 { background: repeating-linear-gradient(-45deg, #fff9e6, #fff9e6 8px, #ffffff 8px, #ffffff 16px); border-color: #d4af37; border-left-color: #d4af37; box-shadow: 2px 2px 0 #d4af37; }
-        .rank-row.top-2 { background: repeating-linear-gradient(-45deg, #f5f5f5, #f5f5f5 8px, #ffffff 8px, #ffffff 16px); border-color: #a8a9ad; border-left-color: #a8a9ad; box-shadow: 2px 2px 0 #a8a9ad; }
-        .rank-row.top-3 { background: repeating-linear-gradient(-45deg, #fff0e6, #fff0e6 8px, #ffffff 8px, #ffffff 16px); border-color: #cd7f32; border-left-color: #cd7f32; box-shadow: 2px 2px 0 #cd7f32; }
+        .rank-row.top-1 { background: repeating-linear-gradient(-45deg, #fff9e6, #fff9e6 8px, #ffffff 8px, #ffffff 16px); border-color: #d4af37 !important; border-left-color: #d4af37 !important; box-shadow: 2px 2px 0 #d4af37; }
+        .rank-row.top-2 { background: repeating-linear-gradient(-45deg, #f5f5f5, #f5f5f5 8px, #ffffff 8px, #ffffff 16px); border-color: #a8a9ad !important; border-left-color: #a8a9ad !important; box-shadow: 2px 2px 0 #a8a9ad; }
+        .rank-row.top-3 { background: repeating-linear-gradient(-45deg, #fff0e6, #fff0e6 8px, #ffffff 8px, #ffffff 16px); border-color: #cd7f32 !important; border-left-color: #cd7f32 !important; box-shadow: 2px 2px 0 #cd7f32; }
 
         .rank-num { font-size: 20px; color: #ccc; width: 45px; font-style: italic; font-family: 'Montserrat', sans-serif; white-space: nowrap; transform: skewX(2deg); }
         .rank-row.top-1 .rank-num { color: #d4af37; font-size: 20px; width: 75px; text-shadow: 1px 1px 0 rgba(0,0,0,0.1); }
@@ -215,7 +223,7 @@
         .rank-name { flex: 1; font-size: 16px; color: var(--dj-purple); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 10px; transform: skewX(2deg); }
         .rank-val { font-size: 18px; font-style: italic; font-family: 'Montserrat', sans-serif; text-align: right; white-space: nowrap; transform: skewX(2deg); }
 
-        /* 요청 1. 색감 적용: 텍스트 컬러 지정 (마젠타, 붉은주황, 하늘색) */
+        /* 요청하신 정확한 텍스트 컬러 완벽 적용 */
         .val-daily { color: var(--dj-magenta); }
         .val-giver { color: var(--dj-orange); }
         .val-quest { color: var(--dj-cyan); }
@@ -245,7 +253,7 @@
         }
 
         /* -------------------------------------
-           하단 전광판 (남색+주황색 롤백)
+           하단 전광판
         -------------------------------------- */
         .marquee-wrap { 
             position: absolute; bottom: 0; left: 0; width: 100%; height: 26px;
@@ -262,6 +270,7 @@
             .game-frame { border-width: 6px; border-radius: 12px; }
             .content-wrap { padding: 30px 15px 35px; }
             .top-header-area { flex-direction: column; align-items: flex-start; gap: 15px; margin-bottom: 15px; }
+            .header-titles { padding-top: 5px; }
             .header h1 { font-size: 46px; text-shadow: 2px 2px 0 var(--dj-purple), 3px 3px 0 rgba(0,0,0,0.1); }
             
             .deco-dot-matrix { left: 120px; top: 0px; width: 30px; height: 30px; background-size: 5px 5px; }
@@ -275,7 +284,7 @@
             .tab-btn { font-size: 13px; padding: 10px; border-width: 2px; box-shadow: 2px 2px 0 var(--dj-purple); transform: skewX(-5deg); }
             .tab-btn span { transform: skewX(5deg); }
             
-            .rank-row { transform: skewX(0); padding: 8px 10px; border-left-width: 4px; box-shadow: 2px 2px 0 var(--dj-purple) !important; }
+            .rank-row { transform: skewX(0); padding: 8px 10px; border-left-width: 4px !important; box-shadow: 2px 2px 0 var(--dj-purple) !important; }
             .rank-num, .rank-name, .rank-val { transform: skewX(0); font-size: 14px; }
             .rank-num { width: 35px; }
             .rank-val { min-width: 70px; }
@@ -294,6 +303,7 @@
                 <div class="eq-bars">
                     <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
                 </div>
+                <div class="hud-cross">+</div>
             </div>
         </div>
 
@@ -332,6 +342,7 @@
             <div id="giver" class="list-container giver-list" style="display:none;"></div>
             <div id="quest" class="list-container quest-list" style="display:none;"></div>
 
+            <!-- 하단 여백을 세련되게 채워줄 감사 문구 -->
             <div class="thank-you-msg">
                 ★ THANK YOU FOR COMPLETING THE DAILY QUEST! ★
             </div>
@@ -371,7 +382,7 @@
             }
         }
 
-        // 랭킹 행 생성 (색감 적용)
+        // 랭킹 행 생성
         function createRows(dataList, typeClass, tabType) {
             if (!dataList || dataList.length === 0) {
                 return '<div style="text-align:center; padding:20px; color:#999; font-weight:900;">조건을 달성한 사람이 아직 없습니다.</div>';
