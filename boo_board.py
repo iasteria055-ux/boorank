@@ -294,6 +294,13 @@ def main():
         data['donation_ranking'] = donations
         data['quest_ranking'] = quests
 
+# 1. 일퀘 달성자들을 시간 순으로 정렬 (데이터 들어온 순서 상관없음)
+    data['quest_board'] = sorted(data['quest_board'], key=lambda x: x['time'])
+
+    # 2. 기부왕/일퀘왕 랭킹도 밸류(val) 기준으로 재정렬
+    data['donation_ranking'] = sorted(data['donation_ranking'], key=lambda x: x['val'], reverse=True)
+    data['quest_ranking'] = sorted(data['quest_ranking'], key=lambda x: x['val'], reverse=True)
+
     data['updated_at'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     with open('data.json', 'w', encoding='utf-8') as f:
