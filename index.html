@@ -12,12 +12,14 @@
             --dj-purple: #351c61; --dj-yellow: #f8c117; --dj-orange: #ea5920;
             --dj-cyan: #1ebfd4; --dj-magenta: #e62253; --dj-bg: #f2f3f7;
             --dj-grid: #e8eaef; --white: #ffffff; --black: #111111;
+            --dj-navy: #15162c; /* 전광판용 남색 부활 */
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Pretendard', sans-serif;
             background-color: var(--dj-bg);
+            /* 배경 사선 패턴 */
             background-image: repeating-linear-gradient(45deg, #e8eaef 0, #e8eaef 2px, transparent 2px, transparent 20px);
             display: flex; justify-content: center; align-items: center;
             height: 100vh; padding: 2vh 10px; overflow: hidden;
@@ -31,12 +33,16 @@
                 linear-gradient(var(--dj-grid) 1px, transparent 1px),
                 linear-gradient(90deg, var(--dj-grid) 1px, transparent 1px);
             background-size: 40px 40px;
-            border: 12px solid var(--dj-purple);
-            border-radius: 20px;
+            /* 테두리는 기존 느낌 유지하되 살짝 깔끔하게(10px) */
+            border: 10px solid var(--dj-purple);
+            border-radius: 16px;
             position: relative; overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.15), inset 0 0 0 4px #f0f2f5;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15), inset 0 0 0 4px #f0f2f5;
         }
 
+        /* -------------------------------------
+           HUD 오버레이 및 상단 서브타이틀 이동
+        -------------------------------------- */
         .hud-overlay {
             position: absolute; top: 18px; bottom: 18px; left: 18px; right: 18px;
             pointer-events: none; z-index: 5; border: 1px solid rgba(53, 28, 97, 0.1);
@@ -48,16 +54,28 @@
         .hud-corner.br { bottom: -2px; right: -2px; border-left: none; border-top: none; }
 
         .hud-top { position: absolute; top: 15px; left: 15px; right: 15px; display: flex; align-items: center; gap: 15px; }
-        .hud-bottom { position: absolute; bottom: 15px; left: 15px; right: 15px; display: flex; align-items: center; gap: 15px; }
-
+        
+        /* MINERAL STORAGE 배지와 이동된 서브타이틀을 감싸는 컨테이너 */
+        .hud-top-left-group { display: flex; flex-direction: column; gap: 4px; }
+        
         .hud-badge {
             border: 2px solid var(--dj-purple); padding: 2px 10px;
             font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 900;
-            color: var(--dj-purple); background: var(--white);
+            color: var(--dj-purple); background: var(--white); align-self: flex-start;
         }
+        
+        /* 로고 위에 있던 텍스트를 이쪽으로 옮김 */
+        .top-subtitle {
+            font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 900;
+            color: var(--dj-purple); letter-spacing: 2px; opacity: 0.7;
+            display: flex; align-items: center; gap: 8px; margin-left: 2px;
+        }
+        .top-subtitle .barcode { font-size: 12px; letter-spacing: 3px; color: var(--dj-cyan); opacity: 0.8; }
+
         .hud-line { flex: 1; height: 1px; background: var(--dj-purple); opacity: 0.2; }
         .hud-cross { font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 900; color: var(--dj-magenta); }
 
+        .hud-bottom { position: absolute; bottom: 15px; left: 15px; right: 15px; display: flex; align-items: center; gap: 15px; }
         .hud-side {
             position: absolute; top: 50%; transform: translateY(-50%);
             font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 900;
@@ -76,9 +94,11 @@
         .eq-bar:nth-child(5) { background: var(--dj-purple); animation-delay: 0.2s; }
         @keyframes eq-play { 0% { height: 4px; } 100% { height: 16px; } }
 
-        .content-wrap { position: relative; padding: 45px 35px 30px; z-index: 10; display: flex; flex-direction: column; flex: 1; min-height: 0; }
+        /* -------------------------------------
+           메인 콘텐츠 래퍼
+        -------------------------------------- */
+        .content-wrap { position: relative; padding: 65px 35px 30px; z-index: 10; display: flex; flex-direction: column; flex: 1; min-height: 0; }
 
-        /* --- 신규: 랭킹 공간 확보를 위한 상단 가로 배치 레이아웃 --- */
         .top-dashboard-area {
             display: flex; justify-content: space-between; align-items: flex-end;
             margin-bottom: 25px; gap: 15px;
@@ -89,51 +109,51 @@
             position: relative;
         }
 
-        /* 팝아트 데코레이션 요소 대폭 추가 */
+        /* -------------------------------------
+           팝아트 데코레이션 (깔끔하게 리뉴얼)
+        -------------------------------------- */
+        /* 망점 무늬 (너무 강하지 않게) */
         .deco-dot-matrix {
-            position: absolute; width: 60px; height: 60px; 
+            position: absolute; width: 50px; height: 50px; 
             background-image: radial-gradient(var(--dj-cyan) 20%, transparent 20%);
-            background-size: 8px 8px;
-            top: -20px; left: 180px; z-index: 0; opacity: 0.6;
+            background-size: 7px 7px;
+            top: -10px; left: 140px; z-index: 0; opacity: 0.5;
         }
+        /* 회전하는 별 (포인트 컬러) */
         .deco-star {
-            position: absolute; width: 30px; height: 30px;
+            position: absolute; width: 22px; height: 22px;
             background: var(--dj-magenta);
             clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-            top: 20px; left: 240px; z-index: 2;
-            animation: spin 6s linear infinite;
+            top: 25px; left: 195px; z-index: 2;
+            animation: spin 5s linear infinite;
         }
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        
+        /* 하단 빗금 포인트 (주황색 공 대신 사용) */
         .deco-stripe-box {
-            position: absolute; width: 80px; height: 25px;
-            background: repeating-linear-gradient(-45deg, var(--dj-orange), var(--dj-orange) 4px, transparent 4px, transparent 8px);
-            bottom: -15px; left: -10px; z-index: 0;
-            transform: skewX(-15deg);
+            position: absolute; width: 60px; height: 20px;
+            background: repeating-linear-gradient(-45deg, var(--dj-orange), var(--dj-orange) 3px, transparent 3px, transparent 6px);
+            bottom: -5px; right: -30px; z-index: 1;
+            transform: skewX(-15deg); box-shadow: 2px 2px 0 var(--dj-purple);
         }
 
-        .top-subtitle {
-            font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 900;
-            color: var(--dj-purple); letter-spacing: 2px; opacity: 0.8;
-            display: flex; align-items: center; gap: 12px; margin-bottom: 5px; margin-left: 5px;
-            position: relative; z-index: 2;
-        }
-        .top-subtitle .barcode { font-size: 14px; letter-spacing: 3px; color: var(--dj-cyan); opacity: 0.8; }
-
-        .header { position: relative; display: inline-block; cursor: default; z-index: 2; padding-left: 10px;}
-        .block-cyan { position: absolute; width: 45px; height: 30px; background: var(--dj-cyan); top: -5px; left: -5px; z-index: 1; transform: skewX(-10deg); box-shadow: 3px 3px 0 var(--dj-purple); }
-        .block-orange { position: absolute; width: 40px; height: 40px; background: var(--dj-orange); bottom: -5px; right: -25px; z-index: 1; border-radius: 50%; box-shadow: -3px 3px 0 var(--dj-purple); }
+        .header { position: relative; display: inline-block; cursor: default; z-index: 2; padding-left: 5px;}
+        /* 타이틀 앞을 꾸미는 블록 */
+        .block-cyan { position: absolute; width: 35px; height: 25px; background: var(--dj-cyan); top: -2px; left: -5px; z-index: 1; transform: skewX(-10deg); box-shadow: 3px 3px 0 var(--dj-purple); }
         
         .header h1 {
-            font-size: 64px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
+            font-size: 66px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
             text-transform: uppercase; line-height: 0.85; position: relative; z-index: 5;
             letter-spacing: -2px; color: var(--dj-yellow);
             text-shadow: 4px 4px 0 var(--dj-purple), -2px -2px 0 var(--white), 8px 8px 0 rgba(0,0,0,0.15);
+            margin: 0;
         }
 
+        /* -------------------------------------
+           유튜브 & 통계 카드 (기존 틀 유지)
+        -------------------------------------- */
         .yt-box-mini {
             width: 320px; height: 180px; 
-            background: var(--black); border: 5px solid var(--dj-purple);
+            background: var(--black); border: 4px solid var(--dj-purple); /* 5->4로 약간 샤프하게 */
             box-shadow: 8px 8px 0 var(--dj-cyan), -4px -4px 0 var(--dj-magenta);
             padding: 4px; overflow: hidden; position: relative; z-index: 10; flex-shrink: 0;
             transform: skewX(-3deg); transition: transform 0.3s ease;
@@ -142,6 +162,26 @@
         .yt-box-mini iframe { width: 100%; height: 100%; transform: skewX(3deg); display: block; transition: transform 0.3s ease;}
         .yt-box-mini:hover iframe { transform: skewX(0deg); }
 
+        /* 선생님이 놔두라고 하신 통계 카드 복구! */
+        .dashboard-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: var(--black); border: 2px solid var(--dj-purple); border-radius: 8px;
+            padding: 12px 10px; text-align: center; color: var(--white);
+            box-shadow: 3px 3px 0 rgba(53, 28, 97, 0.2); transition: transform 0.2s;
+        }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 4px 4px 0 var(--dj-magenta); border-color: var(--dj-magenta); }
+        .stat-card.highlight { border-color: var(--dj-yellow); box-shadow: 3px 3px 0 rgba(248, 193, 23, 0.3); }
+        .stat-card.highlight:hover { box-shadow: 4px 4px 0 var(--dj-cyan); border-color: var(--dj-cyan); }
+        .stat-title { font-size: 12px; color: #aaa; margin-bottom: 5px; font-weight: bold; }
+        .stat-value { font-size: 24px; font-weight: 900; color: var(--dj-cyan); font-family: 'Montserrat', sans-serif; }
+        .stat-card.highlight .stat-value { color: var(--dj-yellow); }
+
+        /* -------------------------------------
+           탭 메뉴 (두꺼운 테두리 유지)
+        -------------------------------------- */
         .tab-menu { display: flex; gap: 12px; margin-bottom: 20px; position: relative; z-index: 10; flex-shrink: 0; }
         .tab-btn {
             flex: 1; padding: 14px 5px; background: var(--white);
@@ -160,8 +200,11 @@
         .tab-btn.active { background: var(--dj-purple); color: var(--dj-yellow); box-shadow: 4px 4px 0 var(--dj-yellow); border-color: var(--dj-purple); }
         .tab-btn#btnQuest.active { color: var(--dj-cyan); box-shadow: 4px 4px 0 var(--dj-cyan); }
 
+        /* -------------------------------------
+           랭킹 리스트 (테두리 얇게 다이어트)
+        -------------------------------------- */
         .list-container {
-            display: flex; flex-direction: column; gap: 12px; position: relative; z-index: 10;
+            display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 10;
             flex: 1; min-height: 0; overflow-y: auto; padding-right: 15px; padding-left: 5px; padding-bottom: 10px;
         }
         .list-container::-webkit-scrollbar { width: 8px; }
@@ -170,25 +213,28 @@
 
         .rank-row {
             display: flex; align-items: center; background: var(--white);
-            border: 3px solid var(--dj-purple); 
-            padding: 12px 15px; font-weight: 900; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); flex-shrink: 0; position: relative;
+            /* 테두리 3px -> 1.5px 로 얇게! */
+            border: 1.5px solid var(--dj-purple); 
+            /* 좌측 포인트 선도 살짝 얇게 (6px) */
+            border-left: 6px solid var(--dj-purple);
+            padding: 10px 15px; font-weight: 900; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); flex-shrink: 0; position: relative;
             transform: skewX(-2deg);
         }
         
-        /* 랭킹 밋밋함 개선: 탭별 포인트 컬러 및 그림자 강화 */
-        .daily-list .rank-row { box-shadow: 5px 5px 0 var(--dj-magenta); border-left: 8px solid var(--dj-magenta); }
-        .giver-list .rank-row { box-shadow: 5px 5px 0 var(--dj-orange); border-left: 8px solid var(--dj-orange); }
-        .quest-list .rank-row { box-shadow: 5px 5px 0 var(--dj-cyan); border-left: 8px solid var(--dj-cyan); }
+        /* 그림자는 과하지 않게 조절 */
+        .daily-list .rank-row { box-shadow: 3px 3px 0 var(--dj-magenta); border-left-color: var(--dj-magenta); }
+        .giver-list .rank-row { box-shadow: 3px 3px 0 var(--dj-orange); border-left-color: var(--dj-orange); }
+        .quest-list .rank-row { box-shadow: 3px 3px 0 var(--dj-cyan); border-left-color: var(--dj-cyan); }
         
-        .rank-row:hover { transform: skewX(-2deg) translateX(6px) translateY(-2px); }
-        .daily-list .rank-row:hover { box-shadow: -2px 6px 0 var(--dj-magenta); background: #fffafb; }
-        .giver-list .rank-row:hover { box-shadow: -2px 6px 0 var(--dj-orange); background: #fffcf7; }
-        .quest-list .rank-row:hover { box-shadow: -2px 6px 0 var(--dj-cyan); background: #f5ffff; }
+        .rank-row:hover { transform: skewX(-2deg) translateX(5px) translateY(-1px); }
+        .daily-list .rank-row:hover { box-shadow: -2px 4px 0 var(--dj-magenta); background: #fffafb; }
+        .giver-list .rank-row:hover { box-shadow: -2px 4px 0 var(--dj-orange); background: #fffcf7; }
+        .quest-list .rank-row:hover { box-shadow: -2px 4px 0 var(--dj-cyan); background: #f5ffff; }
 
-        /* TOP 3 화려하게 변경 (팝아트 느낌의 패턴 배경) */
-        .rank-row.top-1 { background: repeating-linear-gradient(-45deg, #fff9e6, #fff9e6 8px, #ffffff 8px, #ffffff 16px); border-color: #d4af37; border-left-color: #d4af37; box-shadow: 5px 5px 0 #d4af37; }
-        .rank-row.top-2 { background: repeating-linear-gradient(-45deg, #f5f5f5, #f5f5f5 8px, #ffffff 8px, #ffffff 16px); border-color: #a8a9ad; border-left-color: #a8a9ad; box-shadow: 5px 5px 0 #a8a9ad; }
-        .rank-row.top-3 { background: repeating-linear-gradient(-45deg, #fff0e6, #fff0e6 8px, #ffffff 8px, #ffffff 16px); border-color: #cd7f32; border-left-color: #cd7f32; box-shadow: 5px 5px 0 #cd7f32; }
+        /* TOP 3 리듬게임 감성 패턴 */
+        .rank-row.top-1 { background: repeating-linear-gradient(-45deg, #fff9e6, #fff9e6 8px, #ffffff 8px, #ffffff 16px); border-color: #d4af37; border-left-color: #d4af37; box-shadow: 3px 3px 0 #d4af37; }
+        .rank-row.top-2 { background: repeating-linear-gradient(-45deg, #f5f5f5, #f5f5f5 8px, #ffffff 8px, #ffffff 16px); border-color: #a8a9ad; border-left-color: #a8a9ad; box-shadow: 3px 3px 0 #a8a9ad; }
+        .rank-row.top-3 { background: repeating-linear-gradient(-45deg, #fff0e6, #fff0e6 8px, #ffffff 8px, #ffffff 16px); border-color: #cd7f32; border-left-color: #cd7f32; box-shadow: 3px 3px 0 #cd7f32; }
 
         .rank-row.top-1 .rank-num { color: #d4af37; font-size: 24px; width: 75px; text-shadow: 2px 2px 0 var(--dj-purple); transform: skewX(2deg); }
         .rank-row.top-2 .rank-num { color: #a8a9ad; font-size: 24px; width: 75px; text-shadow: 2px 2px 0 var(--dj-purple); transform: skewX(2deg); }
@@ -201,44 +247,75 @@
 
         .rank-name { flex: 1; font-size: 17px; color: var(--dj-purple); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 10px; transform: skewX(2deg); }
         .rank-val { font-size: 19px; font-style: italic; font-family: 'Montserrat', sans-serif; text-align: right; white-space: nowrap; transform: skewX(2deg); }
+
+        /* -------------------------------------
+           호버 애니메이션 & 전광판 (완벽 복구)
+        -------------------------------------- */
+        .bouncy-text {
+            display: inline-block;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.3s, text-shadow 0.3s;
+        }
+        
+        /* 강제 커서 제어 (리스트는 화살표, 버튼은 손가락) */
+        .rank-row .bouncy-text { cursor: default !important; }
+        .tab-btn .bouncy-text { cursor: pointer !important; }
+
+        /* 통통 튀는 호버 (공통) */
+        .bouncy-text:hover { transform: translateY(-2px) scale(1.05); text-shadow: 0 3px 6px rgba(0,0,0,0.15); }
+
+        /* 스타일리시 색상 호버 복구! */
+        .rank-name .bouncy-text:hover { color: var(--dj-magenta) !important; text-shadow: 0 2px 6px rgba(230, 34, 83, 0.4); }
+        .val-giver .bouncy-text:hover { color: var(--dj-purple) !important; }
+        .val-quest .bouncy-text:hover { color: var(--dj-purple) !important; }
+        .header h1 .bouncy-text:hover { transform: translateY(-4px) scale(1.02) rotate(-2deg); }
+
+        /* 남색 바탕 + 주황색 글씨 전광판 복구! */
+        .marquee-wrap {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 26px;
+            background: var(--dj-navy); color: var(--dj-orange);
+            display: flex; align-items: center; overflow: hidden; z-index: 20;
+            font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 900; letter-spacing: 2px;
+            border-top: 1px solid var(--dj-purple);
+        }
         .marquee-content { display: flex; white-space: nowrap; animation: scroll-left 15s linear infinite; }
         .marquee-content span { padding: 0 30px; }
         @keyframes scroll-left { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
+        /* 모바일 대응 */
         @media (max-width: 700px) {
             .game-frame { border-width: 6px; border-radius: 12px; }
-            .content-wrap { padding: 25px 15px 20px; }
+            .content-wrap { padding: 50px 15px 35px; } /* 상단 여백 확보 */
             .hud-side { display: none; }
             .hud-overlay { top: 10px; bottom: 10px; left: 10px; right: 10px; }
             .hud-top { top: 10px; left: 10px; right: 10px; }
             .hud-bottom { bottom: 10px; left: 10px; right: 10px; }
             
-            /* 모바일에서 레이아웃 다시 세로 배치 */
             .top-dashboard-area { flex-direction: column; align-items: flex-start; gap: 15px; margin-bottom: 15px; }
             .header h1 { font-size: 48px; text-shadow: 3px 3px 0 var(--dj-purple), 5px 5px 0 rgba(0,0,0,0.1); }
             
-            /* 모바일 팝아트 데코 조정 */
-            .deco-dot-matrix { left: 140px; top: -10px; width: 40px; height: 40px; background-size: 6px 6px; }
-            .deco-star { left: 180px; top: 15px; width: 20px; height: 20px; }
+            .deco-dot-matrix { left: 110px; top: -5px; width: 30px; height: 30px; background-size: 5px 5px; }
+            .deco-star { left: 145px; top: 15px; width: 15px; height: 15px; }
+            .deco-stripe-box { display: none; } /* 모바일에선 숨김 */
             
-            .yt-box-mini { width: 100%; height: 200px; transform: skewX(0); box-shadow: 5px 5px 0 var(--dj-cyan), -3px -3px 0 var(--dj-magenta); }
+            .yt-box-mini { width: 100%; height: 200px; transform: skewX(0); box-shadow: 4px 4px 0 var(--dj-cyan), -2px -2px 0 var(--dj-magenta); }
             .yt-box-mini iframe { transform: skewX(0); }
+            
+            /* 대시보드 그리드 2줄로 */
+            .dashboard-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .stat-value { font-size: 20px; }
             
             .tab-menu { gap: 8px; margin-bottom: 15px; }
             .tab-btn { font-size: 13px; padding: 10px 2px; transform: skewX(-5deg); border-width: 2px; box-shadow: 3px 3px 0 var(--dj-purple); }
             .tab-btn span { transform: skewX(5deg); }
+            
             .list-container { padding-right: 5px; gap: 8px; }
-            .rank-row { padding: 10px 10px; transform: skewX(0); border-width: 2px; box-shadow: 3px 3px 0 var(--dj-purple) !important; border-left-width: 6px !important; }
+            .rank-row { padding: 10px 10px; transform: skewX(0); border-width: 1.5px; box-shadow: 2px 2px 0 var(--dj-purple) !important; border-left-width: 4px !important; }
             .rank-row:hover { transform: translateY(-2px); }
             .rank-num { width: 35px; font-size: 16px; transform: skewX(0); }
             .rank-name { font-size: 15px; transform: skewX(0); }
             .rank-val { font-size: 14px; min-width: 70px; transform: skewX(0); }
             .rank-row.top-1 .rank-num, .rank-row.top-2 .rank-num, .rank-row.top-3 .rank-num { font-size: 18px; width: 55px; }
         }
-        
-        /* 강제 커서 제어 */
-        .rank-row .bouncy-text:hover, .rank-row .bouncy-text, .rank-name .bouncy-text:hover, .rank-val .bouncy-text:hover { cursor: default !important; }
-        .tab-btn .bouncy-text:hover, a.link-text .bouncy-text:hover { cursor: pointer !important; }
     </style>
 </head>
 <body>
@@ -247,7 +324,13 @@
             <div class="hud-corner tl"></div><div class="hud-corner tr"></div>
             <div class="hud-corner bl"></div><div class="hud-corner br"></div>
             <div class="hud-top">
-                <div class="hud-badge">MINERAL STORAGE</div>
+                <div class="hud-top-left-group">
+                    <div class="hud-badge">MINERAL STORAGE</div>
+                    <!-- 로고 위에 있던 텍스트를 이쪽으로 이동 (배지 바로 밑) -->
+                    <div class="top-subtitle">
+                        <span>YGOSU</span><span class="barcode">|||| || ||| |</span><span>DATA ARCHIVE</span>
+                    </div>
+                </div>
                 <div class="hud-line"></div>
                 <div class="eq-bars">
                     <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
@@ -264,22 +347,40 @@
         <div class="content-wrap">
             <div class="top-dashboard-area">
                 <div class="header-titles">
-                    <!-- 팝아트 데코레이션 요소 -->
+                    <!-- 팝아트 데코레이션 요소 (로고 주변) -->
                     <div class="deco-dot-matrix"></div>
                     <div class="deco-star"></div>
                     <div class="deco-stripe-box"></div>
                     
-                    <div class="top-subtitle">
-                        <span>YGOSU</span><span class="barcode">|||| || ||| |</span><span>DATA ARCHIVE</span>
-                    </div>
                     <div class="header">
-                        <div class="block-cyan"></div><div class="block-orange"></div>
+                        <div class="block-cyan"></div>
                         <h1><span class="bouncy-text">BOO</span><br><span class="bouncy-text">BOARD</span></h1>
                     </div>
                 </div>
 
                 <div class="yt-box-mini">
                     <iframe width="100%" height="100%" src="https://www.youtube.com/embed/qZlu2j2SiBA?si=dhhYeFagalAQN563&autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                </div>
+            </div>
+
+            <!-- 지웠던 대시보드 그리드 통계 복구 -->
+            <div class="dashboard-grid">
+                <div class="stat-card highlight">
+                    <div class="stat-title">일퀘 완료자</div>
+                    <!-- 실제 연동 시 아래 숫자를 봇이 변경하게 하거나 js로 로드 -->
+                    <div class="stat-value" id="stat-completed">0명</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">오늘 활동 인원</div>
+                    <div class="stat-value" id="stat-active">0명</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">오늘 전체 글</div>
+                    <div class="stat-value" id="stat-posts">0개</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">오늘 전체 댓글</div>
+                    <div class="stat-value" id="stat-comments">0개</div>
                 </div>
             </div>
 
@@ -329,7 +430,7 @@
             }
         }
 
-        // 랭킹 행 생성 (이미지·링크 없음)
+        // 랭킹 행 생성
         function createRows(dataList, typeClass, tabType) {
             if (!dataList || dataList.length === 0) {
                 return '<div style="text-align:center; padding:20px; color:#999; font-weight:900;">조건을 달성한 사람이 아직 없습니다.</div>';
@@ -373,6 +474,14 @@
                 document.getElementById('daily').innerHTML = createRows(data.quest_board, "val-daily", "daily");
                 document.getElementById('giver').innerHTML = createRows(data.donation_ranking, "val-giver", "giver");
                 document.getElementById('quest').innerHTML = createRows(data.quest_ranking, "val-quest", "quest");
+                
+                // 통계 데이터가 json에 있다면 업데이트 (없으면 주석 처리 또는 무시됨)
+                if(data.stats) {
+                    if(data.stats.completed) document.getElementById('stat-completed').innerText = data.stats.completed + "명";
+                    if(data.stats.active) document.getElementById('stat-active').innerText = data.stats.active + "명";
+                    if(data.stats.posts) document.getElementById('stat-posts').innerText = data.stats.posts + "개";
+                    if(data.stats.comments) document.getElementById('stat-comments').innerText = data.stats.comments + "개";
+                }
             })
             .catch(function(error) {
                 console.error("데이터 로딩 오류:", error);
@@ -383,7 +492,7 @@
         }
 
         window.onload = function() {
-            show('daily');   // 초기 탭은 daily
+            show('daily');
             loadData();
         };
     </script>
