@@ -95,6 +95,7 @@
         /* 패딩 상단을 줄여 타이틀을 위로 올림 */
         .content-wrap { position: relative; padding: 65px 35px 30px; z-index: 10; display: flex; flex-direction: column; flex: 1; min-height: 0; }
 
+        /* --- 신규: 랭킹 공간 확보를 위한 상단 가로 배치 레이아웃 --- */
         .top-dashboard-area {
             display: flex; justify-content: space-between; align-items: flex-end;
             margin-bottom: 25px; gap: 15px;
@@ -105,7 +106,7 @@
             position: relative;
         }
 
-        /* 팝아트 데코레이션 최적화 */
+        /* 팝아트 데코레이션 대폭 강화 및 재배치 */
         .deco-dot-matrix {
             position: absolute; width: 50px; height: 50px; 
             background-image: radial-gradient(var(--dj-cyan) 20%, transparent 20%);
@@ -215,8 +216,8 @@
 
         .rank-name { flex: 1; font-size: 17px; color: var(--dj-purple); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 10px; transform: skewX(2deg); }
         .rank-val { font-size: 19px; font-style: italic; font-family: 'Montserrat', sans-serif; text-align: right; white-space: nowrap; transform: skewX(2deg); }
-
-        /* 하단 감사 인사 영역 */
+        
+        /* 하단 감사 인사 영역 추가 */
         .thank-you-msg {
             text-align: center; margin-top: auto; padding-top: 15px; padding-bottom: 15px;
             font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 900;
@@ -224,32 +225,6 @@
             text-transform: uppercase; position: relative; z-index: 10;
         }
 
-        .bouncy-text {
-            display: inline-block;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.3s, text-shadow 0.3s;
-        }
-        
-        /* 강제 커서 제어 (리스트는 화살표, 버튼은 손가락) */
-        .rank-row .bouncy-text { cursor: default !important; }
-        .tab-btn .bouncy-text { cursor: pointer !important; }
-
-        /* 통통 튀는 호버 (공통) */
-        .bouncy-text:hover { transform: translateY(-2px) scale(1.05); text-shadow: 0 3px 6px rgba(0,0,0,0.15); }
-
-        /* 스타일리시 색상 호버 복구! */
-        .rank-name .bouncy-text:hover { color: var(--dj-magenta) !important; text-shadow: 0 2px 6px rgba(230, 34, 83, 0.4); }
-        .val-giver .bouncy-text:hover { color: var(--dj-purple) !important; }
-        .val-quest .bouncy-text:hover { color: var(--dj-purple) !important; }
-        .header h1 .bouncy-text:hover { transform: translateY(-4px) scale(1.02) rotate(-2deg); }
-
-        /* 남색 바탕 + 주황색 글씨 전광판 복구! */
-        .marquee-wrap {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 26px;
-            background: var(--dj-navy); color: var(--dj-orange);
-            display: flex; align-items: center; overflow: hidden; z-index: 20;
-            font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 900; letter-spacing: 2px;
-            border-top: 1px solid var(--dj-purple);
-        }
         .marquee-content { display: flex; white-space: nowrap; animation: scroll-left 15s linear infinite; }
         .marquee-content span { padding: 0 30px; }
         @keyframes scroll-left { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
@@ -288,8 +263,8 @@
             .rank-num { width: 35px; font-size: 16px; transform: skewX(0); }
             .rank-name { font-size: 15px; transform: skewX(0); }
             .rank-val { font-size: 14px; min-width: 70px; transform: skewX(0); }
-            .rank-row.top-1 .rank-num, .rank-row.top-2 .rank-num, .rank-row.top-3 .rank-num { font-size: 18px; width: 55px; }
-        }
+        .rank-row .bouncy-text:hover, .rank-row .bouncy-text, .rank-name .bouncy-text:hover, .rank-val .bouncy-text:hover { cursor: default !important; }
+        .tab-btn .bouncy-text:hover, a.link-text .bouncy-text:hover { cursor: pointer !important; }
     </style>
 </head>
 <body>
@@ -306,7 +281,7 @@
                     </div>
                     <div class="hud-cross">+</div>
                 </div>
-                <!-- 서브타이틀을 MINERAL STORAGE 아래로 이동 -->
+                <!-- 서브타이틀을 MINERAL STORAGE 아래로 이동 및 밀착 -->
                 <div class="top-subtitle">
                     <span>YGOSU</span><span class="barcode">|||| || ||| |</span><span>DATA ARCHIVE</span>
                 </div>
