@@ -12,21 +12,26 @@
             --dj-purple: #351c61; 
             --dj-yellow: #f8c117; 
             --dj-orange: #f24b0f; 
-            --dj-cyan: #00a3d2;   /* 요청하신 새로운 리워드 색상 */
+            --dj-cyan: #00a3d2;   
             --dj-magenta: #d91c49; 
-            --dj-bg: #f2f3f7; 
+            --dj-bg: #f4f5f8; 
             --dj-grid: #e8eaef; 
             --white: #ffffff; 
             --black: #111111;
-            --dj-navy: #15162c;
+            --dj-navy: #15162c; /* EXTENSION 딥 네이비 컬러 */
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
-        /* 바깥 배경: 거대한 45도 사선 스트라이프 패턴 */
         body { 
             font-family: 'Pretendard', sans-serif; 
             background-color: var(--dj-bg); 
-            background-image: repeating-linear-gradient(-45deg, #e6e8ee 0, #e6e8ee 25px, transparent 25px, transparent 50px);
+            background-image: repeating-linear-gradient(
+                -45deg, 
+                transparent, 
+                transparent 15px, 
+                rgba(53, 28, 97, 0.03) 15px, 
+                rgba(53, 28, 97, 0.03) 30px
+            );
             display: flex; justify-content: center; align-items: center;
             min-height: 100vh; padding: 2vh 10px; overflow: hidden;
         }
@@ -38,11 +43,18 @@
                 linear-gradient(var(--dj-grid) 1px, transparent 1px), 
                 linear-gradient(90deg, var(--dj-grid) 1px, transparent 1px);
             background-size: 40px 40px;
-            border: 10px solid var(--dj-purple);
+            /* EXTENSION 감성: 아우터 테두리를 딥 네이비로 변경 */
+            border: 10px solid var(--dj-navy);
             border-radius: 16px;
             position: relative; overflow: hidden;
             box-shadow: 0 15px 40px rgba(0,0,0,0.15), inset 0 0 0 4px #f0f2f5;
             display: flex; flex-direction: column;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+        }
+        
+        .game-frame:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.2), inset 0 0 0 4px #f0f2f5;
         }
 
         .scanlines {
@@ -51,25 +63,24 @@
             background-size: 100% 4px; z-index: 1; pointer-events: none;
         }
 
-        /* 랭킹 리스트 배경 - 거대 팝아트 타이포그래피 */
         .djmax-bg-text {
-            position: absolute; top: 15%; right: -10%; z-index: 0;
+            position: absolute; top: 20%; right: -5%; z-index: 0;
             display: flex; flex-direction: column; pointer-events: none;
-            transform: rotate(-10deg); opacity: 0.04;
+            transform: rotate(-10deg); opacity: 0.05;
         }
         .djmax-bg-text span {
-            font-family: 'Montserrat', sans-serif; font-size: 220px; font-weight: 900; line-height: 0.8;
-            letter-spacing: -15px; color: var(--dj-purple);
+            font-family: 'Montserrat', sans-serif; font-size: 180px; font-weight: 900; line-height: 0.8;
+            letter-spacing: -10px; color: var(--dj-purple);
         }
         .djmax-bg-text .hollow {
-            color: transparent; -webkit-text-stroke: 5px var(--dj-purple); margin-left: 100px;
+            color: transparent; -webkit-text-stroke: 4px var(--dj-purple); margin-left: 80px;
             font-style: italic;
         }
 
         .floating-sym { position: absolute; font-family: 'Montserrat', sans-serif; font-weight: 900; z-index: 1; opacity: 0.15; pointer-events: none; }
-        .sym-1 { color: var(--dj-magenta); font-size: 140px; top: 5%; right: 8%; animation: float1 6s infinite alternate ease-in-out; }
-        .sym-2 { color: var(--dj-cyan); font-size: 100px; bottom: 25%; left: 2%; transform: rotate(15deg); animation: float2 5s infinite alternate ease-in-out; }
-        .sym-3 { color: var(--dj-yellow); font-size: 180px; top: 35%; left: 35%; animation: float3 8s infinite alternate ease-in-out; }
+        .sym-1 { color: var(--dj-magenta); font-size: 120px; top: 5%; right: 10%; animation: float1 6s infinite alternate ease-in-out; }
+        .sym-2 { color: var(--dj-cyan); font-size: 80px; bottom: 30%; left: 2%; transform: rotate(15deg); animation: float2 5s infinite alternate ease-in-out; }
+        .sym-3 { color: var(--dj-yellow); font-size: 150px; top: 40%; left: 40%; animation: float3 8s infinite alternate ease-in-out; }
         
         @keyframes float1 { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(30px) rotate(15deg); } }
         @keyframes float2 { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(-40px) scale(1.1); } }
@@ -105,55 +116,144 @@
 
         .content-wrap { position: relative; padding: 45px 30px 45px; z-index: 10; display: flex; flex-direction: column; flex: 1; min-height: 0; }
 
-        .top-header-area { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; gap: 20px; }
-        .header-titles { display: flex; flex-direction: column; position: relative; padding-top: 10px; flex: 1; }
+        .top-header-area {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            margin-bottom: 20px; gap: 20px;
+        }
         
-        .deco-dot-matrix { position: absolute; width: 80px; height: 80px; background-image: radial-gradient(var(--dj-cyan) 20%, transparent 20%); background-size: 10px 10px; top: 10px; left: 180px; z-index: 0; opacity: 0.7; }
-        .deco-star { position: absolute; width: 30px; height: 30px; background: var(--dj-magenta); clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); top: 35px; left: 280px; z-index: 2; animation: spin 8s linear infinite; }
+        .header-titles { 
+            display: flex; flex-direction: column; 
+            position: relative; padding-top: 10px; flex: 1; 
+        }
+        
+        .deco-dot-matrix {
+            position: absolute; width: 80px; height: 80px; 
+            background-image: radial-gradient(var(--dj-cyan) 20%, transparent 20%);
+            background-size: 10px 10px; top: 10px; left: 280px; z-index: 0; opacity: 0.7;
+        }
+        .deco-star {
+            position: absolute; width: 40px; height: 40px; background: var(--dj-magenta);
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            top: 35px; left: 400px; z-index: 2; animation: spin 8s linear infinite;
+        }
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        .deco-crosshair { position: absolute; width: 45px; height: 45px; border: 3px solid var(--dj-cyan); border-radius: 50%; top: -10px; left: 140px; z-index: 0; opacity: 0.6; display: flex; justify-content: center; align-items: center; }
+        
+        .deco-crosshair {
+            position: absolute; width: 50px; height: 50px;
+            border: 3px solid var(--dj-cyan); border-radius: 50%;
+            top: 15px; left: 220px; z-index: 0; opacity: 0.6;
+            display: flex; justify-content: center; align-items: center;
+        }
         .deco-crosshair::before { content: ''; width: 3px; height: 100%; background: var(--dj-cyan); }
         .deco-crosshair::after { content: ''; width: 100%; height: 3px; background: var(--dj-cyan); position: absolute; }
-        .deco-stripe-box { position: absolute; width: 90px; height: 25px; background: repeating-linear-gradient(-45deg, var(--dj-orange), var(--dj-orange) 4px, transparent 4px, transparent 8px); bottom: -10px; left: -10px; z-index: 0; transform: skewX(-15deg); }
 
-        .top-subtitle { font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 900; color: var(--dj-purple); letter-spacing: 2px; opacity: 0.8; display: flex; align-items: center; gap: 12px; margin-bottom: 5px; margin-left: 5px; position: relative; z-index: 2; }
-        .top-subtitle .barcode { font-size: 16px; letter-spacing: 3px; color: var(--dj-cyan); opacity: 0.8; }
-
-        .header { position: relative; display: inline-block; cursor: default; z-index: 2; margin-top: 0; width: 100%; }
-        .block-cyan { position: absolute; width: 50px; height: 25px; background: var(--dj-cyan); top: -2px; left: -5px; z-index: 1; transform: skewX(-15deg); box-shadow: 3px 3px 0 var(--dj-purple); }
-        
-        .header h1 { 
-            font-size: 85px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
-            text-transform: uppercase; line-height: 0.85; position: relative; z-index: 5;
-            letter-spacing: -3px; color: var(--dj-yellow);
-            text-shadow: 
-                5px 5px 0 var(--dj-purple), 
-                -4px -4px 0 var(--dj-cyan), 
-                4px -4px 0 var(--dj-magenta),
-                8px 8px 0 rgba(0,0,0,0.15);
-            margin: 0; padding-left: 5px; white-space: nowrap;
+        .deco-stripe-box {
+            position: absolute; width: 100px; height: 25px;
+            background: repeating-linear-gradient(-45deg, var(--dj-orange), var(--dj-orange) 4px, transparent 4px, transparent 8px);
+            bottom: -15px; left: 10px; z-index: 0; border: 2px solid var(--dj-purple);
+            transform: skewX(-15deg);
         }
 
-        .yt-box-mini { width: 300px; height: 168px; flex-shrink: 0; background: var(--black); border: 4px solid var(--dj-purple); box-shadow: 5px 5px 0 var(--dj-cyan), -2px -2px 0 var(--dj-magenta); padding: 4px; overflow: hidden; transform: skewX(-2deg); transition: transform 0.3s ease; position: relative; z-index: 10; margin-top: 10px; }
+        .top-subtitle {
+            font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 900;
+            color: var(--dj-purple); letter-spacing: 2px; opacity: 0.8;
+            display: flex; align-items: center; gap: 15px; 
+            margin-bottom: 5px; margin-left: 5px; position: relative; z-index: 2;
+        }
+        .top-subtitle .barcode { font-size: 18px; letter-spacing: 3px; color: var(--dj-cyan); opacity: 0.8; }
+
+        /* 타이틀 컨테이너 (텍스트 커서 방지) */
+        .header { 
+            position: relative; display: inline-block; cursor: default !important; 
+            z-index: 2; margin-top: -10px; padding-left: 10px; width: 100%;
+        }
+        .header * { cursor: default !important; }
+        
+        .block-cyan { position: absolute; width: 120px; height: 40px; background: var(--dj-cyan); top: 10px; left: -15px; z-index: 1; transform: skewX(-15deg); box-shadow: 4px 4px 0 var(--dj-purple); }
+        .block-orange { position: absolute; width: 60px; height: 60px; background: var(--dj-orange); bottom: 10px; right: 20px; z-index: 1; border-radius: 50%; box-shadow: -4px 4px 0 var(--dj-purple); }
+        
+        /* 🔥 EXTENSION 감성 네이비 테두리 & 통통 튀는 호버 애니메이션 */
+        .header h1 { 
+            font-size: 110px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase; line-height: 0.8; position: relative; z-index: 5;
+            letter-spacing: -6px; color: var(--dj-yellow); margin: 0; 
+            display: flex; flex-direction: column;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .header h1 span {
+            /* 딥 네이비(EXTENSION) 그림자로 변경 */
+            text-shadow: 
+                6px 6px 0 var(--dj-navy), 
+                -4px -4px 0 var(--dj-cyan), 
+                4px -4px 0 var(--dj-magenta), 
+                10px 10px 0 rgba(0,0,0,0.15);
+            transition: text-shadow 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .header h1 span:first-child { margin-bottom: -5px; }
+
+        /* 로고 호버 시 통통 튀는 효과 */
+        .header:hover h1 {
+            transform: translateY(-5px) scale(1.02) rotate(-2deg);
+        }
+        .header:hover h1 span {
+            text-shadow: 
+                9px 9px 0 var(--dj-navy), 
+                -6px -6px 0 var(--dj-cyan), 
+                6px -6px 0 var(--dj-magenta), 
+                15px 15px 0 rgba(0,0,0,0.25);
+        }
+
+        .yt-box-mini { 
+            width: 320px; height: 180px; flex-shrink: 0;
+            background: var(--black); border: 4px solid var(--dj-navy); /* 유튜브 박스 테두리도 네이비로 통일 */
+            box-shadow: 5px 5px 0 var(--dj-cyan), -2px -2px 0 var(--dj-magenta); 
+            padding: 4px; overflow: hidden; transform: skewX(-2deg); 
+            transition: transform 0.3s ease; position: relative; z-index: 10; margin-top: 10px;
+        }
         .yt-box-mini:hover { transform: skewX(0deg); box-shadow: 6px 6px 0 var(--dj-cyan), -3px -3px 0 var(--dj-magenta); }
         .yt-box-mini iframe { width: 100%; height: 100%; transform: skewX(2deg); display: block; transition: transform 0.3s ease; }
         .yt-box-mini:hover iframe { transform: skewX(0deg); }
 
+        /* -------------------------------------
+           탭 버튼
+        -------------------------------------- */
         .tab-menu { display: flex; gap: 12px; margin-bottom: 15px; position: relative; z-index: 10;}
-        .tab-btn { flex: 1; padding: 12px; background: var(--white); border: 3px solid var(--dj-purple); box-shadow: 4px 4px 0 var(--dj-purple); font-size: 16px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif; color: var(--dj-purple); cursor: pointer; transform: skewX(-8deg); transition: all 0.2s; position: relative; overflow: hidden; }
+        .tab-btn { 
+            flex: 1; padding: 12px; background: var(--white); 
+            border: 3px solid var(--dj-purple); box-shadow: 4px 4px 0 var(--dj-purple); 
+            font-size: 16px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
+            color: var(--dj-purple); cursor: pointer; transform: skewX(-8deg); transition: all 0.2s;
+            position: relative; overflow: hidden;
+        }
         .tab-btn span { display: inline-block; transform: skewX(8deg); position: relative; z-index: 2;}
-        .tab-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(53, 28, 97, 0.05) 10px, rgba(53, 28, 97, 0.05) 20px); transition: left 0.3s; z-index: 1; }
+        .tab-btn::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(53, 28, 97, 0.05) 10px, rgba(53, 28, 97, 0.05) 20px);
+            transition: left 0.3s; z-index: 1;
+        }
         .tab-btn:hover::before { left: 0; }
         .tab-btn:hover { transform: skewX(-8deg) translateY(-2px); box-shadow: 5px 5px 0 var(--dj-magenta); color: var(--dj-magenta); border-color: var(--dj-magenta); }
         .tab-btn.active { background: var(--dj-purple); color: var(--dj-yellow); box-shadow: 4px 4px 0 var(--dj-cyan); border-color: var(--dj-purple); }
         .tab-btn#btnQuest.active { color: var(--dj-cyan); box-shadow: 4px 4px 0 var(--dj-cyan); }
 
-        .list-container { display: flex; flex-direction: column; gap: 8px; flex: 1; overflow-y: auto; padding-right: 10px; padding-bottom: 5px; position: relative; z-index: 10; }
+        /* -------------------------------------
+           랭킹 리스트 영역
+        -------------------------------------- */
+        .list-container { 
+            display: flex; flex-direction: column; gap: 8px; 
+            flex: 1; overflow-y: auto; padding-right: 10px; padding-bottom: 5px;
+            position: relative; z-index: 10;
+        }
         .list-container::-webkit-scrollbar { width: 8px; }
         .list-container::-webkit-scrollbar-track { background: rgba(53, 28, 97, 0.05); border-radius: 4px; }
         .list-container::-webkit-scrollbar-thumb { background: var(--dj-purple); border-radius: 4px; }
 
-        /* 랭킹 4위 이하를 포함한 모든 줄에 테두리 !important 추가 */
+        /* 커서 방지 */
+        .rank-row, .rank-row * { cursor: default !important; }
+        .tab-btn, .tab-btn * { cursor: pointer !important; }
+
         .rank-row { 
             display: flex; align-items: center; background: var(--white); 
             border: 1px solid var(--dj-purple) !important; 
@@ -163,11 +263,16 @@
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s, background-color 0.2s;
             position: relative; overflow: hidden;
         }
-        .rank-row::after { content: ''; position: absolute; right: 0; top: 0; height: 100%; width: 0; background: linear-gradient(90deg, transparent, rgba(53, 28, 97, 0.05)); transition: width 0.3s ease; z-index: 0; pointer-events: none; }
+        .rank-row::after {
+            content: ''; position: absolute; right: 0; top: 0; height: 100%; width: 0;
+            background: linear-gradient(90deg, transparent, rgba(53, 28, 97, 0.05));
+            transition: width 0.3s ease; z-index: 0; pointer-events: none;
+        }
         .rank-row:hover::after { width: 100%; }
         
         .giver-list .rank-row { border-left-color: var(--dj-orange) !important; box-shadow: 2px 2px 0 var(--dj-orange); }
         .quest-list .rank-row { border-left-color: var(--dj-cyan) !important; box-shadow: 2px 2px 0 var(--dj-cyan); }
+        .daily-list .rank-row { border-left-color: var(--dj-magenta) !important; box-shadow: 2px 2px 0 var(--dj-magenta); }
         
         .rank-row:hover { transform: skewX(-2deg) translateX(5px) translateY(-1px); }
         .giver-list .rank-row:hover { box-shadow: -2px 4px 0 var(--dj-orange); background: #fffcf7; }
@@ -189,7 +294,29 @@
         .val-giver { color: var(--dj-orange); }
         .val-quest { color: var(--dj-cyan); }
 
-        /* 🔥 복구된 통통 튀는 호버 효과! */
+        /* 은은한 팝아트 텍스트 배경 */
+        .content-bg-text {
+            position: absolute;
+            top: 40%; left: 50%;
+            transform: translate(-50%, -50%) rotate(-5deg);
+            font-size: 140px;
+            font-weight: 900;
+            font-family: 'Montserrat', sans-serif;
+            color: transparent;
+            -webkit-text-stroke: 2px rgba(53, 28, 97, 0.05); 
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 1; 
+            display: flex; flex-direction: column; align-items: center; line-height: 0.8;
+            letter-spacing: -5px;
+        }
+        
+        .content-bg-text .filled {
+            color: rgba(248, 193, 23, 0.08); 
+            -webkit-text-stroke: 0;
+            margin-right: 60px;
+        }
+
         .bouncy-text {
             display: inline-block;
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s, text-shadow 0.2s;
@@ -218,14 +345,36 @@
             .game-frame { border-width: 6px; border-radius: 12px; }
             .content-wrap { padding: 30px 15px 35px; }
             .top-header-area { flex-direction: column; align-items: flex-start; gap: 15px; margin-bottom: 15px; }
-            .header h1 { font-size: 55px; text-shadow: 3px 3px 0 var(--dj-purple), 4px 4px 0 rgba(0,0,0,0.15); letter-spacing: -2px; }
-            .yt-box-mini { width: 100%; height: 180px; transform: skewX(0); box-shadow: 4px 4px 0 var(--dj-cyan), -2px -2px 0 var(--dj-magenta); margin-top: 0; }
+            
+            .header-titles { padding-top: 5px; width: 100%;}
+            .header h1 { font-size: 70px; letter-spacing:-3px; line-height: 0.85; margin-top: 0;}
+            .header h1 span { text-shadow: 4px 4px 0 var(--dj-navy), -2px -2px 0 var(--dj-cyan), 2px -2px 0 var(--dj-magenta), 6px 6px 0 rgba(0,0,0,0.15); }
+            .header h1 span:first-child { margin-bottom: 0px; }
+            
+            .header:hover h1 { transform: translateY(-3px) scale(1.02) rotate(-1deg); }
+            .header:hover h1 span { text-shadow: 6px 6px 0 var(--dj-navy), -3px -3px 0 var(--dj-cyan), 3px -3px 0 var(--dj-magenta), 10px 10px 0 rgba(0,0,0,0.2); }
+
+            .top-subtitle { font-size: 11px; margin-bottom: 8px;}
+            .top-subtitle .barcode { font-size: 14px;}
+            .block-cyan { width: 70px; height: 25px; top: 0px; left: -5px; box-shadow: 2px 2px 0 var(--dj-purple);}
+            .block-orange { width: 35px; height: 35px; bottom: 5px; right: 10px; box-shadow: -2px 2px 0 var(--dj-purple);}
+            
+            .deco-dot-matrix { left: 120px; top: 0px; width: 30px; height: 30px; background-size: 5px 5px; }
+            .deco-crosshair { left: 90px; top: -10px; width: 25px; height: 25px; }
+            .deco-star { left: 180px; top: 20px; width: 15px; height: 15px; }
+            
+            .yt-box-mini { width: 100%; height: 180px; transform: skewX(0); box-shadow: 4px 4px 0 var(--dj-cyan), -2px -2px 0 var(--dj-magenta); }
             .yt-box-mini iframe { transform: skewX(0); }
-            .tab-btn { font-size: 13px; padding: 10px; }
-            .rank-row { transform: skewX(0); padding: 8px 10px; border-left-width: 4px !important; }
+            
+            .tab-menu { gap: 8px; margin-bottom: 12px; }
+            .tab-btn { font-size: 13px; padding: 10px; border-width: 2px; box-shadow: 2px 2px 0 var(--dj-purple); transform: skewX(-5deg); }
+            .tab-btn span { transform: skewX(5deg); }
+            
+            .rank-row { transform: skewX(0); padding: 8px 10px; border-left-width: 4px !important; box-shadow: 2px 2px 0 var(--dj-purple) !important; }
             .rank-num, .rank-name, .rank-val { transform: skewX(0); font-size: 14px; }
             .rank-num { width: 35px; }
             .rank-val { min-width: 70px; }
+            .rank-row.top-1 .rank-num, .rank-row.top-2 .rank-num, .rank-row.top-3 .rank-num { font-size: 16px; width: 50px; }
         }
     </style>
 </head>
@@ -233,7 +382,6 @@
     <div class="game-frame">
         <div class="scanlines"></div>
         
-        <!-- 거대 배경 텍스트 복구 -->
         <div class="djmax-bg-text">
             <span>RANK</span>
             <span class="hollow">+ING</span>
@@ -256,13 +404,18 @@
             </div>
         </div>
 
+        <div class="content-bg-text">
+            <span>R A N K</span>
+            <span class="filled">+ I N G</span>
+        </div>
+
         <div class="content-wrap">
             <div class="top-header-area">
                 <div class="header-titles">
-                    <div class="deco-crosshair"></div>
-                    <div class="deco-dot-matrix"></div>
-                    <div class="deco-star"></div>
-                    <div class="deco-stripe-box"></div>
+                    <div class="deco-crosshair" style="top: 15px; left: 220px; width: 50px; height: 50px; border-width: 3px;"></div>
+                    <div class="deco-dot-matrix" style="top: 10px; left: 280px; width: 80px; height: 80px; background-size: 10px 10px;"></div>
+                    <div class="deco-star" style="top: 35px; left: 400px; width: 40px; height: 40px;"></div>
+                    <div class="deco-stripe-box" style="bottom: -15px; left: 10px; width: 100px; height: 25px; border: 2px solid var(--dj-purple);"></div>
                     
                     <div class="top-subtitle">
                         <span>YGOSU</span>
@@ -271,7 +424,11 @@
                     </div>
                     <div class="header">
                         <div class="block-cyan"></div>
-                        <h1>BOO<br><span style="color: var(--dj-yellow);">BOARD</span></h1>
+                        <div class="block-orange"></div>
+                        <h1>
+                            <span>BOO</span>
+                            <span style="color: var(--white);">BOARD</span>
+                        </h1>
                     </div>
                 </div>
                 
@@ -329,6 +486,7 @@
             }
         }
 
+        // 랭킹 행 생성
         function createRows(dataList, typeClass, tabType) {
             if (!dataList || dataList.length === 0) {
                 return '<div style="text-align:center; padding:20px; color:#999; font-weight:900; z-index:2; position:relative;">조건을 달성한 사람이 아직 없습니다.</div>';
@@ -361,6 +519,7 @@
             return html;
         }
 
+        // 데이터 로드
         function loadData() {
             fetch('data.json?t=' + new Date().getTime())
             .then(function(response) {
