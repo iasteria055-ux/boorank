@@ -12,9 +12,9 @@
             --dj-purple: #351c61; 
             --dj-yellow: #f8c117; 
             --dj-orange: #f24b0f; /* 도네이션: 강렬한 레드-오렌지 */
-            --dj-cyan: #0ebed4;   /* 리워드: 쨍한 스카이블루 */
+            --dj-cyan: #00a3d2;   /* 리워드: 쨍한 스카이블루 */
             --dj-magenta: #d91c49; /* CLEAR: 딥 마젠타 */
-            --dj-bg: #f2f3f7; 
+            --dj-bg: #f4f5f8; /* 배경색 살짝 더 밝게 조정 */
             --dj-grid: #e8eaef; 
             --white: #ffffff; 
             --black: #111111;
@@ -25,7 +25,14 @@
         body { 
             font-family: 'Pretendard', sans-serif; 
             background-color: var(--dj-bg); 
-            background-image: repeating-linear-gradient(45deg, #e8eaef 0, #e8eaef 2px, transparent 2px, transparent 20px);
+            /* 화면 바깥 배경에 은은한 45도 사선 패턴 적용 */
+            background-image: repeating-linear-gradient(
+                -45deg, 
+                transparent, 
+                transparent 15px, 
+                rgba(53, 28, 97, 0.03) 15px, 
+                rgba(53, 28, 97, 0.03) 30px
+            );
             display: flex; justify-content: center; align-items: center;
             min-height: 100vh; padding: 2vh 10px; overflow: hidden;
         }
@@ -255,6 +262,7 @@
         
         .giver-list .rank-row { border-left-color: var(--dj-orange) !important; box-shadow: 2px 2px 0 var(--dj-orange); }
         .quest-list .rank-row { border-left-color: var(--dj-cyan) !important; box-shadow: 2px 2px 0 var(--dj-cyan); }
+        .daily-list .rank-row { border-left-color: var(--dj-magenta) !important; box-shadow: 2px 2px 0 var(--dj-magenta); }
         
         .rank-row:hover { transform: skewX(-2deg) translateX(5px) translateY(-1px); }
         .giver-list .rank-row:hover { box-shadow: -2px 4px 0 var(--dj-orange); background: #fffcf7; }
@@ -276,21 +284,28 @@
         .val-giver { color: var(--dj-orange); }
         .val-quest { color: var(--dj-cyan); }
 
-        /* -------------------------------------
-           호버 애니메이션 & 텍스트 색상 전환
-        -------------------------------------- */
-        .bouncy-text {
-            display: inline-block;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.3s, text-shadow 0.3s;
+        /* 🔥 은은한 팝아트 텍스트 배경 (콘텐츠 영역 뒤) */
+        .content-bg-text {
+            position: absolute;
+            top: 40%; left: 50%;
+            transform: translate(-50%, -50%) rotate(-5deg);
+            font-size: 140px;
+            font-weight: 900;
+            font-family: 'Montserrat', sans-serif;
+            color: transparent;
+            -webkit-text-stroke: 2px rgba(53, 28, 97, 0.05); /* 아주 연한 보라색 테두리만 */
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 1; /* 랭킹 리스트(z-index: 10)보다 뒤에 배치 */
+            display: flex; flex-direction: column; align-items: center; line-height: 0.8;
+            letter-spacing: -5px;
         }
-        .bouncy-text:hover { transform: translateY(-2px) scale(1.05); text-shadow: 0 3px 6px rgba(0,0,0,0.15); }
         
-        .rank-row .bouncy-text { cursor: default !important; }
-        .tab-btn .bouncy-text, a.link-text .bouncy-text { cursor: pointer !important; }
-
-        .rank-name .bouncy-text:hover { color: var(--dj-magenta) !important; text-shadow: 0 2px 6px rgba(230, 34, 83, 0.4); }
-        .val-giver .bouncy-text:hover, .val-quest .bouncy-text:hover, .val-daily .bouncy-text:hover { color: var(--dj-purple) !important; }
-        .header h1 .bouncy-text:hover { transform: translateY(-4px) scale(1.02) rotate(-2deg); }
+        .content-bg-text .filled {
+            color: rgba(248, 193, 23, 0.08); /* 노란색 약간 채움 */
+            -webkit-text-stroke: 0;
+            margin-right: 60px;
+        }
 
         /* 하단 감사 인사 */
         .thank-you-msg {
@@ -375,6 +390,12 @@
                 </div>
                 <div class="hud-cross">+</div>
             </div>
+        </div>
+
+        <!-- 팝아트 텍스트 배경 추가 -->
+        <div class="content-bg-text">
+            <span>R A N K</span>
+            <span class="filled">+ I N G</span>
         </div>
 
         <div class="content-wrap">
