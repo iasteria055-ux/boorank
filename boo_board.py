@@ -295,11 +295,14 @@ def main():
         data['quest_ranking'] = quests
 
 # 1. 일퀘 달성자들을 시간 순으로 정렬 (데이터 들어온 순서 상관없음)
-    data['quest_board'] = sorted(data['quest_board'], key=lambda x: x['time'])
+    data['quest_board'] = sorted(
+        data['quest_board'], 
+        key=lambda x: x.get('time', '23:59:59')
+    )
 
-    # 2. 기부왕/일퀘왕 랭킹도 밸류(val) 기준으로 재정렬
-    data['donation_ranking'] = sorted(data['donation_ranking'], key=lambda x: x['val'], reverse=True)
-    data['quest_ranking'] = sorted(data['quest_ranking'], key=lambda x: x['val'], reverse=True)
+    # 기부왕/일퀘왕도 혹시 모를 val 키 누락 방지
+    data['donation_ranking'] = sorted(data['donation_ranking'], key=lambda x: x.get('val', 0), reverse=True)
+    data['quest_ranking'] = sorted(data['quest_ranking'], key=lambda x: x.get('val', 0), reverse=True)
 
     data['updated_at'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
