@@ -26,17 +26,19 @@ def process_board_page(page_num):
             if not date_td:
                 continue
             date_text = date_td.get_text(strip=True)
-            # 오늘 날짜 엄격 판단: HH:MM 형식만 인정 (길이 5자리, ':' 포함, 숫자)
-            is_today = bool(re.match(r'^\d{2}:\d{2}$', date_text))
 
+            # ★ 오늘 게시글은 HH:MM 형식만
+            is_today = bool(re.match(r'^\d{2}:\d{2}$', date_text))
             post_time = None
             if is_today:
-                h, mi = map(int, date_text.split(':'))
-                now = datetime.now()
-                post_time = now.replace(hour=h, minute=mi, second=0, microsecond=0)
-                # 만약 미래 시간이면 (예: 새벽 1시에 전날 23시 글이 남아있는 경우) 전날로 조정
-                if post_time > now:
-                    post_time -= timedelta(days=1)
+                try:
+                    h, mi = map(int, date_text.split(':'))
+                    now = datetime.now()
+                    # 오늘 날짜에 해당 시간을 그대로 적용 (미래여도 보정하지 않음)
+                    post_time = now.replace(hour=h, minute=mi, second=0, microsecond=0)
+                    # 단, 23:59 vs 00:01 같은 극단적 케이스는 없으므로 무시
+                except:
+                    post_time = None
 
             name_td = tr.find('td', class_='name')
             if not name_td:
