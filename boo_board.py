@@ -26,19 +26,17 @@ def process_board_page(page_num):
             if not date_td:
                 continue
             date_text = date_td.get_text(strip=True)
-            is_today = (':' in date_text) or ('전' in date_text) or ('방금' in date_text)
+            # 오늘 날짜 엄격 판단: HH:MM 형식만 인정 (길이 5자리, ':' 포함, 숫자)
+            is_today = bool(re.match(r'^\d{2}:\d{2}$', date_text))
 
-            # 게시글 작성 시간 파싱 (HH:MM만 사용)
             post_time = None
             if is_today:
-                m = re.search(r'(\d{2}):(\d{2})', date_text)
-                if m:
-                    h, mi = int(m.group(1)), int(m.group(2))
-                    now = datetime.now()
-                    post_time = now.replace(hour=h, minute=mi, second=0, microsecond=0)
-                    # 만약 시간이 미래라면 (예: 23:59 vs 00:01) 전날로 조정
-                    if post_time > now:
-                        post_time -= timedelta(days=1)
+                h, mi = map(int, date_text.split(':'))
+                now = datetime.now()
+                post_time = now.replace(hour=h, minute=mi, second=0, microsecond=0)
+                # 만약 미래 시간이면 (예: 새벽 1시에 전날 23시 글이 남아있는 경우) 전날로 조정
+                if post_time > now:
+                    post_time -= timedelta(days=1)
 
             name_td = tr.find('td', class_='name')
             if not name_td:
@@ -65,7 +63,7 @@ def process_board_page(page_num):
                 "is_today": is_today,
                 "mem_id": mem_id,
                 "name": name,
-                "post_time": post_time   # 게시글 작성 시각 (오늘인 경우만)
+                "post_time": post_time   # 오늘인 경우만 값 존재
             })
         return posts
     except Exception as e:
