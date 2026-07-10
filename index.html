@@ -7,7 +7,7 @@
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,900;1,900&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap'); /* 말풍선용 귀여운 폰트 */
+        @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap'); /* 귀여운 코멘트용 폰트 */
         
         :root {
             --dj-purple: #351c61; 
@@ -15,18 +15,25 @@
             --dj-orange: #f24b0f; 
             --dj-cyan: #00a3d2;   
             --dj-magenta: #d91c49; 
-            --dj-bg: #f2f3f7; 
+            --dj-bg: #f4f5f8; 
             --dj-grid: #e8eaef; 
             --white: #ffffff; 
             --black: #111111;
-            --dj-navy: #15162c; /* EXTENSION 테두리용 딥 네이비 */
+            --dj-navy: #15162c; /* EXTENSION 딥 네이비 컬러 */
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
+        /* 바깥 배경: 얇고 은은한 45도 사선 핀스트라이프 패턴 */
         body { 
             font-family: 'Pretendard', sans-serif; 
             background-color: var(--dj-bg); 
-            background-image: repeating-linear-gradient(-45deg, rgba(53, 28, 97, 0.04) 0, rgba(53, 28, 97, 0.04) 1px, transparent 1px, transparent 15px);
+            background-image: repeating-linear-gradient(
+                -45deg, 
+                transparent, 
+                transparent 15px, 
+                rgba(53, 28, 97, 0.03) 15px, 
+                rgba(53, 28, 97, 0.03) 30px
+            );
             display: flex; justify-content: center; align-items: center;
             min-height: 100vh; padding: 2vh 10px; overflow: hidden;
         }
@@ -38,36 +45,64 @@
                 linear-gradient(var(--dj-grid) 1px, transparent 1px), 
                 linear-gradient(90deg, var(--dj-grid) 1px, transparent 1px);
             background-size: 40px 40px;
-            border: 10px solid var(--dj-navy); /* EXTENSION 감성 테두리 */
+            border: 10px solid var(--dj-navy);
             border-radius: 16px;
             position: relative; overflow: hidden;
             box-shadow: 0 15px 40px rgba(0,0,0,0.15), inset 0 0 0 4px #f0f2f5;
             display: flex; flex-direction: column;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+        }
+        
+        .game-frame:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.2), inset 0 0 0 4px #f0f2f5;
         }
 
-        .scanlines { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(53,28,97,0.03) 50%, rgba(53,28,97,0.03)); background-size: 100% 4px; z-index: 1; pointer-events: none; }
+        .scanlines {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(53,28,97,0.03) 50%, rgba(53,28,97,0.03));
+            background-size: 100% 4px; z-index: 1; pointer-events: none;
+        }
 
-        .djmax-bg-text { position: absolute; top: 15%; right: -10%; z-index: 0; display: flex; flex-direction: column; pointer-events: none; transform: rotate(-10deg); opacity: 0.04; }
-        .djmax-bg-text span { font-family: 'Montserrat', sans-serif; font-size: 220px; font-weight: 900; line-height: 0.8; letter-spacing: -15px; color: var(--dj-purple); }
-        .djmax-bg-text .hollow { color: transparent; -webkit-text-stroke: 5px var(--dj-purple); margin-left: 100px; font-style: italic; }
+        .djmax-bg-text {
+            position: absolute; top: 20%; right: -5%; z-index: 0;
+            display: flex; flex-direction: column; pointer-events: none;
+            transform: rotate(-10deg); opacity: 0.05;
+        }
+        .djmax-bg-text span {
+            font-family: 'Montserrat', sans-serif; font-size: 180px; font-weight: 900; line-height: 0.8;
+            letter-spacing: -10px; color: var(--dj-purple);
+        }
+        .djmax-bg-text .hollow {
+            color: transparent; -webkit-text-stroke: 4px var(--dj-purple); margin-left: 80px;
+            font-style: italic;
+        }
 
         .floating-sym { position: absolute; font-family: 'Montserrat', sans-serif; font-weight: 900; z-index: 1; opacity: 0.15; pointer-events: none; }
-        .sym-1 { color: var(--dj-magenta); font-size: 140px; top: 5%; right: 8%; animation: float1 6s infinite alternate ease-in-out; }
-        .sym-2 { color: var(--dj-cyan); font-size: 100px; bottom: 25%; left: 2%; transform: rotate(15deg); animation: float2 5s infinite alternate ease-in-out; }
-        .sym-3 { color: var(--dj-yellow); font-size: 180px; top: 35%; left: 35%; animation: float3 8s infinite alternate ease-in-out; }
+        .sym-1 { color: var(--dj-magenta); font-size: 120px; top: 5%; right: 10%; animation: float1 6s infinite alternate ease-in-out; }
+        .sym-2 { color: var(--dj-cyan); font-size: 80px; bottom: 30%; left: 2%; transform: rotate(15deg); animation: float2 5s infinite alternate ease-in-out; }
+        .sym-3 { color: var(--dj-yellow); font-size: 150px; top: 40%; left: 40%; animation: float3 8s infinite alternate ease-in-out; }
         
         @keyframes float1 { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(30px) rotate(15deg); } }
         @keyframes float2 { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(-40px) scale(1.1); } }
         @keyframes float3 { 0% { transform: rotate(0deg) scale(0.9); } 100% { transform: rotate(45deg) scale(1.05); } }
 
-        .hud-overlay { position: absolute; top: 15px; bottom: 15px; left: 15px; right: 15px; pointer-events: none; z-index: 5; border: 1px solid rgba(53, 28, 97, 0.1); }
+        .hud-overlay {
+            position: absolute; top: 15px; bottom: 15px; left: 15px; right: 15px;
+            pointer-events: none; z-index: 5; border: 1px solid rgba(53, 28, 97, 0.1);
+        }
         .hud-corner { position: absolute; width: 12px; height: 12px; border: 2px solid var(--dj-purple); }
         .hud-corner.tl { top: -2px; left: -2px; border-right: none; border-bottom: none; }
         .hud-corner.tr { top: -2px; right: -2px; border-left: none; border-bottom: none; }
         .hud-corner.bl { bottom: -2px; left: -2px; border-right: none; border-top: none; }
         .hud-corner.br { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+
         .hud-top { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; align-items: center; gap: 15px; }
-        .hud-badge { border: 2px solid var(--dj-purple); padding: 3px 10px; font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 900; color: var(--dj-purple); background: var(--white); letter-spacing: 1px; }
+        .hud-badge {
+            border: 2px solid var(--dj-purple); padding: 3px 10px;
+            font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 900;
+            color: var(--dj-purple); background: var(--white); letter-spacing: 1px;
+        }
         .hud-line { flex: 1; height: 1px; background: var(--dj-purple); opacity: 0.2; }
         .hud-cross { font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 900; color: var(--dj-magenta); }
 
@@ -81,120 +116,126 @@
         @keyframes eq-play { 0% { height: 4px; } 100% { height: 14px; } }
 
         .content-wrap { position: relative; padding: 45px 30px 45px; z-index: 10; display: flex; flex-direction: column; flex: 1; min-height: 0; }
+
         .top-header-area { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; gap: 20px; }
         .header-titles { display: flex; flex-direction: column; position: relative; padding-top: 10px; flex: 1; }
         
-        .deco-dot-matrix { position: absolute; width: 80px; height: 80px; background-image: radial-gradient(var(--dj-cyan) 20%, transparent 20%); background-size: 10px 10px; top: 10px; left: 180px; z-index: 0; opacity: 0.7; }
-        .deco-star { position: absolute; width: 30px; height: 30px; background: var(--dj-magenta); clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); top: 35px; left: 280px; z-index: 2; animation: spin 8s linear infinite; }
+        .deco-dot-matrix { position: absolute; width: 80px; height: 80px; background-image: radial-gradient(var(--dj-cyan) 20%, transparent 20%); background-size: 10px 10px; top: 10px; left: 280px; z-index: 0; opacity: 0.7; }
+        .deco-star { position: absolute; width: 40px; height: 40px; background: var(--dj-magenta); clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); top: 35px; left: 400px; z-index: 2; animation: spin 8s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        .deco-crosshair { position: absolute; width: 45px; height: 45px; border: 3px solid var(--dj-cyan); border-radius: 50%; top: -10px; left: 140px; z-index: 0; opacity: 0.6; display: flex; justify-content: center; align-items: center; }
+        .deco-crosshair { position: absolute; width: 50px; height: 50px; border: 3px solid var(--dj-cyan); border-radius: 50%; top: 15px; left: 220px; z-index: 0; opacity: 0.6; display: flex; justify-content: center; align-items: center; }
         .deco-crosshair::before { content: ''; width: 3px; height: 100%; background: var(--dj-cyan); }
         .deco-crosshair::after { content: ''; width: 100%; height: 3px; background: var(--dj-cyan); position: absolute; }
-        .deco-stripe-box { position: absolute; width: 90px; height: 25px; background: repeating-linear-gradient(-45deg, var(--dj-orange), var(--dj-orange) 4px, transparent 4px, transparent 8px); bottom: -10px; left: -10px; z-index: 0; transform: skewX(-15deg); }
+        .deco-stripe-box { position: absolute; width: 100px; height: 25px; background: repeating-linear-gradient(-45deg, var(--dj-orange), var(--dj-orange) 4px, transparent 4px, transparent 8px); bottom: -15px; left: 10px; z-index: 0; border: 2px solid var(--dj-purple); transform: skewX(-15deg); }
 
-        .top-subtitle { font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 900; color: var(--dj-purple); letter-spacing: 2px; opacity: 0.8; display: flex; align-items: center; gap: 12px; margin-bottom: 5px; margin-left: 5px; position: relative; z-index: 2; }
-        .top-subtitle .barcode { font-size: 16px; letter-spacing: 3px; color: var(--dj-cyan); opacity: 0.8; }
+        .top-subtitle { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 900; color: var(--dj-purple); letter-spacing: 2px; opacity: 0.8; display: flex; align-items: center; gap: 15px; margin-bottom: 5px; margin-left: 5px; position: relative; z-index: 2; }
+        .top-subtitle .barcode { font-size: 18px; letter-spacing: 3px; color: var(--dj-cyan); opacity: 0.8; }
 
-        .header { position: relative; display: inline-block; cursor: default; z-index: 2; margin-top: 0; width: 100%; }
-        .block-cyan { position: absolute; width: 50px; height: 25px; background: var(--dj-cyan); top: -2px; left: -5px; z-index: 1; transform: skewX(-15deg); box-shadow: 3px 3px 0 var(--dj-purple); }
+        .header { position: relative; display: inline-block; cursor: default !important; z-index: 2; margin-top: -10px; padding-left: 10px; width: 100%; }
+        .header * { cursor: default !important; }
+        .block-cyan { position: absolute; width: 120px; height: 40px; background: var(--dj-cyan); top: 10px; left: -15px; z-index: 1; transform: skewX(-15deg); box-shadow: 4px 4px 0 var(--dj-purple); }
+        .block-orange { position: absolute; width: 60px; height: 60px; background: var(--dj-orange); bottom: 10px; right: 20px; z-index: 1; border-radius: 50%; box-shadow: -4px 4px 0 var(--dj-purple); }
         
-        /* 🔥 EXTENSION 감성: 딥 네이비 테두리 & 통통 튀는 애니메이션 */
         .header h1 { 
-            font-size: 85px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
-            text-transform: uppercase; line-height: 0.85; position: relative; z-index: 5;
-            letter-spacing: -3px; color: var(--dj-yellow);
-            text-shadow: 
-                5px 5px 0 var(--dj-navy), 
-                -4px -4px 0 var(--dj-cyan), 
-                4px -4px 0 var(--dj-magenta), 
-                8px 8px 0 rgba(0,0,0,0.15);
-            margin: 0; padding-left: 5px; white-space: nowrap;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), text-shadow 0.4s ease;
+            font-size: 110px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase; line-height: 0.8; position: relative; z-index: 5;
+            letter-spacing: -6px; color: var(--dj-yellow); margin: 0; display: flex; flex-direction: column;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-
-        .header:hover h1 {
-            transform: translateY(-4px) scale(1.02) rotate(-2deg);
-            text-shadow: 
-                7px 7px 0 var(--dj-navy), 
-                -5px -5px 0 var(--dj-cyan), 
-                5px -5px 0 var(--dj-magenta), 
-                10px 10px 0 rgba(0,0,0,0.2);
+        .header h1 span {
+            text-shadow: 6px 6px 0 var(--dj-navy), -4px -4px 0 var(--dj-cyan), 4px -4px 0 var(--dj-magenta), 10px 10px 0 rgba(0,0,0,0.15);
+            transition: text-shadow 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        .header h1 span:first-child { margin-bottom: -5px; }
+        .header:hover h1 { transform: translateY(-5px) scale(1.02) rotate(-2deg); }
+        .header:hover h1 span { text-shadow: 9px 9px 0 var(--dj-navy), -6px -6px 0 var(--dj-cyan), 6px -6px 0 var(--dj-magenta), 15px 15px 0 rgba(0,0,0,0.25); }
 
-        .yt-box-mini { width: 300px; height: 168px; flex-shrink: 0; background: var(--black); border: 4px solid var(--dj-navy); box-shadow: 5px 5px 0 var(--dj-cyan), -2px -2px 0 var(--dj-magenta); padding: 4px; overflow: hidden; transform: skewX(-2deg); transition: transform 0.3s ease; position: relative; z-index: 10; margin-top: 10px; }
+        .yt-box-mini { 
+            width: 320px; height: 180px; flex-shrink: 0; background: var(--black); border: 4px solid var(--dj-navy); 
+            box-shadow: 5px 5px 0 var(--dj-cyan), -2px -2px 0 var(--dj-magenta); padding: 4px; overflow: hidden; transform: skewX(-2deg); 
+            transition: transform 0.3s ease; position: relative; z-index: 10; margin-top: 10px;
+        }
         .yt-box-mini:hover { transform: skewX(0deg); box-shadow: 6px 6px 0 var(--dj-cyan), -3px -3px 0 var(--dj-magenta); }
         .yt-box-mini iframe { width: 100%; height: 100%; transform: skewX(2deg); display: block; transition: transform 0.3s ease; }
         .yt-box-mini:hover iframe { transform: skewX(0deg); }
 
         .tab-menu { display: flex; gap: 12px; margin-bottom: 15px; position: relative; z-index: 10;}
-        .tab-btn { flex: 1; padding: 12px; background: var(--white); border: 3px solid var(--dj-purple); box-shadow: 4px 4px 0 var(--dj-purple); font-size: 16px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif; color: var(--dj-purple); transform: skewX(-8deg); transition: all 0.2s; position: relative; overflow: hidden; }
+        .tab-btn { 
+            flex: 1; padding: 12px; background: var(--white); border: 3px solid var(--dj-purple); box-shadow: 4px 4px 0 var(--dj-purple); 
+            font-size: 16px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
+            color: var(--dj-purple); cursor: pointer; transform: skewX(-8deg); transition: all 0.2s; position: relative; overflow: hidden;
+        }
         .tab-btn span { display: inline-block; transform: skewX(8deg); position: relative; z-index: 2;}
-        .tab-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(53, 28, 97, 0.05) 10px, rgba(53, 28, 97, 0.05) 20px); transition: left 0.3s; z-index: 1; }
+        .tab-btn::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(53, 28, 97, 0.05) 10px, rgba(53, 28, 97, 0.05) 20px);
+            transition: left 0.3s; z-index: 1;
+        }
         .tab-btn:hover::before { left: 0; }
         .tab-btn:hover { transform: skewX(-8deg) translateY(-2px); box-shadow: 5px 5px 0 var(--dj-magenta); color: var(--dj-magenta); border-color: var(--dj-magenta); }
         .tab-btn.active { background: var(--dj-purple); color: var(--dj-yellow); box-shadow: 4px 4px 0 var(--dj-cyan); border-color: var(--dj-purple); }
         .tab-btn#btnQuest.active { color: var(--dj-cyan); box-shadow: 4px 4px 0 var(--dj-cyan); }
 
-        .list-container { 
-            display: flex; gap: 15px; /* 좌(랭킹), 우(코멘트) 분할 */
-            flex: 1; overflow: hidden; position: relative; z-index: 10; padding-bottom: 5px;
-        }
-
-        /* 왼쪽 랭킹 영역 */
-        .rank-column {
-            flex: 1; display: flex; flex-direction: column; gap: 8px;
-            overflow-y: auto; padding-right: 5px;
-        }
-        .rank-column::-webkit-scrollbar { width: 6px; }
-        .rank-column::-webkit-scrollbar-track { background: rgba(53, 28, 97, 0.05); border-radius: 4px; }
-        .rank-column::-webkit-scrollbar-thumb { background: var(--dj-purple); border-radius: 4px; }
-
-        /* 오른쪽 코멘트 영역 */
-        .comment-column {
-            flex: 1; display: flex; flex-direction: column; justify-content: flex-start;
-            gap: 15px; overflow-y: hidden; padding: 10px; position: relative;
-            background: rgba(255, 255, 255, 0.4); border: 2px dashed var(--dj-grid); border-radius: 12px;
-        }
-        
-        /* 둥둥 떠다니는 귀여운 코멘트 말풍선 */
-        .boo-comment {
-            font-family: 'Jua', sans-serif; /* 동글동글 귀여운 폰트 */
-            font-size: 20px; color: var(--dj-purple);
-            background: #fff; padding: 10px 15px; border-radius: 20px;
-            box-shadow: 3px 3px 0 rgba(0,0,0,0.05), inset -2px -2px 0 rgba(0,0,0,0.05);
-            border: 2px solid var(--dj-navy);
-            display: inline-block; position: absolute;
-            white-space: nowrap; cursor: default;
-            animation: floatBubble 4s ease-in-out infinite alternate;
-        }
-        /* 마젠타, 시안, 오렌지 포인트 조합 */
-        .boo-comment:nth-child(odd) { border-color: var(--dj-magenta); color: var(--dj-magenta); }
-        .boo-comment:nth-child(3n) { border-color: var(--dj-cyan); color: var(--dj-cyan); }
-        .boo-comment:nth-child(4n) { border-color: var(--dj-orange); color: var(--dj-orange); }
-
-        @keyframes floatBubble {
-            0% { transform: translateY(0px) rotate(-2deg); }
-            100% { transform: translateY(-15px) rotate(2deg); }
-        }
-
         /* -------------------------------------
-           랭킹 줄 스타일 및 커서 고정
+           랭킹 리스트 레이아웃 (반갈죽)
         -------------------------------------- */
-        .rank-row, .rank-row * { cursor: default !important; }
-        .tab-btn, .tab-btn * { cursor: pointer !important; }
-
-        .rank-row { 
-            display: flex; align-items: center; background: var(--white); 
-            border: 1px solid var(--dj-purple) !important; border-left: 6px solid var(--dj-purple) !important;
-            padding: 8px 12px; font-weight: 900; flex-shrink: 0; transform: skewX(-2deg); 
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s, background-color 0.2s; position: relative; overflow: hidden;
+        .list-container { 
+            display: flex; flex-direction: column; gap: 8px; 
+            flex: 1; overflow-y: auto; padding-right: 10px; padding-bottom: 5px;
+            position: relative; z-index: 10;
         }
-        .rank-row::after { content: ''; position: absolute; right: 0; top: 0; height: 100%; width: 0; background: linear-gradient(90deg, transparent, rgba(53, 28, 97, 0.05)); transition: width 0.3s ease; z-index: 0; pointer-events: none; }
-        .rank-row:hover::after { width: 100%; }
+        .list-container::-webkit-scrollbar { width: 8px; }
+        .list-container::-webkit-scrollbar-track { background: rgba(53, 28, 97, 0.05); border-radius: 4px; }
+        .list-container::-webkit-scrollbar-thumb { background: var(--dj-purple); border-radius: 4px; }
+
+        /* 가로로 나란히 서게 할 래퍼 박스 */
+        .item-wrapper {
+            display: flex; gap: 15px; width: 100%;
+        }
+
+        .rank-row, .comment-row { cursor: default !important; }
+        .rank-row *, .comment-row * { cursor: default !important; }
+
+        /* 왼쪽 랭킹표 / 오른쪽 코멘트표 공통 스타일 */
+        .rank-row, .comment-row { 
+            flex: 1; /* 가로 공간 절반씩 차지 */
+            display: flex; align-items: center; background: var(--white); 
+            border: 1px solid var(--dj-purple) !important; 
+            border-left: 6px solid var(--dj-purple) !important;
+            padding: 10px 15px; font-weight: 900;
+            transform: skewX(-2deg); 
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s, background-color 0.2s;
+            position: relative; overflow: hidden;
+        }
         
+        .rank-row-top { display: flex; align-items: center; width: 100%; }
+        
+        .rank-row::after, .comment-row::after {
+            content: ''; position: absolute; right: 0; top: 0; height: 100%; width: 0;
+            background: linear-gradient(90deg, transparent, rgba(53, 28, 97, 0.05));
+            transition: width 0.3s ease; z-index: 0; pointer-events: none;
+        }
+        .rank-row:hover::after, .comment-row:hover::after { width: 100%; }
+        
+        /* 오른쪽 코멘트 전용 추가 스타일 */
+        .comment-row { 
+            justify-content: center; /* 텍스트 가운데 정렬 */
+            border-left-color: var(--dj-magenta) !important; /* 코멘트는 마젠타 테두리 */
+        }
+        .comment-text {
+            font-family: 'Jua', sans-serif;
+            font-size: 16px; color: var(--dj-navy);
+            transform: skewX(2deg); /* 글자는 똑바로 */
+            position: relative; z-index: 2;
+        }
+
         .giver-list .rank-row { border-left-color: var(--dj-orange) !important; box-shadow: 2px 2px 0 var(--dj-orange); }
         .quest-list .rank-row { border-left-color: var(--dj-cyan) !important; box-shadow: 2px 2px 0 var(--dj-cyan); }
-        .rank-row:hover { transform: skewX(-2deg) translateX(5px) translateY(-1px); }
+        .daily-list .rank-row { border-left-color: var(--dj-purple) !important; box-shadow: 2px 2px 0 var(--dj-purple); }
+        
+        .rank-row:hover { transform: skewX(-2deg) translateX(5px) translateY(-1px); box-shadow: -2px 4px 0 var(--dj-purple); }
+        .comment-row:hover { transform: skewX(-2deg) translateX(5px) translateY(-1px); box-shadow: -2px 4px 0 var(--dj-magenta); background: #fffcf7; }
+        
         .giver-list .rank-row:hover { box-shadow: -2px 4px 0 var(--dj-orange); background: #fffcf7; }
         .quest-list .rank-row:hover { box-shadow: -2px 4px 0 var(--dj-cyan); background: #f5ffff; }
 
@@ -202,93 +243,89 @@
         .rank-row.top-2 { background: repeating-linear-gradient(-45deg, #f5f5f5, #f5f5f5 8px, #ffffff 8px, #ffffff 16px); border-color: #a8a9ad !important; border-left-color: #a8a9ad !important; box-shadow: 2px 2px 0 #a8a9ad; }
         .rank-row.top-3 { background: repeating-linear-gradient(-45deg, #fff0e6, #fff0e6 8px, #ffffff 8px, #ffffff 16px); border-color: #cd7f32 !important; border-left-color: #cd7f32 !important; box-shadow: 2px 2px 0 #cd7f32; }
 
-        .rank-row-top { display: flex; align-items: center; flex: 1; min-width: 0; transform: skewX(2deg); }
-
-        .mobile-comment { display: none; } /* 데스크탑에서는 숨김 */
-
-        .rank-num { font-size: 18px; color: #ccc; width: 40px; font-style: italic; font-family: 'Montserrat', sans-serif; white-space: nowrap; position: relative; z-index: 2; }
-        .rank-row.top-1 .rank-num { color: #d4af37; width: 60px; text-shadow: 1px 1px 0 rgba(0,0,0,0.1); }
-        .rank-row.top-2 .rank-num { color: #a8a9ad; width: 60px; }
-        .rank-row.top-3 .rank-num { color: #cd7f32; width: 60px; text-shadow: 1px 1px 0 rgba(0,0,0,0.1); }
+        .rank-num { font-size: 20px; color: #ccc; width: 45px; font-style: italic; font-family: 'Montserrat', sans-serif; white-space: nowrap; transform: skewX(2deg); position: relative; z-index: 2; }
+        .rank-row.top-1 .rank-num { color: #d4af37; width: 75px; text-shadow: 1px 1px 0 rgba(0,0,0,0.1); }
+        .rank-row.top-2 .rank-num { color: #a8a9ad; width: 75px; }
+        .rank-row.top-3 .rank-num { color: #cd7f32; width: 75px; text-shadow: 1px 1px 0 rgba(0,0,0,0.1); }
         
-        .rank-name { flex: 1; font-size: 14px; color: var(--dj-purple); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 5px; position: relative; z-index: 2; }
-        .rank-val { font-size: 16px; font-style: italic; font-family: 'Montserrat', sans-serif; text-align: right; white-space: nowrap; transform: skewX(2deg); position: relative; z-index: 2; }
+        .rank-name { flex: 1; font-size: 16px; color: var(--dj-purple); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 10px; transform: skewX(2deg); position: relative; z-index: 2; }
+        .rank-val { font-size: 18px; font-style: italic; font-family: 'Montserrat', sans-serif; text-align: right; white-space: nowrap; transform: skewX(2deg); position: relative; z-index: 2; }
 
         .val-daily { color: var(--dj-magenta); }
         .val-giver { color: var(--dj-orange); }
         .val-quest { color: var(--dj-cyan); }
+
+        /* 모바일 코멘트 숨김 기본값 (데스크탑에선 안 보임) */
+        .mobile-comment { display: none; }
+
+        .content-bg-text {
+            position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%) rotate(-5deg);
+            font-size: 140px; font-weight: 900; font-family: 'Montserrat', sans-serif; color: transparent;
+            -webkit-text-stroke: 2px rgba(53, 28, 97, 0.05); white-space: nowrap; pointer-events: none;
+            z-index: 1; display: flex; flex-direction: column; align-items: center; line-height: 0.8; letter-spacing: -5px;
+        }
+        .content-bg-text .filled { color: rgba(248, 193, 23, 0.08); -webkit-text-stroke: 0; margin-right: 60px; }
 
         .bouncy-text { display: inline-block; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s, text-shadow 0.2s; }
         .rank-row:hover .rank-name .bouncy-text { color: var(--dj-magenta); transform: translateY(-3px) scale(1.05); text-shadow: 0 2px 4px rgba(217, 28, 73, 0.3); }
         .rank-row:hover .rank-val .bouncy-text { color: var(--dj-purple); transform: translateY(-3px) scale(1.05); text-shadow: 0 2px 4px rgba(53, 28, 97, 0.3); }
 
         .thank-you-msg { text-align: center; margin-top: auto; padding-top: 15px; font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 900; color: var(--dj-purple); letter-spacing: 3px; opacity: 0.6; text-transform: uppercase; position: relative; z-index: 10; }
+        
         .marquee-wrap { position: absolute; bottom: 0; left: 0; width: 100%; height: 26px; background: var(--dj-navy); color: var(--dj-orange); display: flex; align-items: center; overflow: hidden; z-index: 20; font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 900; letter-spacing: 2px; border-top: 1px solid var(--dj-purple); }
         .marquee-content { display: flex; white-space: nowrap; animation: scroll-left 15s linear infinite; }
         .marquee-content span { padding: 0 30px; }
         @keyframes scroll-left { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
         @media (max-width: 700px) {
-            .djmax-bg-text, .sym-3 { display: none; } 
+            .djmax-bg-text { display: none; } 
+            .sym-3 { display: none; }
             .game-frame { border-width: 6px; border-radius: 12px; }
             .content-wrap { padding: 30px 15px 35px; }
             .top-header-area { flex-direction: column; align-items: flex-start; gap: 15px; margin-bottom: 15px; }
-            .header h1 { font-size: 55px; text-shadow: 3px 3px 0 var(--dj-purple), 4px 4px 0 rgba(0,0,0,0.15); letter-spacing: -2px; }
-            .yt-box-mini { width: 100%; height: 180px; transform: skewX(0); margin-top: 0; }
+            
+            .header-titles { padding-top: 5px; width: 100%;}
+            .header h1 { font-size: 70px; letter-spacing:-3px; line-height: 0.85; margin-top: 0;}
+            .header h1 span { text-shadow: 4px 4px 0 var(--dj-navy), -2px -2px 0 var(--dj-cyan), 2px -2px 0 var(--dj-magenta), 6px 6px 0 rgba(0,0,0,0.15); }
+            .header h1 span:first-child { margin-bottom: 0px; }
+            
+            .header:hover h1 { transform: translateY(-3px) scale(1.02) rotate(-1deg); }
+            .header:hover h1 span { text-shadow: 6px 6px 0 var(--dj-navy), -3px -3px 0 var(--dj-cyan), 3px -3px 0 var(--dj-magenta), 10px 10px 0 rgba(0,0,0,0.2); }
+
+            .top-subtitle { font-size: 11px; margin-bottom: 8px;}
+            .top-subtitle .barcode { font-size: 14px;}
+            .block-cyan { width: 70px; height: 25px; top: 0px; left: -5px; box-shadow: 2px 2px 0 var(--dj-purple);}
+            .block-orange { width: 35px; height: 35px; bottom: 5px; right: 10px; box-shadow: -2px 2px 0 var(--dj-purple);}
+            
+            .deco-dot-matrix { left: 120px; top: 0px; width: 30px; height: 30px; background-size: 5px 5px; }
+            .deco-crosshair { left: 90px; top: -10px; width: 25px; height: 25px; }
+            .deco-star { left: 180px; top: 20px; width: 15px; height: 15px; }
+            
+            .yt-box-mini { width: 100%; height: 180px; transform: skewX(0); box-shadow: 4px 4px 0 var(--dj-cyan), -2px -2px 0 var(--dj-magenta); }
             .yt-box-mini iframe { transform: skewX(0); }
             
-            /* 모바일 공간 부족으로 우측 코멘트 열 숨김 */
-            .comment-column { display: none; }
+            .tab-menu { gap: 8px; margin-bottom: 12px; }
+            .tab-btn { font-size: 13px; padding: 10px; border-width: 2px; box-shadow: 2px 2px 0 var(--dj-purple); transform: skewX(-5deg); }
+            .tab-btn span { transform: skewX(5deg); }
+            
+            /* 🔥 모바일 1층, 2층 레이아웃 처리 */
+            .item-wrapper { flex-direction: column; gap: 0; }
+            .comment-row { display: none !important; } /* 데스크탑 전용 오른쪽 랭크박스 숨김 */
+            
+            .rank-row { flex-direction: column; align-items: stretch; padding: 8px 10px; transform: skewX(0); border-left-width: 4px !important; box-shadow: 2px 2px 0 var(--dj-purple) !important; }
+            .rank-row-top { transform: skewX(0); } /* 1층 찌그러짐 원상복구 */
+            
+            .rank-num, .rank-name, .rank-val { transform: skewX(0); font-size: 14px; }
+            .rank-num { width: 35px; }
+            .rank-val { min-width: 50px; }
+            .rank-row.top-1 .rank-num, .rank-row.top-2 .rank-num, .rank-row.top-3 .rank-num { font-size: 16px; width: 50px; }
 
-            /* 🔥 모바일에서 1층: 닉네임+수치, 2층: 코멘트 배치 */
-            .rank-row {
-                flex-direction: column;
-                align-items: stretch;
-                padding: 10px 12px;
-                gap: 0;
-                transform: skewX(0); /* 쏠림 현상 방지 */
-            }
-            .rank-row-top {
-                display: flex;
-                align-items: center;
-                width: 100%;
-                transform: skewX(0);
-            }
-            .rank-num {
-                width: 35px;
-                font-size: 15px;
-            }
-            .rank-row.top-1 .rank-num, 
-            .rank-row.top-2 .rank-num, 
-            .rank-row.top-3 .rank-num {
-                width: 50px;
-                font-size: 15px;
-            }
-            .rank-name {
-                font-size: 15px;
-                flex: 1;
-            }
-            .rank-val {
-                text-align: right;
-                width: auto;
-                font-size: 14px;
-                transform: skewX(0);
-                margin-top: 0;
-                padding-top: 0;
-                border-top: none;
-            }
             /* 모바일 전용 2층 코멘트 디자인 */
             .mobile-comment {
-                display: block;
-                width: 100%;
-                text-align: left;
-                font-family: 'Jua', sans-serif;
-                font-size: 14px;
-                color: rgba(53, 28, 97, 0.8);
-                margin-top: 6px;
-                padding-top: 6px;
-                border-top: 1px dashed rgba(53, 28, 97, 0.15);
-                padding-left: 35px; /* 순위 여백만큼 띄움 */
+                display: block; width: 100%; text-align: left;
+                font-family: 'Jua', sans-serif; font-size: 14px; color: var(--dj-navy);
+                margin-top: 6px; padding-top: 6px; border-top: 1px dashed rgba(53, 28, 97, 0.15);
+                padding-left: 35px; /* 순위 숫자 여백만큼 들여쓰기 */
             }
         }
     </style>
@@ -296,8 +333,15 @@
 <body>
     <div class="game-frame">
         <div class="scanlines"></div>
-        <div class="djmax-bg-text"><span>RANK</span><span class="hollow">+ING</span></div>
-        <div class="floating-sym sym-1">+</div><div class="floating-sym sym-2">X</div><div class="floating-sym sym-3">O</div>
+        
+        <div class="djmax-bg-text">
+            <span>RANK</span>
+            <span class="hollow">+ING</span>
+        </div>
+        
+        <div class="floating-sym sym-1">+</div>
+        <div class="floating-sym sym-2">X</div>
+        <div class="floating-sym sym-3">O</div>
 
         <div class="hud-overlay">
             <div class="hud-corner tl"></div><div class="hud-corner tr"></div>
@@ -312,18 +356,34 @@
             </div>
         </div>
 
+        <div class="content-bg-text">
+            <span>R A N K</span>
+            <span class="filled">+ I N G</span>
+        </div>
+
         <div class="content-wrap">
             <div class="top-header-area">
                 <div class="header-titles">
-                    <div class="deco-crosshair"></div><div class="deco-dot-matrix"></div><div class="deco-star"></div><div class="deco-stripe-box"></div>
+                    <div class="deco-crosshair" style="top: 15px; left: 220px; width: 50px; height: 50px; border-width: 3px;"></div>
+                    <div class="deco-dot-matrix" style="top: 10px; left: 280px; width: 80px; height: 80px; background-size: 10px 10px;"></div>
+                    <div class="deco-star" style="top: 35px; left: 400px; width: 40px; height: 40px;"></div>
+                    <div class="deco-stripe-box" style="bottom: -15px; left: 10px; width: 100px; height: 25px; border: 2px solid var(--dj-purple);"></div>
+                    
                     <div class="top-subtitle">
-                        <span>YGOSU</span><span class="barcode">|||| || ||| |</span><span>DATA ARCHIVE</span>
+                        <span>YGOSU</span>
+                        <span class="barcode">|||| || ||| |</span>
+                        <span>DATA ARCHIVE</span>
                     </div>
                     <div class="header">
                         <div class="block-cyan"></div>
-                        <h1>BOO<br><span style="color: var(--dj-yellow);">BOARD</span></h1>
+                        <div class="block-orange"></div>
+                        <h1>
+                            <span>BOO</span>
+                            <span style="color: var(--white);">BOARD</span>
+                        </h1>
                     </div>
                 </div>
+                
                 <div class="yt-box-mini">
                     <iframe src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                 </div>
@@ -335,132 +395,141 @@
                 <button class="tab-btn" id="btnQuest" onclick="show('quest')"><span class="bouncy-text">REWARDS</span></button>
             </div>
 
-            <!-- 반으로 나뉜 레이아웃 구조 (좌측 랭킹, 우측 코멘트) -->
-            <div id="daily" class="list-container daily-list">
-                <div class="rank-column" id="daily-ranks"></div>
-                <div class="comment-column" id="daily-comments"></div>
-            </div>
-            
-            <div id="giver" class="list-container giver-list" style="display:none;">
-                <div class="rank-column" id="giver-ranks"></div>
-                <div class="comment-column" id="giver-comments"></div>
-            </div>
-            
-            <div id="quest" class="list-container quest-list" style="display:none;">
-                <div class="rank-column" id="quest-ranks"></div>
-                <div class="comment-column" id="quest-comments"></div>
-            </div>
+            <div id="daily" class="list-container daily-list"></div>
+            <div id="giver" class="list-container giver-list" style="display:none;"></div>
+            <div id="quest" class="list-container quest-list" style="display:none;"></div>
 
-            <div class="thank-you-msg">★ THANK YOU FOR COMPLETING THE DAILY QUEST! ★</div>
+            <div class="thank-you-msg">
+                ★ THANK YOU FOR COMPLETING THE DAILY QUEST! ★
+            </div>
         </div>
 
         <div class="marquee-wrap">
             <div class="marquee-content">
-                <span>/// YGOSU BOO BOARD DATA ARCHIVE ///</span><span>DAILY QUEST ACHIEVERS</span><span>DONATION RANKING</span><span>MINERAL REWARDS</span>
-                <span>/// YGOSU BOO BOARD DATA ARCHIVE ///</span><span>DAILY QUEST ACHIEVERS</span><span>DONATION RANKING</span><span>MINERAL REWARDS</span>
+                <span>/// YGOSU BOO BOARD DATA ARCHIVE ///</span>
+                <span>DAILY QUEST ACHIEVERS</span>
+                <span>DONATION RANKING</span>
+                <span>MINERAL REWARDS</span>
+                <span>/// YGOSU BOO BOARD DATA ARCHIVE ///</span>
+                <span>DAILY QUEST ACHIEVERS</span>
+                <span>DONATION RANKING</span>
+                <span>MINERAL REWARDS</span>
             </div>
         </div>
     </div>
 
     <script>
-        // 랜덤 브금 리스트
-        const bgmList = ["upNRraLNEg4", "56jjrn5BpDk", "NzcJWgK2ZTI", "qZlu2j2SiBA", "ZbO9PBdFRdc", "BMA5fYUfXq0"];
+        const bgmList = ["upNRraLNEg4", "56jjrn5BpDk", "NzcJWgK2ZTI", "qZlu2j2SiBA", "ZbO9PBdFRdc", "BMA5fYUfXq0", "SNkeRWscPIo", "xA_WMJR15lQ"]
+        
         function setRandomBGM() {
             const randomId = bgmList[Math.floor(Math.random() * bgmList.length)];
             const iframe = document.querySelector('.yt-box-mini iframe');
             iframe.src = `https://www.youtube.com/embed/${randomId}?si=iRSunb6wWGX7SGp5&autoplay=1&loop=1&playlist=${randomId}`;
         }
 
-        // 탭 전환
         function show(tab) {
             document.getElementById('daily').style.display = 'none';
             document.getElementById('giver').style.display = 'none';
             document.getElementById('quest').style.display = 'none';
+
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
 
-            document.getElementById(tab).style.display = 'flex';
-            document.getElementById('btn' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+            if (tab === 'daily') {
+                document.getElementById('daily').style.display = 'flex';
+                document.getElementById('btnDaily').classList.add('active');
+            } else if (tab === 'giver') {
+                document.getElementById('giver').style.display = 'flex';
+                document.getElementById('btnGiver').classList.add('active');
+            } else if (tab === 'quest') {
+                document.getElementById('quest').style.display = 'flex';
+                document.getElementById('btnQuest').classList.add('active');
+            }
         }
 
-        // 10% 게임, 30% 팬심/주접, 60% 망령 비율로 구성된 칭호 리스트 (요청 문구 포함!)
-        const booTitles = [
-            // 팬심 / 주접 (30%)
-            "부우단 행동대장 =_=", "윤랑바라기", "충성충성 부우충성", "(숨참고 부우 다이브)", "부우야 나 죽어 =_=",
-            "세상에서 제일 귀여운 =_=", "부우만 믿고 간다", "성덕이 될 거야", "하랑이 미모 무슨 일 =_=",
-            
-            // 인방 / 게시판 망령 (60%)
-            "숲(SOOP) 지박령", "부우 게시판 망령 =_=", "일퀘 깎는 장인", "방송 언제 켜? =_=", "시그 장전 완료",
-            "방방봐 해주세요", "억까 멈춰! =_=", "채팅창 핑퐁 장인", "오늘도 출첵 완료!", "표정 풀어 =_=",
-            "(부우 몰래 딴방 구경)", "일퀘 스피드런 1위", "퇴근 후 부우방송", "오늘도 폼 미쳤다 =_=", "현생은 폼인가",
-            "내일부터 갓생산다 =_=", "미네랄 폭격기", "부우 게시판 수호자",
-            "부우라고 하지좀마", "억까들 오ㅡㅡㅡㅡㅡㅡㅡ열", // <- 추가된 멘트들!
-            
-            // 게임 (10%)
-            "부우는 롤 좋아해 =_=", "부우는 배그 좋아해 =_=", "넵! 알겠습니다!"
-        ];
-
-        // 데이터 렌더링 및 둥둥 코멘트 자동 생성 로직
-        function renderData(dataList, typeClass, tabType, rankTarget, commentTarget) {
-            let htmlRanks = "";
-            let htmlComments = "";
-            
+        function createRows(dataList, typeClass, tabType) {
             if (!dataList || dataList.length === 0) {
-                document.getElementById(rankTarget).innerHTML = '<div style="text-align:center; padding:20px; color:#999; font-weight:900;">조건을 달성한 사람이 아직 없습니다.</div>';
-                return;
+                return '<div style="text-align:center; padding:20px; color:#999; font-weight:900; z-index:2; position:relative;">조건을 달성한 사람이 아직 없습니다.</div>';
             }
 
+            // 부우 게시판 맞춤 코멘트 (비율 조정 및 특별 멘트 추가)
+            const booTitles = [
+                "부우단 행동대장 =_=", "하랑이바라기", "충성충성 부우충성", "(숨참고 부우 다이브)",
+                "하랑아 나 죽어 =_=", "세상에서 제일 귀여운 =_=", "부우만 믿고 간다", "성덕이 될 거야",
+                "하랑이 미모 무슨 일 =_=", "숲(SOOP) 지박령", "부우 게시판 망령 =_=", "일퀘 깎는 장인",
+                "방송 언제 켜? =_=", "도네 장전 완료", "방방봐 해주세요", "억까 멈춰! =_=",
+                "채팅창 핑퐁 장인", "오늘도 출첵 완료!", "표정 풀어 =_=", "(부우 몰래 딴방 구경)",
+                "일퀘 스피드런 1위", "퇴근 후 부우방송", "오늘도 폼 미쳤다 =_=", "현생은 폼인가",
+                "내일부터 갓생산다 =_=", "미네랄 폭격기", "부우 게시판 수호자", "미드 차이 =_=",
+                "자기장 억까 =_=", "오늘 저녁은 치킨이닭", "부우라고 하지좀마", "억까들 오ㅡㅡㅡㅡㅡㅡㅡ열"
+            ];
+
+            var html = "";
             dataList.forEach(function(r, i) {
-                // 랭킹 카드 구조 (모바일 2줄 대응을 위해 구조화)
                 var rankClass = "";
                 var rankIcon = String(i + 1).padStart(2, '0');
+
                 if (i === 0) { rankClass = "top-1"; rankIcon = "🥇 01"; }
                 else if (i === 1) { rankClass = "top-2"; rankIcon = "🥈 02"; }
                 else if (i === 2) { rankClass = "top-3"; rankIcon = "🥉 03"; }
 
                 var nameHtml = '<span class="bouncy-text">' + r.name + '</span>';
-                var valHtml = (tabType === 'daily') ? "CLEAR" : (r.val.toLocaleString() + " MN");
-
+                var valHtml = tabType === 'daily' ? "CLEAR" : r.val.toLocaleString() + " MN";
+                
                 var randomTitle = booTitles[Math.floor(Math.random() * booTitles.length)];
 
-                htmlRanks += '<div class="rank-row ' + rankClass + '">' +
+                // 전체 래퍼 시작
+                html += '<div class="item-wrapper">';
+
+                // 1. 왼쪽 랭킹표 박스
+                html += '<div class="rank-row ' + rankClass + '">' +
                         '<div class="rank-row-top">' +
                         '<div class="rank-num">' + rankIcon + '</div>' +
                         '<div class="rank-name">' + nameHtml + '</div>' +
                         '<div class="rank-val ' + typeClass + '"><span class="bouncy-text">' + valHtml + '</span></div>' +
-                        '</div>' +
-                        '<div class="mobile-comment">"' + randomTitle + '"</div>' +
                         '</div>';
+                        
+                // 모바일에서만 나타나는 2층 코멘트 (일퀘 탭 전용)
+                if (tabType === 'daily') {
+                    html += '<div class="mobile-comment">" ' + randomTitle + ' "</div>';
+                }
                 
-                // 우측 떠다니는 말풍선 동적 생성
-                var randomTop = Math.floor(Math.random() * 80) + "%"; // 0%~80% 사이 세로 랜덤
-                var randomLeft = Math.floor(Math.random() * 50) + "%"; // 0%~50% 사이 가로 랜덤
-                var randomDelay = (Math.random() * 3).toFixed(2) + "s"; // 시간 차 애니메이션
-                
-                htmlComments += '<div class="boo-comment" style="top:' + randomTop + '; left:' + randomLeft + '; animation-delay:' + randomDelay + ';">"' + randomTitle + '"</div>';
-            });
+                html += '</div>'; // 왼쪽 랭킹표 박스 끝
 
-            document.getElementById(rankTarget).innerHTML = htmlRanks;
-            // 코멘트 말풍선 수량을 깔끔하게 최대 12개로 가공하여 주입
-            document.getElementById(commentTarget).innerHTML = htmlComments;
+                // 2. 오른쪽 똑같은 양식의 코멘트표 박스 (일퀘 탭 전용)
+                if (tabType === 'daily') {
+                    html += '<div class="comment-row">';
+                    html += '<div class="comment-text">" ' + randomTitle + ' "</div>';
+                    html += '</div>';
+                }
+
+                html += '</div>'; // 전체 래퍼 끝
+            });
+            return html;
         }
 
         function loadData() {
             fetch('data.json?t=' + new Date().getTime())
-            .then(function(response) { if (!response.ok) throw new Error('네트워크 응답 실패'); return response.json(); })
+            .then(function(response) {
+                if (!response.ok) throw new Error('네트워크 응답 실패');
+                return response.json();
+            })
             .then(function(data) {
-                renderData(data.quest_board, "val-daily", "daily", "daily-ranks", "daily-comments");
-                renderData(data.donation_ranking, "val-giver", "giver", "giver-ranks", "giver-comments");
-                renderData(data.quest_ranking, "val-quest", "quest", "quest-ranks", "quest-comments");
+                document.getElementById('daily').innerHTML = createRows(data.quest_board, "val-daily", "daily");
+                document.getElementById('giver').innerHTML = createRows(data.donation_ranking, "val-giver", "giver");
+                document.getElementById('quest').innerHTML = createRows(data.quest_ranking, "val-quest", "quest");
             })
             .catch(function(error) {
                 console.error("데이터 로딩 오류:", error);
+                document.getElementById('daily').innerHTML = '<div style="text-align:center; padding:20px; color:#999;">데이터를 불러올 수 없습니다.</div>';
+                document.getElementById('giver').innerHTML = '<div style="text-align:center; padding:20px; color:#999;">데이터를 불러올 수 없습니다.</div>';
+                document.getElementById('quest').innerHTML = '<div style="text-align:center; padding:20px; color:#999;">데이터를 불러올 수 없습니다.</div>';
             });
         }
 
         window.onload = function() {
             show('daily');
             loadData();
-            setRandomBGM(); // 새로고침할 때마다 배경음악 랜덤 교체
+            setRandomBGM(); 
         };
     </script>
 </body>
