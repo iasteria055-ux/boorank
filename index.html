@@ -236,15 +236,11 @@
         .yt-box-mini:hover iframe { transform: skewX(0deg); }
 
         /* -------------------------------------
-           탭 버튼
-        -------------------------------------- */
         .tab-menu { display: flex; gap: 12px; margin-bottom: 15px; position: relative; z-index: 10;}
         .tab-btn { 
-            flex: 1; padding: 12px; background: var(--white); 
-            border: 3px solid var(--dj-purple); box-shadow: 4px 4px 0 var(--dj-purple); 
+            flex: 1; padding: 12px; background: var(--white); border: 3px solid var(--dj-purple); box-shadow: 4px 4px 0 var(--dj-purple); 
             font-size: 16px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
-            color: var(--dj-purple); cursor: pointer; transform: skewX(-8deg); transition: all 0.2s;
-            position: relative; overflow: hidden;
+            color: var(--dj-purple); cursor: pointer; transform: skewX(-8deg); transition: all 0.2s; position: relative; overflow: hidden;
         }
         .tab-btn span { display: inline-block; transform: skewX(8deg); position: relative; z-index: 2;}
         .tab-btn::before {
@@ -256,6 +252,7 @@
         .tab-btn:hover { transform: skewX(-8deg) translateY(-2px); box-shadow: 5px 5px 0 var(--dj-magenta); color: var(--dj-magenta); border-color: var(--dj-magenta); }
         .tab-btn.active { background: var(--dj-purple); color: var(--dj-yellow); box-shadow: 4px 4px 0 var(--dj-cyan); border-color: var(--dj-purple); }
         .tab-btn#btnQuest.active { color: var(--dj-cyan); box-shadow: 4px 4px 0 var(--dj-cyan); }
+
 
         /* -------------------------------------
            랭킹 리스트 레이아웃 (반갈죽)
