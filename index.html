@@ -7,6 +7,7 @@
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,900;1,900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
         
         :root {
             --dj-purple: #351c61; 
@@ -18,7 +19,7 @@
             --dj-grid: #e8eaef; 
             --white: #ffffff; 
             --black: #111111;
-            --dj-navy: #15162c; /* EXTENSION 딥 네이비 컬러 */
+            --dj-navy: #15162c;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
@@ -43,7 +44,6 @@
                 linear-gradient(var(--dj-grid) 1px, transparent 1px), 
                 linear-gradient(90deg, var(--dj-grid) 1px, transparent 1px);
             background-size: 40px 40px;
-            /* EXTENSION 감성: 아우터 테두리를 딥 네이비로 변경 */
             border: 10px solid var(--dj-navy);
             border-radius: 16px;
             position: relative; overflow: hidden;
@@ -115,7 +115,6 @@
         @keyframes eq-play { 0% { height: 4px; } 100% { height: 14px; } }
 
         .content-wrap { position: relative; padding: 45px 30px 45px; z-index: 10; display: flex; flex-direction: column; flex: 1; min-height: 0; }
-
         .top-header-area { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; gap: 20px; position: relative; }
         .header-titles { display: flex; flex-direction: column; position: relative; flex: 1; height: 188px; justify-content: flex-end; padding-bottom: 2px; }
         
@@ -126,7 +125,6 @@
         .top-subtitle { position: absolute; top: 10px; left: 5px; font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 900; color: var(--dj-purple); letter-spacing: 2px; opacity: 0.8; display: flex; align-items: center; gap: 15px; z-index: 2; }
         .top-subtitle .barcode { font-size: 18px; letter-spacing: 3px; color: var(--dj-cyan); opacity: 0.8; }
 
-        /* 🔥 수정: 세련된 네이비 배경 + 미세한 매트릭스 격자 애니메이션 추가 */
         .ext-bg-typo {
             position: absolute; top: 35px; left: 10px;
             font-family: 'Montserrat', sans-serif; font-size: 65px; font-weight: 900;
@@ -135,15 +133,14 @@
         }
         .ext-bg-typo .dark-box {
             position: relative;
-            background: linear-gradient(135deg, #1d2242, #2c3258); /* 기존 검정 느낌에서 세련된 딥 네이비로 변경 */
+            background: linear-gradient(135deg, #1d2242, #2c3258); 
             color: var(--white);
             padding: 8px 25px;
             display: flex; flex-direction: row; gap: 15px; align-items: center;
             box-shadow: 6px 6px 0 rgba(21, 22, 44, 0.15); 
-            overflow: hidden; /* 격자가 박스 밖으로 튀어나가지 않게 고정 */
+            overflow: hidden; 
         }
         
-        /* 은은한 매트릭스 격자 무한 스크롤 효과 (위로 올라감) */
         .ext-bg-typo .dark-box::before {
             content: '';
             position: absolute; top: 0; left: 0; right: 0; bottom: 0;
@@ -154,12 +151,11 @@
         }
         @keyframes matrix-scroll {
             from { background-position: 0 0; }
-            to { background-position: 0 -40px; } /* 위로 무한 이동 */
+            to { background-position: 0 -40px; } 
         }
         
         .ext-bg-typo .dark-box span {
-            position: relative; z-index: 2; /* 글자가 격자 위로 올라오게 처리 */
-            /* -webkit-text-stroke 대신 다중 text-shadow를 사용하여 모양 훼손 없는 깔끔한 테두리 생성 */
+            position: relative; z-index: 2; 
             text-shadow: 
                 -1.5px -1.5px 0 var(--black),  
                  1.5px -1.5px 0 var(--black),
@@ -181,13 +177,12 @@
         }
         .ext-bg-typo-sym.cross {
             font-size: 55px; color: var(--dj-magenta);
-            bottom: -20px; right: -20px; /* 오른쪽 아래 구석으로 이동 */
+            bottom: -20px; right: -20px; 
             transform: rotate(-10deg);
             text-shadow: 3px 3px 0 rgba(0,0,0,0.1);
             z-index: 3;
         }
 
-        /* 🔥 작아지고 탭 위로 일렬 이동한 타이틀 디자인 (유튜브 박스와 하단 정렬) */
         .header-title-row { 
             position: relative; display: flex; align-items: baseline; gap: 15px; 
             margin-bottom: 0; margin-left: 5px; z-index: 10; cursor: default !important; 
@@ -202,20 +197,15 @@
         }
         
         .header-title-row h1 span {
-            /* EXTENSION 미니멀 테두리 (네이비 + 쿨그레이 조합) */
             text-shadow: 3px 3px 0 var(--dj-navy), 6px 6px 0 #c4c8d1, 9px 9px 0 rgba(0,0,0,0.1);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: inline-block;
         }
 
-        /* 로고 호버 시 통통 튀는 효과 */
         .header-title-row:hover h1 { transform: translateY(-2px) scale(1.02) rotate(-1deg); }
         .header-title-row:hover h1 span { text-shadow: 4px 4px 0 var(--dj-navy), 8px 8px 0 #c4c8d1, 12px 12px 0 rgba(0,0,0,0.15); }
-        
-        /* 마우스 직접 닿았을 때 개별 글자가 더 튀어오름 */
         .header-title-row h1 span:hover { transform: translateY(-4px) scale(1.05) rotate(2deg); cursor: pointer !important;}
         
-        /* 미니멀 꾸밈 블록 */
         .mini-block-navy { width: 30px; height: 15px; background: var(--dj-navy); transform: skewX(-15deg); margin-bottom: 8px;}
         .mini-block-grey { width: 15px; height: 15px; background: #c4c8d1; border-radius: 50%; margin-bottom: 8px;}
 
@@ -228,9 +218,6 @@
         .yt-box-mini iframe { width: 100%; height: 100%; transform: skewX(2deg); display: block; transition: transform 0.3s ease; }
         .yt-box-mini:hover iframe { transform: skewX(0deg); }
 
-        /* -------------------------------------
-           탭 버튼
-        -------------------------------------- */
         .tab-menu { display: flex; gap: 12px; margin-bottom: 15px; position: relative; z-index: 10;}
         .tab-btn { 
             flex: 1; padding: 12px; background: var(--white); 
@@ -248,11 +235,7 @@
         .tab-btn:hover::before { left: 0; }
         .tab-btn:hover { transform: skewX(-8deg) translateY(-2px); box-shadow: 5px 5px 0 var(--dj-magenta); color: var(--dj-magenta); border-color: var(--dj-magenta); }
         .tab-btn.active { background: var(--dj-purple); color: var(--dj-yellow); box-shadow: 4px 4px 0 var(--dj-cyan); border-color: var(--dj-purple); }
-        .tab-btn#btnQuest.active { color: var(--dj-cyan); box-shadow: 4px 4px 0 var(--dj-cyan); }
 
-        /* -------------------------------------
-           랭킹 리스트 영역 (2단 배열 구조)
-        -------------------------------------- */
         .list-container { 
             display: flex; gap: 15px; flex: 1; overflow: hidden; position: relative; z-index: 10; padding-bottom: 5px;
         }
@@ -265,7 +248,8 @@
         .list-column::-webkit-scrollbar-track { background: rgba(53, 28, 97, 0.05); border-radius: 4px; }
         .list-column::-webkit-scrollbar-thumb { background: var(--dj-purple); border-radius: 4px; }
 
-        /* 모바일 코멘트 숨김 기본값 (데스크탑에선 안 보임) */
+        /* 🔥 수정: 데스크탑과 모바일 모두에서 정렬을 유지하는 필수 클래스 */
+        .mobile-top-row { display: flex; align-items: center; width: 100%; }
         .mobile-comment { display: none; }
 
         .content-bg-text {
@@ -280,7 +264,6 @@
         .rank-row:hover .rank-name .bouncy-text { color: var(--dj-magenta); transform: translateY(-3px) scale(1.05); text-shadow: 0 2px 4px rgba(217, 28, 73, 0.3); }
         .rank-row:hover .rank-val .bouncy-text { color: var(--dj-purple); transform: translateY(-3px) scale(1.05); text-shadow: 0 2px 4px rgba(53, 28, 97, 0.3); }
 
-        /* 커서 방지 */
         .rank-row, .rank-row * { cursor: default !important; }
         .tab-btn, .tab-btn * { cursor: pointer !important; }
 
@@ -300,20 +283,13 @@
         }
         .rank-row:hover::after { width: 100%; }
         
-        .giver-list .rank-row { border-left-color: var(--dj-orange) !important; box-shadow: 2px 2px 0 var(--dj-orange); }
-        .quest-list .rank-row { border-left-color: var(--dj-cyan) !important; box-shadow: 2px 2px 0 var(--dj-cyan); }
         .daily-list .rank-row { border-left-color: var(--dj-magenta) !important; box-shadow: 2px 2px 0 var(--dj-magenta); }
-        
-        /* 코멘트 박스 스타일 */
         .comment-row { border-left-color: var(--dj-yellow) !important; box-shadow: 2px 2px 0 var(--dj-yellow); justify-content: center; background: #fffdf5; }
         
-        @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
         .comment-text { font-family: 'Jua', sans-serif; font-size: 15px; color: var(--dj-navy); font-weight: normal; transform: skewX(2deg); position: relative; z-index: 2; letter-spacing: 0.5px;}
         .comment-row:hover .comment-text { color: var(--dj-magenta); transform: translateY(-2px) scale(1.02) skewX(2deg); }
 
         .rank-row:hover { transform: skewX(-2deg) translateX(5px) translateY(-1px); }
-        .giver-list .rank-row:hover { box-shadow: -2px 4px 0 var(--dj-orange); background: #fffcf7; }
-        .quest-list .rank-row:hover { box-shadow: -2px 4px 0 var(--dj-cyan); background: #f5ffff; }
         .comment-row:hover { box-shadow: -2px 4px 0 var(--dj-yellow); background: #fffcf0; }
 
         .rank-row.top-1 { background: repeating-linear-gradient(-45deg, #fff9e6, #fff9e6 8px, #ffffff 8px, #ffffff 16px); border-color: #d4af37 !important; border-left-color: #d4af37 !important; box-shadow: 2px 2px 0 #d4af37; }
@@ -327,10 +303,7 @@
         
         .rank-name { flex: 1; font-size: 16px; color: var(--dj-purple); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 10px; transform: skewX(2deg); position: relative; z-index: 2; }
         .rank-val { font-size: 18px; font-style: italic; font-family: 'Montserrat', sans-serif; text-align: right; white-space: nowrap; transform: skewX(2deg); position: relative; z-index: 2; }
-
         .val-daily { color: var(--dj-magenta); }
-        .val-giver { color: var(--dj-orange); }
-        .val-quest { color: var(--dj-cyan); }
 
         .thank-you-msg { text-align: center; margin-top: auto; padding-top: 15px; font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 900; color: var(--dj-purple); letter-spacing: 3px; opacity: 0.6; text-transform: uppercase; position: relative; z-index: 10; }
         
@@ -353,8 +326,6 @@
             .header-title-row { margin-top: 70px; }
             .header-title-row h1 { font-size: 40px; gap: 8px; }
             .header-title-row h1 span { text-shadow: 2px 2px 0 var(--dj-navy), 4px 4px 0 #c4c8d1, 6px 6px 0 rgba(0,0,0,0.1); }
-            .header-title-row:hover h1 { transform: translateY(-2px) scale(1.02); }
-            .header-title-row:hover h1 span { text-shadow: 3px 3px 0 var(--dj-navy), 6px 6px 0 #c4c8d1, 9px 9px 0 rgba(0,0,0,0.15); }
             
             .mini-block-navy { width: 20px; height: 10px; }
             .mini-block-grey { width: 10px; height: 10px; }
@@ -367,7 +338,6 @@
             
             .tab-menu { gap: 8px; margin-bottom: 12px; }
             .tab-btn { font-size: 13px; padding: 10px; border-width: 2px; box-shadow: 2px 2px 0 var(--dj-purple); transform: skewX(-5deg); }
-            .tab-btn span { transform: skewX(5deg); }
             
             .list-container { flex-direction: column; gap: 8px; overflow-y: auto; }
             .list-column { overflow-y: visible; padding-right: 0; }
@@ -496,12 +466,9 @@
     </div>
 
     <script>
-        // BGM 랜덤 설정 (뒤로가기 시 중복 로딩 방지 추가)
         const bgmList = ["upNRraLNEg4", "56jjrn5BpDk", "NzcJWgK2ZTI", "qZlu2j2SiBA", "ZbO9PBdFRdc", "BMA5fYUfXq0", "SNkeRWscPIo", "o9HKraQywf8", "i_Z4FMCgtPg"];
 
-
         function setRandomBGM() {
-            // 뒤로가기로 페이지 진입 시 BGM을 다시 렌더링하지 않음
             if (window.performance && window.performance.navigation.type === 2) {
                 return;
             }
@@ -511,17 +478,16 @@
         }
 
         function show(tab) {
-            // 다른 탭들을 제외했으므로 daily만 보이도록 유지
             document.getElementById('daily').style.display = 'flex';
         }
 
-        // 랭킹 행 및 코멘트 박스 분리 생성
         function createRows(dataList, typeClass, tabType) {
             if (!dataList || dataList.length === 0) {
                 document.getElementById('rankColumn').innerHTML = '<div style="text-align:center; padding:20px; color:#999; font-weight:900;">조건을 달성한 사람이 아직 없습니다.</div>';
                 return;
             }
 
+            // 60개의 부우 맞춤형 코멘트 리스트
             const booTitles = [
                 "부우단 행동대장 =_=", "하랑이바라기", "충성충성 부우충성", "(숨참고 부우 다이브)",
                 "하랑아 나 죽어 =_=", "세상에서 제일 귀여운 =_=", "부우만 믿고 간다", "성덕이 될 거야",
@@ -568,7 +534,6 @@
             document.getElementById('commentColumn').innerHTML = commentHtml;
         }
 
-        // 데이터 로드
         function loadData() {
             fetch('data.json?t=' + new Date().getTime())
             .then(function(response) {
@@ -576,7 +541,6 @@
                 return response.json();
             })
             .then(function(data) {
-                // 부우 게시판 맞춤형으로 퀘스트 랭킹만 표시
                 createRows(data.quest_board, "val-daily", "daily");
             })
             .catch(function(error) {
