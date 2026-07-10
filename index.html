@@ -127,16 +127,17 @@
         .top-subtitle { position: absolute; top: 10px; left: 5px; font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 900; color: var(--dj-purple); letter-spacing: 2px; opacity: 0.8; display: flex; align-items: center; gap: 15px; z-index: 2; }
         .top-subtitle .barcode { font-size: 18px; letter-spacing: 3px; color: var(--dj-cyan); opacity: 0.8; }
 
-        /* 🔥 수정: 빈 공간을 채울 부우 감성 배경 타이포그래피 */
+        /* 🔥 수정: 빈 공간을 채울 부우 감성 배경 타이포그래피 (크기 및 위치 조정) */
+
         .ext-bg-typo {
-            position: absolute; top: 45px; left: 20px;
-            font-family: 'Montserrat', sans-serif; font-size: 90px; font-weight: 900;
-            line-height: 0.85; letter-spacing: -6px; transform: skewX(-5deg) rotate(-2deg);
+            position: absolute; top: 35px; left: 10px;
+            font-family: 'Montserrat', sans-serif; font-size: 75px; font-weight: 900;
+            line-height: 0.7; letter-spacing: -6px; transform: skewX(-5deg) rotate(-2deg);
             display: flex; flex-direction: column;
             pointer-events: none; user-select: none; z-index: 0;
         }
         .ext-bg-typo .stroke { color: transparent; -webkit-text-stroke: 2px rgba(21, 22, 44, 0.1); }
-        .ext-bg-typo .fill { color: rgba(21, 22, 44, 0.04); margin-left: 40px; }
+        .ext-bg-typo .fill { color: transparent; -webkit-text-stroke: 2px rgba(21, 22, 44, 0.1); margin-left: 20px; }
 
         /* 🔥 작아지고 탭 위로 일렬 이동한 타이틀 디자인 (유튜브 박스와 하단 정렬) */
         .header-title-row { 
