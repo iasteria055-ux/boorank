@@ -127,16 +127,57 @@
         .top-subtitle { position: absolute; top: 10px; left: 5px; font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 900; color: var(--dj-purple); letter-spacing: 2px; opacity: 0.8; display: flex; align-items: center; gap: 15px; z-index: 2; }
         .top-subtitle .barcode { font-size: 18px; letter-spacing: 3px; color: var(--dj-cyan); opacity: 0.8; }
 
-    /* 🔥 수정: 빈 공간을 채울 부우 감성 배경 타이포그래피 (크기 및 위치 조정) */
+        /* 🔥 수정된 부분: 네이비 배경 + 미세한 매트릭스 격자 애니메이션 추가 + 기호 */
         .ext-bg-typo {
             position: absolute; top: 35px; left: 10px;
-            font-family: 'Montserrat', sans-serif; font-size: 75px; font-weight: 900;
-            line-height: 0.7; letter-spacing: -6px; transform: skewX(-5deg) rotate(-2deg);
-            display: flex; flex-direction: row; /* 가로 정렬로 변경 */
+            font-family: 'Montserrat', sans-serif; font-size: 65px; font-weight: 900;
+            line-height: 1; letter-spacing: -2px; transform: skewX(-5deg) rotate(-2deg);
             pointer-events: none; user-select: none; z-index: 0;
         }
-        .ext-bg-typo .stroke { color: transparent; -webkit-text-stroke: 2px rgba(21, 22, 44, 0.1); }
-        .ext-bg-typo .fill { color: transparent; -webkit-text-stroke: 2px rgba(21, 22, 44, 0.1); margin-left: 20px; } 
+        .ext-bg-typo .dark-box {
+            position: relative;
+            background: linear-gradient(135deg, #1d2242, #2c3258);
+            color: var(--white);
+            padding: 8px 25px;
+            display: flex; flex-direction: row; gap: 15px; align-items: center;
+            box-shadow: 6px 6px 0 rgba(21, 22, 44, 0.15); 
+            overflow: hidden;
+        }
+        .ext-bg-typo .dark-box::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+            background-size: 8px 8px;
+            animation: matrix-scroll 3s linear infinite;
+            z-index: 1;
+        }
+        @keyframes matrix-scroll {
+            from { background-position: 0 0; }
+            to { background-position: 0 -40px; }
+        }
+        .ext-bg-typo .dark-box span {
+            position: relative; z-index: 2;
+            text-shadow: 
+                -1.5px -1.5px 0 var(--black),  
+                 1.5px -1.5px 0 var(--black),
+                -1.5px  1.5px 0 var(--black),
+                 1.5px  1.5px 0 var(--black);
+        }
+        .ext-bg-typo-sym {
+            position: absolute; font-family: 'Montserrat', sans-serif; font-weight: 900;
+        }
+        .ext-bg-typo-sym.plus {
+            font-size: 65px; color: var(--dj-yellow);
+            top: -35px; right: -25px; transform: rotate(15deg);
+            text-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+        }
+        .ext-bg-typo-sym.cross {
+            font-size: 55px; color: var(--dj-magenta);
+            bottom: -20px; right: -20px;
+            transform: rotate(-10deg);
+            text-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+            z-index: 3;
+        }
 
         /* 🔥 작아지고 탭 위로 일렬 이동한 타이틀 디자인 (유튜브 박스와 하단 정렬) */
         .header-title-row { 
@@ -306,8 +347,9 @@
             
             .header-titles { padding-top: 30px; width: 100%; height: auto; justify-content: flex-start; }
             .top-subtitle { top: 0; left: 0; }
-            .ext-bg-typo { font-size: 60px; top: 30px; left: 10px; position: absolute; }
-            .ext-bg-typo .fill { margin-left: 20px; }
+            
+            /* 🔥 수정된 부분: 모바일 뷰포트에서도 적절한 크기로 축소 고정 */
+            .ext-bg-typo { transform: scale(0.6) skewX(-5deg) rotate(-2deg); top: 15px; left: 0px; transform-origin: left top; }
             
             .header-title-row { margin-top: 70px; }
             .header-title-row h1 { font-size: 40px; gap: 8px; }
@@ -394,10 +436,14 @@
                         <span>DATA ARCHIVE</span>
                     </div>
                     
-                    <!-- 빈 공간을 꽉 채우는 부우 감성 배경 타이포그래피 -->
+                    <!-- 🔥 수정된 부분: 빈 공간을 꽉 채우는 부우 감성 배경 타이포그래피 (박스 & 기호) -->
                     <div class="ext-bg-typo">
-                        <span class="stroke">BOO</span>
-                        <span class="fill">=_=</span>
+                        <div class="dark-box">
+                            <span>BOO</span>
+                            <span>=_=</span>
+                        </div>
+                        <div class="ext-bg-typo-sym plus">+</div>
+                        <div class="ext-bg-typo-sym cross">X</div>
                     </div>
 
                     <!-- DAILY QUEST 탭 바로 위로 작아진 타이틀 일렬 배치 -->
