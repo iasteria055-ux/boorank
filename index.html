@@ -435,6 +435,13 @@
                 "부우 용서할까", "넵! 알겠습니다!", "부우라고 하지좀마", "억까들 오ㅡㅡㅡㅡㅡㅡㅡ열"
             ];
 
+            // 🔥 코멘트를 무작위로 섞어둘 배열 생성
+            let availableTitles = [...booTitles];
+            for (let i = availableTitles.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [availableTitles[i], availableTitles[j]] = [availableTitles[j], availableTitles[i]];
+            }
+
             var html = "";
             dataList.forEach(function(r, i) {
                 var rankClass = "";
@@ -446,7 +453,16 @@
 
                 var nameHtml = '<span class="bouncy-text">' + r.name + '</span>';
                 var valHtml = tabType === 'daily' ? "CLEAR" : r.val.toLocaleString() + " MN";
-                var randomTitle = booTitles[Math.floor(Math.random() * booTitles.length)];
+                
+                // 🔥 중복 없이 하나씩 뽑고, 다 떨어지면 다시 채워서 섞기
+                if (availableTitles.length === 0) {
+                    availableTitles = [...booTitles];
+                    for (let j = availableTitles.length - 1; j > 0; j--) {
+                        const k = Math.floor(Math.random() * (j + 1));
+                        [availableTitles[j], availableTitles[k]] = [availableTitles[k], availableTitles[j]];
+                    }
+                }
+                var randomTitle = availableTitles.pop();
 
                 html += '<div class="item-wrapper">';
 
