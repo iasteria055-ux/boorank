@@ -7,7 +7,7 @@
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,900;1,900&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap'); /* 귀여운 코멘트용 폰트 */
         
         :root {
             --dj-purple: #351c61; 
@@ -19,10 +19,11 @@
             --dj-grid: #e8eaef; 
             --white: #ffffff; 
             --black: #111111;
-            --dj-navy: #15162c;
+            --dj-navy: #15162c; /* EXTENSION 딥 네이비 컬러 */
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
+        /* 바깥 배경: 얇고 은은한 45도 사선 핀스트라이프 패턴 */
         body { 
             font-family: 'Pretendard', sans-serif; 
             background-color: var(--dj-bg); 
@@ -115,106 +116,44 @@
         @keyframes eq-play { 0% { height: 4px; } 100% { height: 14px; } }
 
         .content-wrap { position: relative; padding: 45px 30px 45px; z-index: 10; display: flex; flex-direction: column; flex: 1; min-height: 0; }
-        .top-header-area { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; gap: 20px; position: relative; }
-        .header-titles { display: flex; flex-direction: column; position: relative; flex: 1; height: 188px; justify-content: flex-end; padding-bottom: 2px; }
+
+        .top-header-area { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; gap: 20px; }
+        .header-titles { display: flex; flex-direction: column; position: relative; padding-top: 10px; flex: 1; }
         
         .deco-dot-matrix { position: absolute; width: 80px; height: 80px; background-image: radial-gradient(var(--dj-cyan) 20%, transparent 20%); background-size: 10px 10px; top: 10px; left: 280px; z-index: 0; opacity: 0.7; }
         .deco-star { position: absolute; width: 40px; height: 40px; background: var(--dj-magenta); clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); top: 35px; left: 400px; z-index: 2; animation: spin 8s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
+        .deco-crosshair { position: absolute; width: 50px; height: 50px; border: 3px solid var(--dj-cyan); border-radius: 50%; top: 15px; left: 220px; z-index: 0; opacity: 0.6; display: flex; justify-content: center; align-items: center; }
+        .deco-crosshair::before { content: ''; width: 3px; height: 100%; background: var(--dj-cyan); }
+        .deco-crosshair::after { content: ''; width: 100%; height: 3px; background: var(--dj-cyan); position: absolute; }
+        .deco-stripe-box { position: absolute; width: 100px; height: 25px; background: repeating-linear-gradient(-45deg, var(--dj-orange), var(--dj-orange) 4px, transparent 4px, transparent 8px); bottom: -15px; left: 10px; z-index: 0; border: 2px solid var(--dj-purple); transform: skewX(-15deg); }
 
-        .top-subtitle { position: absolute; top: 10px; left: 5px; font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 900; color: var(--dj-purple); letter-spacing: 2px; opacity: 0.8; display: flex; align-items: center; gap: 15px; z-index: 2; }
+        .top-subtitle { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 900; color: var(--dj-purple); letter-spacing: 2px; opacity: 0.8; display: flex; align-items: center; gap: 15px; margin-bottom: 5px; margin-left: 5px; position: relative; z-index: 2; }
         .top-subtitle .barcode { font-size: 18px; letter-spacing: 3px; color: var(--dj-cyan); opacity: 0.8; }
 
-        /* 🔥 수정: 세련된 네이비 배경 + 미세한 매트릭스 격자 애니메이션 추가 + 텍스트 섀도우 윤곽선 */
-        .ext-bg-typo {
-            position: absolute; top: 35px; left: 10px;
-            font-family: 'Montserrat', sans-serif; font-size: 65px; font-weight: 900;
-            line-height: 1; letter-spacing: -2px; transform: skewX(-5deg) rotate(-2deg);
-            pointer-events: none; user-select: none; z-index: 0;
-        }
-        .ext-bg-typo .dark-box {
-            position: relative;
-            background: linear-gradient(135deg, #1d2242, #2c3258); 
-            color: var(--white);
-            padding: 8px 25px;
-            display: flex; flex-direction: row; gap: 15px; align-items: center;
-            box-shadow: 6px 6px 0 rgba(21, 22, 44, 0.15); 
-            overflow: hidden; 
-        }
+        .header { position: relative; display: inline-block; cursor: default !important; z-index: 2; margin-top: -10px; padding-left: 10px; width: 100%; }
+        .header * { cursor: default !important; }
+        .block-cyan { position: absolute; width: 120px; height: 40px; background: var(--dj-cyan); top: 10px; left: -15px; z-index: 1; transform: skewX(-15deg); box-shadow: 4px 4px 0 var(--dj-purple); }
+        .block-orange { position: absolute; width: 60px; height: 60px; background: var(--dj-orange); bottom: 10px; right: 20px; z-index: 1; border-radius: 50%; box-shadow: -4px 4px 0 var(--dj-purple); }
         
-        .ext-bg-typo .dark-box::before {
-            content: '';
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
-            background-size: 8px 8px;
-            animation: matrix-scroll 3s linear infinite;
-            z-index: 1;
-        }
-        @keyframes matrix-scroll {
-            from { background-position: 0 0; }
-            to { background-position: 0 -40px; } 
-        }
-        
-        .ext-bg-typo .dark-box span {
-            position: relative; z-index: 2; 
-            /* 텍스트 섀도우를 이용한 뚜렷하고 모양 안 깨지는 검정 윤곽선 */
-            text-shadow: 
-                -1.5px -1.5px 0 var(--black),  
-                 1.5px -1.5px 0 var(--black),
-                -1.5px  1.5px 0 var(--black),
-                 1.5px  1.5px 0 var(--black),
-                -1.5px  0     0 var(--black),
-                 1.5px  0     0 var(--black),
-                 0     -1.5px 0 var(--black),
-                 0      1.5px 0 var(--black);
-        }
-
-        .ext-bg-typo-sym {
-            position: absolute; font-family: 'Montserrat', sans-serif; font-weight: 900;
-        }
-        .ext-bg-typo-sym.plus {
-            font-size: 65px; color: var(--dj-yellow);
-            top: -35px; right: -25px; transform: rotate(15deg);
-            text-shadow: 3px 3px 0 rgba(0,0,0,0.1);
-        }
-        .ext-bg-typo-sym.cross {
-            font-size: 55px; color: var(--dj-magenta);
-            bottom: -20px; right: -20px; 
-            transform: rotate(-10deg);
-            text-shadow: 3px 3px 0 rgba(0,0,0,0.1);
-            z-index: 3;
-        }
-
-        .header-title-row { 
-            position: relative; display: flex; align-items: baseline; gap: 15px; 
-            margin-bottom: 0; margin-left: 5px; z-index: 10; cursor: default !important; 
-        }
-        .header-title-row * { cursor: default !important; }
-        
-        .header-title-row h1 { 
-            font-size: 55px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
-            text-transform: uppercase; line-height: 1; position: relative; z-index: 5;
-            letter-spacing: -3px; margin: 0; display: flex; gap: 12px;
+        .header h1 { 
+            font-size: 110px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase; line-height: 0.8; position: relative; z-index: 5;
+            letter-spacing: -6px; color: var(--dj-yellow); margin: 0; display: flex; flex-direction: column;
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        
-        .header-title-row h1 span {
-            text-shadow: 3px 3px 0 var(--dj-navy), 6px 6px 0 #c4c8d1, 9px 9px 0 rgba(0,0,0,0.1);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: inline-block;
+        .header h1 span {
+            text-shadow: 6px 6px 0 var(--dj-navy), -4px -4px 0 var(--dj-cyan), 4px -4px 0 var(--dj-magenta), 10px 10px 0 rgba(0,0,0,0.15);
+            transition: text-shadow 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-
-        .header-title-row:hover h1 { transform: translateY(-2px) scale(1.02) rotate(-1deg); }
-        .header-title-row:hover h1 span { text-shadow: 4px 4px 0 var(--dj-navy), 8px 8px 0 #c4c8d1, 12px 12px 0 rgba(0,0,0,0.15); }
-        .header-title-row h1 span:hover { transform: translateY(-4px) scale(1.05) rotate(2deg); cursor: pointer !important;}
-        
-        .mini-block-navy { width: 30px; height: 15px; background: var(--dj-navy); transform: skewX(-15deg); margin-bottom: 8px;}
-        .mini-block-grey { width: 15px; height: 15px; background: #c4c8d1; border-radius: 50%; margin-bottom: 8px;}
+        .header h1 span:first-child { margin-bottom: -5px; }
+        .header:hover h1 { transform: translateY(-5px) scale(1.02) rotate(-2deg); }
+        .header:hover h1 span { text-shadow: 9px 9px 0 var(--dj-navy), -6px -6px 0 var(--dj-cyan), 6px -6px 0 var(--dj-magenta), 15px 15px 0 rgba(0,0,0,0.25); }
 
         .yt-box-mini { 
             width: 320px; height: 180px; flex-shrink: 0; background: var(--black); border: 4px solid var(--dj-navy); 
             box-shadow: 5px 5px 0 var(--dj-cyan), -2px -2px 0 var(--dj-magenta); padding: 4px; overflow: hidden; transform: skewX(-2deg); 
-            transition: transform 0.3s ease; position: relative; z-index: 10; margin-top: 0;
+            transition: transform 0.3s ease; position: relative; z-index: 10; margin-top: 10px;
         }
         .yt-box-mini:hover { transform: skewX(0deg); box-shadow: 6px 6px 0 var(--dj-cyan), -3px -3px 0 var(--dj-magenta); }
         .yt-box-mini iframe { width: 100%; height: 100%; transform: skewX(2deg); display: block; transition: transform 0.3s ease; }
@@ -222,11 +161,9 @@
 
         .tab-menu { display: flex; gap: 12px; margin-bottom: 15px; position: relative; z-index: 10;}
         .tab-btn { 
-            flex: 1; padding: 12px; background: var(--white); 
-            border: 3px solid var(--dj-purple); box-shadow: 4px 4px 0 var(--dj-purple); 
+            flex: 1; padding: 12px; background: var(--white); border: 3px solid var(--dj-purple); box-shadow: 4px 4px 0 var(--dj-purple); 
             font-size: 16px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
-            color: var(--dj-purple); cursor: pointer; transform: skewX(-8deg); transition: all 0.2s;
-            position: relative; overflow: hidden;
+            color: var(--dj-purple); cursor: pointer; transform: skewX(-8deg); transition: all 0.2s; position: relative; overflow: hidden;
         }
         .tab-btn span { display: inline-block; transform: skewX(8deg); position: relative; z-index: 2;}
         .tab-btn::before {
@@ -240,24 +177,85 @@
         .tab-btn#btnQuest.active { color: var(--dj-cyan); box-shadow: 4px 4px 0 var(--dj-cyan); }
 
         /* -------------------------------------
-           랭킹 리스트 영역 (2단 배열 구조 확실하게 고정)
+           랭킹 리스트 레이아웃 (반갈죽)
         -------------------------------------- */
         .list-container { 
-            display: flex; flex-direction: row; /* 무조건 가로 정렬 */
-            gap: 15px; flex: 1; overflow: hidden; position: relative; z-index: 10; padding-bottom: 5px;
+            display: flex; flex-direction: column; gap: 8px; 
+            flex: 1; overflow-y: auto; padding-right: 10px; padding-bottom: 5px;
+            position: relative; z-index: 10;
         }
-        
-        .list-column { 
-            flex: 1; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; padding-right: 5px;
-            min-width: 0; /* flex 자식 요소가 부모 영역을 넘치지 않게 방지 */
-        }
-        
-        .list-column::-webkit-scrollbar { width: 6px; }
-        .list-column::-webkit-scrollbar-track { background: rgba(53, 28, 97, 0.05); border-radius: 4px; }
-        .list-column::-webkit-scrollbar-thumb { background: var(--dj-purple); border-radius: 4px; }
+        .list-container::-webkit-scrollbar { width: 8px; }
+        .list-container::-webkit-scrollbar-track { background: rgba(53, 28, 97, 0.05); border-radius: 4px; }
+        .list-container::-webkit-scrollbar-thumb { background: var(--dj-purple); border-radius: 4px; }
 
-        /* 🔥 수정: 데스크탑과 모바일 모두에서 정렬을 유지하는 필수 클래스 */
-        .mobile-top-row { display: flex; align-items: center; width: 100%; }
+        /* 가로로 나란히 서게 할 래퍼 박스 */
+        .item-wrapper {
+            display: flex; gap: 15px; width: 100%;
+        }
+
+        .rank-row, .comment-row { cursor: default !important; }
+        .rank-row *, .comment-row * { cursor: default !important; }
+
+        /* 왼쪽 랭킹표 / 오른쪽 코멘트표 공통 스타일 */
+        .rank-row, .comment-row { 
+            flex: 1; /* 가로 공간 절반씩 차지 */
+            display: flex; align-items: center; background: var(--white); 
+            border: 1px solid var(--dj-purple) !important; 
+            border-left: 6px solid var(--dj-purple) !important;
+            padding: 10px 15px; font-weight: 900;
+            transform: skewX(-2deg); 
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s, background-color 0.2s;
+            position: relative; overflow: hidden;
+        }
+        
+        .rank-row-top { display: flex; align-items: center; width: 100%; }
+        
+        .rank-row::after, .comment-row::after {
+            content: ''; position: absolute; right: 0; top: 0; height: 100%; width: 0;
+            background: linear-gradient(90deg, transparent, rgba(53, 28, 97, 0.05));
+            transition: width 0.3s ease; z-index: 0; pointer-events: none;
+        }
+        .rank-row:hover::after, .comment-row:hover::after { width: 100%; }
+        
+        /* 오른쪽 코멘트 전용 추가 스타일 */
+        .comment-row { 
+            justify-content: center; /* 텍스트 가운데 정렬 */
+            border-left-color: var(--dj-magenta) !important; /* 코멘트는 마젠타 테두리 */
+        }
+        .comment-text {
+            font-family: 'Jua', sans-serif;
+            font-size: 16px; color: var(--dj-navy);
+            transform: skewX(2deg); /* 글자는 똑바로 */
+            position: relative; z-index: 2;
+        }
+
+        .giver-list .rank-row { border-left-color: var(--dj-orange) !important; box-shadow: 2px 2px 0 var(--dj-orange); }
+        .quest-list .rank-row { border-left-color: var(--dj-cyan) !important; box-shadow: 2px 2px 0 var(--dj-cyan); }
+        .daily-list .rank-row { border-left-color: var(--dj-purple) !important; box-shadow: 2px 2px 0 var(--dj-purple); }
+        
+        .rank-row:hover { transform: skewX(-2deg) translateX(5px) translateY(-1px); box-shadow: -2px 4px 0 var(--dj-purple); }
+        .comment-row:hover { transform: skewX(-2deg) translateX(5px) translateY(-1px); box-shadow: -2px 4px 0 var(--dj-magenta); background: #fffcf7; }
+        
+        .giver-list .rank-row:hover { box-shadow: -2px 4px 0 var(--dj-orange); background: #fffcf7; }
+        .quest-list .rank-row:hover { box-shadow: -2px 4px 0 var(--dj-cyan); background: #f5ffff; }
+
+        .rank-row.top-1 { background: repeating-linear-gradient(-45deg, #fff9e6, #fff9e6 8px, #ffffff 8px, #ffffff 16px); border-color: #d4af37 !important; border-left-color: #d4af37 !important; box-shadow: 2px 2px 0 #d4af37; }
+        .rank-row.top-2 { background: repeating-linear-gradient(-45deg, #f5f5f5, #f5f5f5 8px, #ffffff 8px, #ffffff 16px); border-color: #a8a9ad !important; border-left-color: #a8a9ad !important; box-shadow: 2px 2px 0 #a8a9ad; }
+        .rank-row.top-3 { background: repeating-linear-gradient(-45deg, #fff0e6, #fff0e6 8px, #ffffff 8px, #ffffff 16px); border-color: #cd7f32 !important; border-left-color: #cd7f32 !important; box-shadow: 2px 2px 0 #cd7f32; }
+
+        .rank-num { font-size: 20px; color: #ccc; width: 45px; font-style: italic; font-family: 'Montserrat', sans-serif; white-space: nowrap; transform: skewX(2deg); position: relative; z-index: 2; }
+        .rank-row.top-1 .rank-num { color: #d4af37; width: 75px; text-shadow: 1px 1px 0 rgba(0,0,0,0.1); }
+        .rank-row.top-2 .rank-num { color: #a8a9ad; width: 75px; }
+        .rank-row.top-3 .rank-num { color: #cd7f32; width: 75px; text-shadow: 1px 1px 0 rgba(0,0,0,0.1); }
+        
+        .rank-name { flex: 1; font-size: 16px; color: var(--dj-purple); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 10px; transform: skewX(2deg); position: relative; z-index: 2; }
+        .rank-val { font-size: 18px; font-style: italic; font-family: 'Montserrat', sans-serif; text-align: right; white-space: nowrap; transform: skewX(2deg); position: relative; z-index: 2; }
+
+        .val-daily { color: var(--dj-magenta); }
+        .val-giver { color: var(--dj-orange); }
+        .val-quest { color: var(--dj-cyan); }
+
+        /* 모바일 코멘트 숨김 기본값 (데스크탑에선 안 보임) */
         .mobile-comment { display: none; }
 
         .content-bg-text {
@@ -271,47 +269,6 @@
         .bouncy-text { display: inline-block; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s, text-shadow 0.2s; }
         .rank-row:hover .rank-name .bouncy-text { color: var(--dj-magenta); transform: translateY(-3px) scale(1.05); text-shadow: 0 2px 4px rgba(217, 28, 73, 0.3); }
         .rank-row:hover .rank-val .bouncy-text { color: var(--dj-purple); transform: translateY(-3px) scale(1.05); text-shadow: 0 2px 4px rgba(53, 28, 97, 0.3); }
-
-        .rank-row, .rank-row * { cursor: default !important; }
-        .tab-btn, .tab-btn * { cursor: pointer !important; }
-
-        .rank-row { 
-            display: flex; align-items: center; background: var(--white); 
-            border: 1px solid var(--dj-purple) !important; 
-            border-left: 6px solid var(--dj-purple) !important;
-            padding: 10px 15px; font-weight: 900; flex-shrink: 0;
-            transform: skewX(-2deg); 
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s, background-color 0.2s;
-            position: relative; overflow: hidden; min-height: 42px;
-        }
-        .rank-row::after {
-            content: ''; position: absolute; right: 0; top: 0; height: 100%; width: 0;
-            background: linear-gradient(90deg, transparent, rgba(53, 28, 97, 0.05));
-            transition: width 0.3s ease; z-index: 0; pointer-events: none;
-        }
-        .rank-row:hover::after { width: 100%; }
-        
-        .daily-list .rank-row { border-left-color: var(--dj-magenta) !important; box-shadow: 2px 2px 0 var(--dj-magenta); }
-        .comment-row { border-left-color: var(--dj-yellow) !important; box-shadow: 2px 2px 0 var(--dj-yellow); justify-content: center; background: #fffdf5; }
-        
-        .comment-text { font-family: 'Jua', sans-serif; font-size: 15px; color: var(--dj-navy); font-weight: normal; transform: skewX(2deg); position: relative; z-index: 2; letter-spacing: 0.5px;}
-        .comment-row:hover .comment-text { color: var(--dj-magenta); transform: translateY(-2px) scale(1.02) skewX(2deg); }
-
-        .rank-row:hover { transform: skewX(-2deg) translateX(5px) translateY(-1px); }
-        .comment-row:hover { box-shadow: -2px 4px 0 var(--dj-yellow); background: #fffcf0; }
-
-        .rank-row.top-1 { background: repeating-linear-gradient(-45deg, #fff9e6, #fff9e6 8px, #ffffff 8px, #ffffff 16px); border-color: #d4af37 !important; border-left-color: #d4af37 !important; box-shadow: 2px 2px 0 #d4af37; }
-        .rank-row.top-2 { background: repeating-linear-gradient(-45deg, #f5f5f5, #f5f5f5 8px, #ffffff 8px, #ffffff 16px); border-color: #a8a9ad !important; border-left-color: #a8a9ad !important; box-shadow: 2px 2px 0 #a8a9ad; }
-        .rank-row.top-3 { background: repeating-linear-gradient(-45deg, #fff0e6, #fff0e6 8px, #ffffff 8px, #ffffff 16px); border-color: #cd7f32 !important; border-left-color: #cd7f32 !important; box-shadow: 2px 2px 0 #cd7f32; }
-
-        .rank-num { font-size: 20px; color: #ccc; width: 45px; font-style: italic; font-family: 'Montserrat', sans-serif; white-space: nowrap; transform: skewX(2deg); position: relative; z-index: 2; }
-        .rank-row.top-1 .rank-num { color: #d4af37; width: 75px; text-shadow: 1px 1px 0 rgba(0,0,0,0.1); }
-        .rank-row.top-2 .rank-num { color: #a8a9ad; width: 75px; }
-        .rank-row.top-3 .rank-num { color: #cd7f32; width: 75px; text-shadow: 1px 1px 0 rgba(0,0,0,0.1); }
-        
-        .rank-name { flex: 1; font-size: 16px; color: var(--dj-purple); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 10px; transform: skewX(2deg); position: relative; z-index: 2; }
-        .rank-val { font-size: 18px; font-style: italic; font-family: 'Montserrat', sans-serif; text-align: right; white-space: nowrap; transform: skewX(2deg); position: relative; z-index: 2; }
-        .val-daily { color: var(--dj-magenta); }
 
         .thank-you-msg { text-align: center; margin-top: auto; padding-top: 15px; font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 900; color: var(--dj-purple); letter-spacing: 3px; opacity: 0.6; text-transform: uppercase; position: relative; z-index: 10; }
         
@@ -327,18 +284,21 @@
             .content-wrap { padding: 30px 15px 35px; }
             .top-header-area { flex-direction: column; align-items: flex-start; gap: 15px; margin-bottom: 15px; }
             
-            .header-titles { padding-top: 30px; width: 100%; height: auto; justify-content: flex-start; }
-            .top-subtitle { top: 0; left: 0; }
-            .ext-bg-typo { transform: scale(0.6) skewX(-5deg) rotate(-2deg); top: 15px; left: 0px; transform-origin: left top; }
+            .header-titles { padding-top: 5px; width: 100%;}
+            .header h1 { font-size: 70px; letter-spacing:-3px; line-height: 0.85; margin-top: 0;}
+            .header h1 span { text-shadow: 4px 4px 0 var(--dj-navy), -2px -2px 0 var(--dj-cyan), 2px -2px 0 var(--dj-magenta), 6px 6px 0 rgba(0,0,0,0.15); }
+            .header h1 span:first-child { margin-bottom: 0px; }
             
-            .header-title-row { margin-top: 70px; }
-            .header-title-row h1 { font-size: 40px; gap: 8px; }
-            .header-title-row h1 span { text-shadow: 2px 2px 0 var(--dj-navy), 4px 4px 0 #c4c8d1, 6px 6px 0 rgba(0,0,0,0.1); }
-            
-            .mini-block-navy { width: 20px; height: 10px; }
-            .mini-block-grey { width: 10px; height: 10px; }
+            .header:hover h1 { transform: translateY(-3px) scale(1.02) rotate(-1deg); }
+            .header:hover h1 span { text-shadow: 6px 6px 0 var(--dj-navy), -3px -3px 0 var(--dj-cyan), 3px -3px 0 var(--dj-magenta), 10px 10px 0 rgba(0,0,0,0.2); }
+
+            .top-subtitle { font-size: 11px; margin-bottom: 8px;}
+            .top-subtitle .barcode { font-size: 14px;}
+            .block-cyan { width: 70px; height: 25px; top: 0px; left: -5px; box-shadow: 2px 2px 0 var(--dj-purple);}
+            .block-orange { width: 35px; height: 35px; bottom: 5px; right: 10px; box-shadow: -2px 2px 0 var(--dj-purple);}
             
             .deco-dot-matrix { left: 120px; top: 0px; width: 30px; height: 30px; background-size: 5px 5px; }
+            .deco-crosshair { left: 90px; top: -10px; width: 25px; height: 25px; }
             .deco-star { left: 180px; top: 20px; width: 15px; height: 15px; }
             
             .yt-box-mini { width: 100%; height: 180px; transform: skewX(0); box-shadow: 4px 4px 0 var(--dj-cyan), -2px -2px 0 var(--dj-magenta); }
@@ -346,29 +306,26 @@
             
             .tab-menu { gap: 8px; margin-bottom: 12px; }
             .tab-btn { font-size: 13px; padding: 10px; border-width: 2px; box-shadow: 2px 2px 0 var(--dj-purple); transform: skewX(-5deg); }
+            .tab-btn span { transform: skewX(5deg); }
             
-            .list-container { flex-direction: column; gap: 8px; overflow-y: auto; }
-            .list-column { overflow-y: visible; padding-right: 0; }
+            /* 🔥 모바일 1층, 2층 레이아웃 처리 */
+            .item-wrapper { flex-direction: column; gap: 0; }
+            .comment-row { display: none !important; } /* 데스크탑 전용 오른쪽 랭크박스 숨김 */
             
-            /* 모바일에서 우측 코멘트 열은 숨김 */
-            #commentColumn { display: none; }
+            .rank-row { flex-direction: column; align-items: stretch; padding: 8px 10px; transform: skewX(0); border-left-width: 4px !important; box-shadow: 2px 2px 0 var(--dj-purple) !important; }
+            .rank-row-top { transform: skewX(0); } /* 1층 찌그러짐 원상복구 */
             
-            /* 모바일 전용 2층 구조 (코멘트 표시) */
-            .rank-row { flex-direction: column; align-items: stretch; transform: skewX(0); padding: 8px 10px; border-left-width: 4px !important; box-shadow: 2px 2px 0 var(--dj-purple) !important; gap: 5px; }
-            .rank-row:hover { transform: translateY(-2px); }
-            
-            .mobile-top-row { display: flex; align-items: center; width: 100%; }
             .rank-num, .rank-name, .rank-val { transform: skewX(0); font-size: 14px; }
             .rank-num { width: 35px; }
-            .rank-val { min-width: 60px; }
-            .rank-row.top-1 .rank-num, .rank-row.top-2 .rank-num, .rank-row.top-3 .rank-num { font-size: 15px; width: 50px; }
-            
-            /* 2층 코멘트 디자인 */
-            .mobile-comment { 
-                display: block; font-family: 'Jua', sans-serif; font-size: 13px; 
-                color: var(--dj-navy); padding-top: 5px; margin-top: 2px; 
-                border-top: 1px dashed rgba(53, 28, 97, 0.2); text-align: left;
-                padding-left: 35px;
+            .rank-val { min-width: 50px; }
+            .rank-row.top-1 .rank-num, .rank-row.top-2 .rank-num, .rank-row.top-3 .rank-num { font-size: 16px; width: 50px; }
+
+            /* 모바일 전용 2층 코멘트 디자인 */
+            .mobile-comment {
+                display: block; width: 100%; text-align: left;
+                font-family: 'Jua', sans-serif; font-size: 14px; color: var(--dj-navy);
+                margin-top: 6px; padding-top: 6px; border-top: 1px dashed rgba(53, 28, 97, 0.15);
+                padding-left: 35px; /* 순위 숫자 여백만큼 들여쓰기 */
             }
         }
     </style>
@@ -378,8 +335,8 @@
         <div class="scanlines"></div>
         
         <div class="djmax-bg-text">
-            <span>STREAM</span>
-            <span class="hollow">ER</span>
+            <span>RANK</span>
+            <span class="hollow">+ING</span>
         </div>
         
         <div class="floating-sym sym-1">+</div>
@@ -400,59 +357,47 @@
         </div>
 
         <div class="content-bg-text">
-            <span>S T R E A M</span>
-            <span class="filled">E R</span>
+            <span>R A N K</span>
+            <span class="filled">+ I N G</span>
         </div>
 
         <div class="content-wrap">
             <div class="top-header-area">
                 <div class="header-titles">
-                    <!-- 데코 요소들 -->
+                    <div class="deco-crosshair" style="top: 15px; left: 220px; width: 50px; height: 50px; border-width: 3px;"></div>
                     <div class="deco-dot-matrix" style="top: 10px; left: 280px; width: 80px; height: 80px; background-size: 10px 10px;"></div>
                     <div class="deco-star" style="top: 35px; left: 400px; width: 40px; height: 40px;"></div>
+                    <div class="deco-stripe-box" style="bottom: -15px; left: 10px; width: 100px; height: 25px; border: 2px solid var(--dj-purple);"></div>
                     
                     <div class="top-subtitle">
                         <span>YGOSU</span>
                         <span class="barcode">|||| || ||| |</span>
                         <span>DATA ARCHIVE</span>
                     </div>
-                    
-                    <!-- 빈 공간을 꽉 채우는 부우 감성 배경 타이포그래피 (박스 & 기호) -->
-                    <div class="ext-bg-typo">
-                        <div class="dark-box">
-                            <span>BOO</span>
-                            <span>=_=</span>
-                        </div>
-                        <div class="ext-bg-typo-sym plus">+</div>
-                        <div class="ext-bg-typo-sym cross">X</div>
-                    </div>
-
-                    <!-- DAILY QUEST 탭 바로 위로 작아진 타이틀 일렬 배치 -->
-                    <div class="header-title-row">
+                    <div class="header">
+                        <div class="block-cyan"></div>
+                        <div class="block-orange"></div>
                         <h1>
-                            <span style="color: var(--dj-yellow);">BOO</span>
+                            <span>BOO</span>
                             <span style="color: var(--white);">BOARD</span>
                         </h1>
-                        <div class="mini-block-navy"></div>
-                        <div class="mini-block-grey"></div>
                     </div>
                 </div>
                 
                 <div class="yt-box-mini">
-                    <iframe src="https://www.youtube.com/embed/upNRraLNEg4?si=Ttv8dI1ESsVc1Yx6&autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    <iframe src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                 </div>
             </div>
 
             <div class="tab-menu">
                 <button class="tab-btn active" id="btnDaily" onclick="show('daily')"><span class="bouncy-text">DAILY QUEST</span></button>
+                <button class="tab-btn" id="btnGiver" onclick="show('giver')"><span class="bouncy-text">DONATION</span></button>
+                <button class="tab-btn" id="btnQuest" onclick="show('quest')"><span class="bouncy-text">REWARDS</span></button>
             </div>
 
-            <div id="daily" class="list-container daily-list">
-                <!-- 랭킹 열 -->
-                <div id="rankColumn" class="list-column"></div>
-                <!-- 코멘트 열 (데스크탑 전용) -->
-                <div id="commentColumn" class="list-column"></div>
-            </div>
+            <div id="daily" class="list-container daily-list"></div>
+            <div id="giver" class="list-container giver-list" style="display:none;"></div>
+            <div id="quest" class="list-container quest-list" style="display:none;"></div>
 
             <div class="thank-you-msg">
                 ★ THANK YOU FOR COMPLETING THE DAILY QUEST! ★
@@ -475,27 +420,38 @@
 
     <script>
         const bgmList = ["upNRraLNEg4", "56jjrn5BpDk", "NzcJWgK2ZTI", "qZlu2j2SiBA", "ZbO9PBdFRdc", "BMA5fYUfXq0", "SNkeRWscPIo", "o9HKraQywf8", "i_Z4FMCgtPg"];
-
+        
         function setRandomBGM() {
-            if (window.performance && window.performance.navigation.type === 2) {
-                return;
-            }
             const randomId = bgmList[Math.floor(Math.random() * bgmList.length)];
             const iframe = document.querySelector('.yt-box-mini iframe');
             iframe.src = `https://www.youtube.com/embed/${randomId}?si=iRSunb6wWGX7SGp5&autoplay=1&loop=1&playlist=${randomId}`;
         }
 
         function show(tab) {
-            document.getElementById('daily').style.display = 'flex';
+            document.getElementById('daily').style.display = 'none';
+            document.getElementById('giver').style.display = 'none';
+            document.getElementById('quest').style.display = 'none';
+
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            if (tab === 'daily') {
+                document.getElementById('daily').style.display = 'flex';
+                document.getElementById('btnDaily').classList.add('active');
+            } else if (tab === 'giver') {
+                document.getElementById('giver').style.display = 'flex';
+                document.getElementById('btnGiver').classList.add('active');
+            } else if (tab === 'quest') {
+                document.getElementById('quest').style.display = 'flex';
+                document.getElementById('btnQuest').classList.add('active');
+            }
         }
 
         function createRows(dataList, typeClass, tabType) {
             if (!dataList || dataList.length === 0) {
-                document.getElementById('rankColumn').innerHTML = '<div style="text-align:center; padding:20px; color:#999; font-weight:900;">조건을 달성한 사람이 아직 없습니다.</div>';
-                return;
+                return '<div style="text-align:center; padding:20px; color:#999; font-weight:900; z-index:2; position:relative;">조건을 달성한 사람이 아직 없습니다.</div>';
             }
 
-            // 60개의 부우 맞춤형 코멘트 리스트
+            // 부우 게시판 맞춤 코멘트 (비율 조정 및 특별 멘트 추가)
             const booTitles = [
                 "부우단 행동대장 =_=", "하랑이바라기", "충성충성 부우충성", "(숨참고 부우 다이브)",
                 "하랑아 나 죽어 =_=", "세상에서 제일 귀여운 =_=", "부우만 믿고 간다", "성덕이 될 거야",
@@ -507,10 +463,7 @@
                 "부우 용서할까", "넵! 알겠습니다!", "부우라고 하지좀마", "억까들 오ㅡㅡㅡㅡㅡㅡㅡ열"
             ];
 
-
-            var rankHtml = "";
-            var commentHtml = "";
-
+            var html = "";
             dataList.forEach(function(r, i) {
                 var rankClass = "";
                 var rankIcon = String(i + 1).padStart(2, '0');
@@ -520,27 +473,38 @@
                 else if (i === 2) { rankClass = "top-3"; rankIcon = "🥉 03"; }
 
                 var nameHtml = '<span class="bouncy-text">' + r.name + '</span>';
-                var valHtml = "CLEAR";
+                var valHtml = tabType === 'daily' ? "CLEAR" : r.val.toLocaleString() + " MN";
+                
                 var randomTitle = booTitles[Math.floor(Math.random() * booTitles.length)];
 
-                // 데스크탑: 1층 구조 / 모바일: 2층 구조를 위한 분할
-                rankHtml += '<div class="rank-row ' + rankClass + '">' +
-                            '<div class="mobile-top-row">' +
-                                '<div class="rank-num">' + rankIcon + '</div>' +
-                                '<div class="rank-name">' + nameHtml + '</div>' +
-                                '<div class="rank-val ' + typeClass + '"><span class="bouncy-text">' + valHtml + '</span></div>' +
-                            '</div>' +
-                            '<div class="mobile-comment">💬 ' + randomTitle + '</div>' +
-                            '</div>';
+                // 전체 래퍼 시작
+                html += '<div class="item-wrapper">';
 
-                // 코멘트 박스 (우측 열 전용, 모바일에서는 숨겨짐)
-                commentHtml += '<div class="rank-row comment-row">' +
-                               '<div class="comment-text">💬 ' + randomTitle + '</div>' +
-                               '</div>';
+                // 1. 왼쪽 랭킹표 박스
+                html += '<div class="rank-row ' + rankClass + '">' +
+                        '<div class="rank-row-top">' +
+                        '<div class="rank-num">' + rankIcon + '</div>' +
+                        '<div class="rank-name">' + nameHtml + '</div>' +
+                        '<div class="rank-val ' + typeClass + '"><span class="bouncy-text">' + valHtml + '</span></div>' +
+                        '</div>';
+                        
+                // 모바일에서만 나타나는 2층 코멘트 (일퀘 탭 전용)
+                if (tabType === 'daily') {
+                    html += '<div class="mobile-comment">" ' + randomTitle + ' "</div>';
+                }
+                
+                html += '</div>'; // 왼쪽 랭킹표 박스 끝
+
+                // 2. 오른쪽 똑같은 양식의 코멘트표 박스 (일퀘 탭 전용)
+                if (tabType === 'daily') {
+                    html += '<div class="comment-row">';
+                    html += '<div class="comment-text">" ' + randomTitle + ' "</div>';
+                    html += '</div>';
+                }
+
+                html += '</div>'; // 전체 래퍼 끝
             });
-
-            document.getElementById('rankColumn').innerHTML = rankHtml;
-            document.getElementById('commentColumn').innerHTML = commentHtml;
+            return html;
         }
 
         function loadData() {
@@ -550,18 +514,22 @@
                 return response.json();
             })
             .then(function(data) {
-                createRows(data.quest_board, "val-daily", "daily");
+                document.getElementById('daily').innerHTML = createRows(data.quest_board, "val-daily", "daily");
+                document.getElementById('giver').innerHTML = createRows(data.donation_ranking, "val-giver", "giver");
+                document.getElementById('quest').innerHTML = createRows(data.quest_ranking, "val-quest", "quest");
             })
             .catch(function(error) {
                 console.error("데이터 로딩 오류:", error);
-                document.getElementById('rankColumn').innerHTML = '<div style="text-align:center; padding:20px; color:#999;">데이터를 불러올 수 없습니다.</div>';
+                document.getElementById('daily').innerHTML = '<div style="text-align:center; padding:20px; color:#999;">데이터를 불러올 수 없습니다.</div>';
+                document.getElementById('giver').innerHTML = '<div style="text-align:center; padding:20px; color:#999;">데이터를 불러올 수 없습니다.</div>';
+                document.getElementById('quest').innerHTML = '<div style="text-align:center; padding:20px; color:#999;">데이터를 불러올 수 없습니다.</div>';
             });
         }
 
         window.onload = function() {
-            setRandomBGM();
             show('daily');
             loadData();
+            setRandomBGM(); 
         };
     </script>
 </body>
