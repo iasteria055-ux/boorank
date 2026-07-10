@@ -495,9 +495,18 @@
         const bgmList = ["upNRraLNEg4", "56jjrn5BpDk", "NzcJWgK2ZTI", "qZlu2j2SiBA", "ZbO9PBdFRdc", "BMA5fYUfXq0", "SNkeRWscPIo", "o9HKraQywf8", "i_Z4FMCgtPg"];
 
         function setRandomBGM() {
+            // 1. 뒤로가기(Back)로 페이지에 돌아왔을 때는 새로운 노래를 뽑지 않음
+            const navEntries = performance.getEntriesByType("navigation");
+            if ((navEntries.length > 0 && navEntries[0].type === "back_forward") || 
+                (window.performance && window.performance.navigation.type === 2)) {
+                return;
+            }
+
             const randomId = bgmList[Math.floor(Math.random() * bgmList.length)];
-            const iframe = document.querySelector('.yt-box-mini iframe');
-            iframe.src = `https://www.youtube.com/embed/${randomId}?si=iRSunb6wWGX7SGp5&autoplay=1&loop=1&playlist=${randomId}`;
+            const ytBox = document.querySelector('.yt-box-mini');
+            
+            // 2. src만 바꾸지 않고 태그를 통째로 교체해서 뒤로가기 히스토리 꼬임을 원천 차단
+            ytBox.innerHTML = `<iframe src="https://www.youtube.com/embed/${randomId}?si=iRSunb6wWGX7SGp5&autoplay=1&loop=1&playlist=${randomId}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
         }
 
         function show(tab) {
