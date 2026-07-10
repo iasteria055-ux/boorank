@@ -125,6 +125,7 @@
         .top-subtitle { position: absolute; top: 10px; left: 5px; font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 900; color: var(--dj-purple); letter-spacing: 2px; opacity: 0.8; display: flex; align-items: center; gap: 15px; z-index: 2; }
         .top-subtitle .barcode { font-size: 18px; letter-spacing: 3px; color: var(--dj-cyan); opacity: 0.8; }
 
+        /* 🔥 수정: 세련된 네이비 배경 + 미세한 매트릭스 격자 애니메이션 추가 + 텍스트 섀도우 윤곽선 */
         .ext-bg-typo {
             position: absolute; top: 35px; left: 10px;
             font-family: 'Montserrat', sans-serif; font-size: 65px; font-weight: 900;
@@ -156,6 +157,7 @@
         
         .ext-bg-typo .dark-box span {
             position: relative; z-index: 2; 
+            /* 텍스트 섀도우를 이용한 뚜렷하고 모양 안 깨지는 검정 윤곽선 */
             text-shadow: 
                 -1.5px -1.5px 0 var(--black),  
                  1.5px -1.5px 0 var(--black),
@@ -235,13 +237,19 @@
         .tab-btn:hover::before { left: 0; }
         .tab-btn:hover { transform: skewX(-8deg) translateY(-2px); box-shadow: 5px 5px 0 var(--dj-magenta); color: var(--dj-magenta); border-color: var(--dj-magenta); }
         .tab-btn.active { background: var(--dj-purple); color: var(--dj-yellow); box-shadow: 4px 4px 0 var(--dj-cyan); border-color: var(--dj-purple); }
+        .tab-btn#btnQuest.active { color: var(--dj-cyan); box-shadow: 4px 4px 0 var(--dj-cyan); }
 
+        /* -------------------------------------
+           랭킹 리스트 영역 (2단 배열 구조 확실하게 고정)
+        -------------------------------------- */
         .list-container { 
-            display: flex; gap: 15px; flex: 1; overflow: hidden; position: relative; z-index: 10; padding-bottom: 5px;
+            display: flex; flex-direction: row; /* 무조건 가로 정렬 */
+            gap: 15px; flex: 1; overflow: hidden; position: relative; z-index: 10; padding-bottom: 5px;
         }
         
         .list-column { 
             flex: 1; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; padding-right: 5px;
+            min-width: 0; /* flex 자식 요소가 부모 영역을 넘치지 않게 방지 */
         }
         
         .list-column::-webkit-scrollbar { width: 6px; }
@@ -498,6 +506,7 @@
                 "부우얀....=_=", "미네랄 폭격기", "부우 게시판 수호자", "미드 차이 =_=", "부우는 롤.. 좋아해 =_=", "부우 코인 탑승!",
                 "부우 용서할까", "넵! 알겠습니다!", "부우라고 하지좀마", "억까들 오ㅡㅡㅡㅡㅡㅡㅡ열"
             ];
+
 
             var rankHtml = "";
             var commentHtml = "";
