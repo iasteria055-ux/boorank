@@ -1,9 +1,19 @@
 {
-  "updated_at": "2026-07-10 15:03:14",
+  "updated_at": "2026-07-10 15:11:56",
   "quest_board": [
     {
       "mem_id": "144953",
       "name": "피통왕통키",
+      "val": "CLEAR"
+    },
+    {
+      "mem_id": "699575",
+      "name": "염보스",
+      "val": "CLEAR"
+    },
+    {
+      "mem_id": "590525",
+      "name": "ㄹㅋㄹㅋㄹㅋ",
       "val": "CLEAR"
     }
   ],
