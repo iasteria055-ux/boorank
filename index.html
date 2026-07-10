@@ -131,24 +131,47 @@
         .top-subtitle { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 900; color: var(--dj-purple); letter-spacing: 2px; opacity: 0.8; display: flex; align-items: center; gap: 15px; margin-bottom: 5px; margin-left: 5px; position: relative; z-index: 2; }
         .top-subtitle .barcode { font-size: 18px; letter-spacing: 3px; color: var(--dj-cyan); opacity: 0.8; }
 
-        .header { position: relative; display: inline-block; cursor: default !important; z-index: 2; margin-top: -10px; padding-left: 10px; width: 100%; }
-        .header * { cursor: default !important; }
-        .block-cyan { position: absolute; width: 120px; height: 40px; background: var(--dj-cyan); top: 10px; left: -15px; z-index: 1; transform: skewX(-15deg); box-shadow: 4px 4px 0 var(--dj-purple); }
-        .block-orange { position: absolute; width: 60px; height: 60px; background: var(--dj-orange); bottom: 10px; right: 20px; z-index: 1; border-radius: 50%; box-shadow: -4px 4px 0 var(--dj-purple); }
+        /* 🔥 추가: 빈 공간을 채울 EXTENSION 감성 배경 타이포그래피 */
+        .ext-bg-typo {
+            font-family: 'Montserrat', sans-serif; font-size: 90px; font-weight: 900;
+            line-height: 0.85; letter-spacing: -6px; transform: skewX(-5deg) rotate(-2deg);
+            display: flex; flex-direction: column; margin-top: 15px; margin-left: 10px;
+            pointer-events: none; user-select: none;
+        }
+        .ext-bg-typo .stroke { color: transparent; -webkit-text-stroke: 2px rgba(21, 22, 44, 0.1); }
+        .ext-bg-typo .fill { color: rgba(21, 22, 44, 0.04); margin-left: 40px; }
+
+        /* 🔥 추가: 작아지고 탭 위로 일렬 이동한 새로운 타이틀 디자인 */
+        .header-title-row { 
+            position: relative; display: flex; align-items: baseline; gap: 15px; 
+            margin-bottom: 12px; margin-left: 5px; z-index: 10; cursor: default !important; 
+        }
+        .header-title-row * { cursor: default !important; }
         
-        .header h1 { 
-            font-size: 110px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
-            text-transform: uppercase; line-height: 0.8; position: relative; z-index: 5;
-            letter-spacing: -6px; color: var(--dj-yellow); margin: 0; display: flex; flex-direction: column;
+        .header-title-row h1 { 
+            font-size: 55px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase; line-height: 1; position: relative; z-index: 5;
+            letter-spacing: -3px; margin: 0; display: flex; gap: 12px;
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .header h1 span {
-            text-shadow: 6px 6px 0 var(--dj-navy), -4px -4px 0 var(--dj-cyan), 4px -4px 0 var(--dj-magenta), 10px 10px 0 rgba(0,0,0,0.15);
-            transition: text-shadow 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        
+        .header-title-row h1 span {
+            /* EXTENSION 미니멀 테두리 (네이비 + 쿨그레이 조합) */
+            text-shadow: 3px 3px 0 var(--dj-navy), 6px 6px 0 #c4c8d1, 9px 9px 0 rgba(0,0,0,0.1);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: inline-block;
         }
-        .header h1 span:first-child { margin-bottom: -5px; }
-        .header:hover h1 { transform: translateY(-5px) scale(1.02) rotate(-2deg); }
-        .header:hover h1 span { text-shadow: 9px 9px 0 var(--dj-navy), -6px -6px 0 var(--dj-cyan), 6px -6px 0 var(--dj-magenta), 15px 15px 0 rgba(0,0,0,0.25); }
+
+        /* 로고 호버 시 통통 튀는 효과 */
+        .header-title-row:hover h1 { transform: translateY(-2px) scale(1.02) rotate(-1deg); }
+        .header-title-row:hover h1 span { text-shadow: 4px 4px 0 var(--dj-navy), 8px 8px 0 #c4c8d1, 12px 12px 0 rgba(0,0,0,0.15); }
+        
+        /* 마우스 직접 닿았을 때 개별 글자가 더 튀어오름 */
+        .header-title-row h1 span:hover { transform: translateY(-4px) scale(1.05) rotate(2deg); cursor: pointer !important;}
+        
+        /* 미니멀 꾸밈 블록 */
+        .mini-block-navy { width: 30px; height: 15px; background: var(--dj-navy); transform: skewX(-15deg); margin-bottom: 8px;}
+        .mini-block-grey { width: 15px; height: 15px; background: #c4c8d1; border-radius: 50%; margin-bottom: 8px;}
 
         .yt-box-mini { 
             width: 320px; height: 180px; flex-shrink: 0; background: var(--black); border: 4px solid var(--dj-navy); 
@@ -284,13 +307,16 @@
             .content-wrap { padding: 30px 15px 35px; }
             .top-header-area { flex-direction: column; align-items: flex-start; gap: 15px; margin-bottom: 15px; }
             
-            .header-titles { padding-top: 5px; width: 100%;}
-            .header h1 { font-size: 70px; letter-spacing:-3px; line-height: 0.85; margin-top: 0;}
-            .header h1 span { text-shadow: 4px 4px 0 var(--dj-navy), -2px -2px 0 var(--dj-cyan), 2px -2px 0 var(--dj-magenta), 6px 6px 0 rgba(0,0,0,0.15); }
-            .header h1 span:first-child { margin-bottom: 0px; }
+            .ext-bg-typo { font-size: 60px; margin-top: 5px; }
+            .ext-bg-typo .fill { margin-left: 20px; }
             
-            .header:hover h1 { transform: translateY(-3px) scale(1.02) rotate(-1deg); }
-            .header:hover h1 span { text-shadow: 6px 6px 0 var(--dj-navy), -3px -3px 0 var(--dj-cyan), 3px -3px 0 var(--dj-magenta), 10px 10px 0 rgba(0,0,0,0.2); }
+            .header-title-row h1 { font-size: 40px; gap: 8px; }
+            .header-title-row h1 span { text-shadow: 2px 2px 0 var(--dj-navy), 4px 4px 0 #c4c8d1, 6px 6px 0 rgba(0,0,0,0.1); }
+            .header-title-row:hover h1 { transform: translateY(-2px) scale(1.02); }
+            .header-title-row:hover h1 span { text-shadow: 3px 3px 0 var(--dj-navy), 6px 6px 0 #c4c8d1, 9px 9px 0 rgba(0,0,0,0.15); }
+            
+            .mini-block-navy { width: 20px; height: 10px; }
+            .mini-block-grey { width: 10px; height: 10px; }
 
             .top-subtitle { font-size: 11px; margin-bottom: 8px;}
             .top-subtitle .barcode { font-size: 14px;}
@@ -364,6 +390,7 @@
         <div class="content-wrap">
             <div class="top-header-area">
                 <div class="header-titles">
+                    <!-- 데코 요소들 -->
                     <div class="deco-crosshair" style="top: 15px; left: 220px; width: 50px; height: 50px; border-width: 3px;"></div>
                     <div class="deco-dot-matrix" style="top: 10px; left: 280px; width: 80px; height: 80px; background-size: 10px 10px;"></div>
                     <div class="deco-star" style="top: 35px; left: 400px; width: 40px; height: 40px;"></div>
@@ -374,19 +401,27 @@
                         <span class="barcode">|||| || ||| |</span>
                         <span>DATA ARCHIVE</span>
                     </div>
-                    <div class="header">
-                        <div class="block-cyan"></div>
-                        <div class="block-orange"></div>
-                        <h1>
-                            <span>BOO</span>
-                            <span style="color: var(--white);">BOARD</span>
-                        </h1>
+                    
+                    <!-- 빈 공간을 꽉 채우는 EXTENSION 감성 배경 타이포그래피 -->
+                    <div class="ext-bg-typo">
+                        <span class="stroke">SYSTEM</span>
+                        <span class="fill">ONLINE</span>
                     </div>
                 </div>
                 
                 <div class="yt-box-mini">
-                    <iframe src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/upNRraLNEg4?si=Ttv8dI1ESsVc1Yx6&autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                 </div>
+            </div>
+
+            <!-- DAILY QUEST 탭 바로 위로 작아진 타이틀 일렬 배치 -->
+            <div class="header-title-row">
+                <h1>
+                    <span style="color: var(--dj-yellow);">BOO</span>
+                    <span style="color: var(--white);">BOARD</span>
+                </h1>
+                <div class="mini-block-navy"></div>
+                <div class="mini-block-grey"></div>
             </div>
 
             <div class="tab-menu">
@@ -419,7 +454,7 @@
     </div>
 
     <script>
-        const bgmList = ["upNRraLNEg4", "56jjrn5BpDk", "NzcJWgK2ZTI", "qZlu2j2SiBA", "ZbO9PBdFRdc", "BMA5fYUfXq0", "SNkeRWscPIo", "xA_WMJR15lQ", "o9HKraQywf8", "i_Z4FMCgtPg"]
+        const bgmList = ["upNRraLNEg4", "56jjrn5BpDk", "NzcJWgK2ZTI", "qZlu2j2SiBA", "ZbO9PBdFRdc", "BMA5fYUfXq0", "SNkeRWscPIo", "xA_WMJR15lQ", "o9HKraQywf8", "i_Z4FMCgtPg"];
         
         function setRandomBGM() {
             const randomId = bgmList[Math.floor(Math.random() * bgmList.length)];
@@ -455,19 +490,12 @@
             const booTitles = [
                 "부우단 행동대장 =_=", "하랑이바라기", "충성충성 부우충성", "(숨참고 부우 다이브)",
                 "하랑아 나 죽어 =_=", "세상에서 제일 귀여운 =_=", "부우만 믿고 간다", "성덕이 될 거야",
-                "부우는 롤 좋아해 =_=", "숲(SOOP) 지박령", "부우 게시판 망령 =_=", "일퀘 깎는 장인",
-                "방송 언제 켜? =_=", "시그 장전 완료", "방방봐 해주세요", "억까 멈춰! =_=",
+                "하랑이 미모 무슨 일 =_=", "숲(SOOP) 지박령", "부우 게시판 망령 =_=", "일퀘 깎는 장인",
+                "방송 언제 켜? =_=", "도네 장전 완료", "방방봐 해주세요", "억까 멈춰! =_=",
                 "채팅창 핑퐁 장인", "오늘도 출첵 완료!", "표정 풀어 =_=", "(부우 몰래 딴방 구경)",
                 "일퀘 스피드런 1위", "퇴근 후 부우방송", "오늘도 폼 미쳤다 =_=", "현생은 폼인가",
                 "내일부터 갓생산다 =_=", "미네랄 폭격기", "부우 게시판 수호자", "미드 차이 =_=",
-                "서폿차이 =_=", "오늘 저녁은 치킨이닭", "부우라고 하지좀마", "억까들 오ㅡㅡㅡㅡㅡㅡㅡ열","하랑이 텐션 무엇? =_=", "부우단 영원하라", "윤하랑 귀여운 거 실화냐", 
-                "오늘도 하랑하랑해 =_=", "하랑이 목소리에 치인다", "내 인생의 빛, 윤하랑", 
-                "충성충성 ^^7", "하랑이 미모 극락 =_=", "부우단 가입 1일차","ㄴㅇㅂㅈ =_=", "선 넘네... =_=", "방종송 틀어주세요", 
-                "게시판 새로고침 장인", "일퀘하러 왔습니다 =_=", "하랑아 밥먹고 겜해라", 
-                "또 나만 진심이지 =_=", "별풍선 충전하러 감", "채팅창 딜미터기 폭발 ㅋㅋㅋ", 
-                "지각비 걷겠습니다 =_=", "눈팅만 3년째", "하랑이 방송 켜라 =_=", 
-                "뇌절 멈춰! =_=", "일퀘 보상 달달하고요", "오늘도 출근도장 쾅!", 
-                "부우 게시판 상주 중 =_=", "하랑이 휴방은 안돼...", "채팅 안 치고 보고 있음 =_=",
+                "자기장 억까 =_=", "오늘 저녁은 치킨이닭", "부우라고 하지좀마", "억까들 오ㅡㅡㅡㅡㅡㅡㅡ열"
             ];
 
             var html = "";
