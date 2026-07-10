@@ -7,8 +7,8 @@
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,900;1,900&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap'); /* 귀여운 코멘트용 폰트 */
-        
+        @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
+
         :root {
             --dj-purple: #351c61; 
             --dj-yellow: #f8c117; 
@@ -20,10 +20,10 @@
             --white: #ffffff; 
             --black: #111111;
             --dj-navy: #15162c; /* EXTENSION 딥 네이비 컬러 */
+            --dj-navy: #15162c;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        /* 바깥 배경: 얇고 은은한 45도 사선 핀스트라이프 패턴 */
+
         body { 
             font-family: 'Pretendard', sans-serif; 
             background-color: var(--dj-bg); 
@@ -37,7 +37,7 @@
             display: flex; justify-content: center; align-items: center;
             min-height: 100vh; padding: 2vh 10px; overflow: hidden;
         }
-        
+
         .game-frame {
             width: 100%; max-width: 850px; height: 96vh;
             background-color: var(--white);
@@ -45,6 +45,7 @@
                 linear-gradient(var(--dj-grid) 1px, transparent 1px), 
                 linear-gradient(90deg, var(--dj-grid) 1px, transparent 1px);
             background-size: 40px 40px;
+            /* EXTENSION 감성: 아우터 테두리를 딥 네이비로 변경 */
             border: 10px solid var(--dj-navy);
             border-radius: 16px;
             position: relative; overflow: hidden;
@@ -52,7 +53,7 @@
             display: flex; flex-direction: column;
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
         }
-        
+
         .game-frame:hover {
             transform: translateY(-2px);
             box-shadow: 0 20px 45px rgba(0,0,0,0.2), inset 0 0 0 4px #f0f2f5;
@@ -82,7 +83,7 @@
         .sym-1 { color: var(--dj-magenta); font-size: 120px; top: 5%; right: 10%; animation: float1 6s infinite alternate ease-in-out; }
         .sym-2 { color: var(--dj-cyan); font-size: 80px; bottom: 30%; left: 2%; transform: rotate(15deg); animation: float2 5s infinite alternate ease-in-out; }
         .sym-3 { color: var(--dj-yellow); font-size: 150px; top: 40%; left: 40%; animation: float3 8s infinite alternate ease-in-out; }
-        
+
         @keyframes float1 { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(30px) rotate(15deg); } }
         @keyframes float2 { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(-40px) scale(1.1); } }
         @keyframes float3 { 0% { transform: rotate(0deg) scale(0.9); } 100% { transform: rotate(45deg) scale(1.05); } }
@@ -117,53 +118,133 @@
 
         .content-wrap { position: relative; padding: 45px 30px 45px; z-index: 10; display: flex; flex-direction: column; flex: 1; min-height: 0; }
 
-        .top-header-area { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; gap: 20px; }
-        .header-titles { display: flex; flex-direction: column; position: relative; padding-top: 10px; flex: 1; }
-        
+        .top-header-area { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; gap: 20px; position: relative; }
+        .header-titles { display: flex; flex-direction: column; position: relative; flex: 1; height: 188px; justify-content: flex-end; padding-bottom: 2px; }
+
         .deco-dot-matrix { position: absolute; width: 80px; height: 80px; background-image: radial-gradient(var(--dj-cyan) 20%, transparent 20%); background-size: 10px 10px; top: 10px; left: 280px; z-index: 0; opacity: 0.7; }
         .deco-star { position: absolute; width: 40px; height: 40px; background: var(--dj-magenta); clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); top: 35px; left: 400px; z-index: 2; animation: spin 8s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        .deco-crosshair { position: absolute; width: 50px; height: 50px; border: 3px solid var(--dj-cyan); border-radius: 50%; top: 15px; left: 220px; z-index: 0; opacity: 0.6; display: flex; justify-content: center; align-items: center; }
-        .deco-crosshair::before { content: ''; width: 3px; height: 100%; background: var(--dj-cyan); }
-        .deco-crosshair::after { content: ''; width: 100%; height: 3px; background: var(--dj-cyan); position: absolute; }
-        .deco-stripe-box { position: absolute; width: 100px; height: 25px; background: repeating-linear-gradient(-45deg, var(--dj-orange), var(--dj-orange) 4px, transparent 4px, transparent 8px); bottom: -15px; left: 10px; z-index: 0; border: 2px solid var(--dj-purple); transform: skewX(-15deg); }
 
-        .top-subtitle { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 900; color: var(--dj-purple); letter-spacing: 2px; opacity: 0.8; display: flex; align-items: center; gap: 15px; margin-bottom: 5px; margin-left: 5px; position: relative; z-index: 2; }
+        .top-subtitle { position: absolute; top: 10px; left: 5px; font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 900; color: var(--dj-purple); letter-spacing: 2px; opacity: 0.8; display: flex; align-items: center; gap: 15px; z-index: 2; }
         .top-subtitle .barcode { font-size: 18px; letter-spacing: 3px; color: var(--dj-cyan); opacity: 0.8; }
 
-        .header { position: relative; display: inline-block; cursor: default !important; z-index: 2; margin-top: -10px; padding-left: 10px; width: 100%; }
-        .header * { cursor: default !important; }
-        .block-cyan { position: absolute; width: 120px; height: 40px; background: var(--dj-cyan); top: 10px; left: -15px; z-index: 1; transform: skewX(-15deg); box-shadow: 4px 4px 0 var(--dj-purple); }
-        .block-orange { position: absolute; width: 60px; height: 60px; background: var(--dj-orange); bottom: 10px; right: 20px; z-index: 1; border-radius: 50%; box-shadow: -4px 4px 0 var(--dj-purple); }
-        
-        .header h1 { 
-            font-size: 110px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
-            text-transform: uppercase; line-height: 0.8; position: relative; z-index: 5;
-            letter-spacing: -6px; color: var(--dj-yellow); margin: 0; display: flex; flex-direction: column;
+        /* 🔥 수정: 세련된 네이비 배경 + 미세한 매트릭스 격자 애니메이션 추가 */
+        .ext-bg-typo {
+            position: absolute; top: 35px; left: 10px;
+            font-family: 'Montserrat', sans-serif; font-size: 65px; font-weight: 900;
+            line-height: 1; letter-spacing: -2px; transform: skewX(-5deg) rotate(-2deg);
+            pointer-events: none; user-select: none; z-index: 0;
+        }
+        .ext-bg-typo .dark-box {
+            position: relative;
+            background: linear-gradient(135deg, #1d2242, #2c3258); /* 기존 검정 느낌에서 세련된 딥 네이비로 변경 */
+            background: linear-gradient(135deg, #1d2242, #2c3258); 
+            color: var(--white);
+            padding: 8px 25px;
+            display: flex; flex-direction: row; gap: 15px; align-items: center;
+            box-shadow: 6px 6px 0 rgba(21, 22, 44, 0.15); 
+            overflow: hidden; /* 격자가 박스 밖으로 튀어나가지 않게 고정 */
+            overflow: hidden; 
+        }
+
+        /* 은은한 매트릭스 격자 무한 스크롤 효과 (위로 올라감) */
+        .ext-bg-typo .dark-box::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+            background-size: 8px 8px;
+            animation: matrix-scroll 3s linear infinite;
+            z-index: 1;
+        }
+        @keyframes matrix-scroll {
+            from { background-position: 0 0; }
+            to { background-position: 0 -40px; } /* 위로 무한 이동 */
+            to { background-position: 0 -40px; } 
+        }
+
+        .ext-bg-typo .dark-box span {
+            position: relative; z-index: 2; /* 글자가 격자 위로 올라오게 처리 */
+            /* -webkit-text-stroke 대신 다중 text-shadow를 사용하여 모양 훼손 없는 깔끔한 테두리 생성 */
+            position: relative; z-index: 2; 
+            text-shadow: 
+                -1.5px -1.5px 0 var(--black),  
+                 1.5px -1.5px 0 var(--black),
+                -1.5px  1.5px 0 var(--black),
+                 1.5px  1.5px 0 var(--black),
+                -1.5px  0     0 var(--black),
+                 1.5px  0     0 var(--black),
+                 0     -1.5px 0 var(--black),
+                 0      1.5px 0 var(--black);
+        }
+
+        .ext-bg-typo-sym {
+            position: absolute; font-family: 'Montserrat', sans-serif; font-weight: 900;
+        }
+        .ext-bg-typo-sym.plus {
+            font-size: 65px; color: var(--dj-yellow);
+            top: -35px; right: -25px; transform: rotate(15deg);
+            text-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+        }
+        .ext-bg-typo-sym.cross {
+            font-size: 55px; color: var(--dj-magenta);
+            bottom: -20px; right: -20px; /* 오른쪽 아래 구석으로 이동 */
+            bottom: -20px; right: -20px; 
+            transform: rotate(-10deg);
+            text-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+            z-index: 3;
+        }
+
+        /* 🔥 작아지고 탭 위로 일렬 이동한 타이틀 디자인 (유튜브 박스와 하단 정렬) */
+        .header-title-row { 
+            position: relative; display: flex; align-items: baseline; gap: 15px; 
+            margin-bottom: 0; margin-left: 5px; z-index: 10; cursor: default !important; 
+        }
+        .header-title-row * { cursor: default !important; }
+
+        .header-title-row h1 { 
+            font-size: 55px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase; line-height: 1; position: relative; z-index: 5;
+            letter-spacing: -3px; margin: 0; display: flex; gap: 12px;
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .header h1 span {
-            text-shadow: 6px 6px 0 var(--dj-navy), -4px -4px 0 var(--dj-cyan), 4px -4px 0 var(--dj-magenta), 10px 10px 0 rgba(0,0,0,0.15);
-            transition: text-shadow 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+        .header-title-row h1 span {
+            /* EXTENSION 미니멀 테두리 (네이비 + 쿨그레이 조합) */
+            text-shadow: 3px 3px 0 var(--dj-navy), 6px 6px 0 #c4c8d1, 9px 9px 0 rgba(0,0,0,0.1);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: inline-block;
         }
-        .header h1 span:first-child { margin-bottom: -5px; }
-        .header:hover h1 { transform: translateY(-5px) scale(1.02) rotate(-2deg); }
-        .header:hover h1 span { text-shadow: 9px 9px 0 var(--dj-navy), -6px -6px 0 var(--dj-cyan), 6px -6px 0 var(--dj-magenta), 15px 15px 0 rgba(0,0,0,0.25); }
+
+        /* 로고 호버 시 통통 튀는 효과 */
+        .header-title-row:hover h1 { transform: translateY(-2px) scale(1.02) rotate(-1deg); }
+        .header-title-row:hover h1 span { text-shadow: 4px 4px 0 var(--dj-navy), 8px 8px 0 #c4c8d1, 12px 12px 0 rgba(0,0,0,0.15); }
+        
+        /* 마우스 직접 닿았을 때 개별 글자가 더 튀어오름 */
+        .header-title-row h1 span:hover { transform: translateY(-4px) scale(1.05) rotate(2deg); cursor: pointer !important;}
+
+        /* 미니멀 꾸밈 블록 */
+        .mini-block-navy { width: 30px; height: 15px; background: var(--dj-navy); transform: skewX(-15deg); margin-bottom: 8px;}
+        .mini-block-grey { width: 15px; height: 15px; background: #c4c8d1; border-radius: 50%; margin-bottom: 8px;}
 
         .yt-box-mini { 
             width: 320px; height: 180px; flex-shrink: 0; background: var(--black); border: 4px solid var(--dj-navy); 
             box-shadow: 5px 5px 0 var(--dj-cyan), -2px -2px 0 var(--dj-magenta); padding: 4px; overflow: hidden; transform: skewX(-2deg); 
-            transition: transform 0.3s ease; position: relative; z-index: 10; margin-top: 10px;
+            transition: transform 0.3s ease; position: relative; z-index: 10; margin-top: 0;
         }
         .yt-box-mini:hover { transform: skewX(0deg); box-shadow: 6px 6px 0 var(--dj-cyan), -3px -3px 0 var(--dj-magenta); }
         .yt-box-mini iframe { width: 100%; height: 100%; transform: skewX(2deg); display: block; transition: transform 0.3s ease; }
         .yt-box-mini:hover iframe { transform: skewX(0deg); }
 
+        /* -------------------------------------
+           탭 버튼
+        -------------------------------------- */
         .tab-menu { display: flex; gap: 12px; margin-bottom: 15px; position: relative; z-index: 10;}
         .tab-btn { 
-            flex: 1; padding: 12px; background: var(--white); border: 3px solid var(--dj-purple); box-shadow: 4px 4px 0 var(--dj-purple); 
+            flex: 1; padding: 12px; background: var(--white); 
+            border: 3px solid var(--dj-purple); box-shadow: 4px 4px 0 var(--dj-purple); 
             font-size: 16px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
-            color: var(--dj-purple); cursor: pointer; transform: skewX(-8deg); transition: all 0.2s; position: relative; overflow: hidden;
+            color: var(--dj-purple); cursor: pointer; transform: skewX(-8deg); transition: all 0.2s;
+            position: relative; overflow: hidden;
         }
         .tab-btn span { display: inline-block; transform: skewX(8deg); position: relative; z-index: 2;}
         .tab-btn::before {
