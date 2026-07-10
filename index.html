@@ -7,6 +7,7 @@
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,900;1,900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap'); /* 귀여운 코멘트용 폰트 */
         
         :root {
             --dj-purple: #351c61; 
@@ -22,6 +23,7 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
+        /* 바깥 배경: 얇고 은은한 45도 사선 핀스트라이프 패턴 */
         body { 
             font-family: 'Pretendard', sans-serif; 
             background-color: var(--dj-bg); 
@@ -43,7 +45,6 @@
                 linear-gradient(var(--dj-grid) 1px, transparent 1px), 
                 linear-gradient(90deg, var(--dj-grid) 1px, transparent 1px);
             background-size: 40px 40px;
-            /* EXTENSION 감성: 아우터 테두리를 딥 네이비로 변경 */
             border: 10px solid var(--dj-navy);
             border-radius: 16px;
             position: relative; overflow: hidden;
@@ -126,56 +127,16 @@
         .top-subtitle { position: absolute; top: 10px; left: 5px; font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 900; color: var(--dj-purple); letter-spacing: 2px; opacity: 0.8; display: flex; align-items: center; gap: 15px; z-index: 2; }
         .top-subtitle .barcode { font-size: 18px; letter-spacing: 3px; color: var(--dj-cyan); opacity: 0.8; }
 
-        /* 🔥 수정: 세련된 네이비 배경 + 미세한 매트릭스 격자 애니메이션 추가 */
+    /* 🔥 수정: 빈 공간을 채울 부우 감성 배경 타이포그래피 (크기 및 위치 조정) */
         .ext-bg-typo {
             position: absolute; top: 35px; left: 10px;
-            font-family: 'Montserrat', sans-serif; font-size: 65px; font-weight: 900;
-            line-height: 1; letter-spacing: -2px; transform: skewX(-5deg) rotate(-2deg);
+            font-family: 'Montserrat', sans-serif; font-size: 75px; font-weight: 900;
+            line-height: 0.7; letter-spacing: -6px; transform: skewX(-5deg) rotate(-2deg);
+            display: flex; flex-direction: row; /* 가로 정렬로 변경 */
             pointer-events: none; user-select: none; z-index: 0;
         }
-        .ext-bg-typo .dark-box {
-            position: relative;
-            background: linear-gradient(135deg, #1d2242, #2c3258); /* 기존 검정 느낌에서 세련된 딥 네이비로 변경 */
-            color: var(--white);
-            padding: 8px 25px;
-            display: flex; flex-direction: row; gap: 15px; align-items: center;
-            box-shadow: 6px 6px 0 rgba(21, 22, 44, 0.15); 
-            overflow: hidden; /* 격자가 박스 밖으로 튀어나가지 않게 고정 */
-        }
-        
-        /* 은은한 매트릭스 격자 무한 스크롤 효과 (위로 올라감) */
-        .ext-bg-typo .dark-box::before {
-            content: '';
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
-            background-size: 8px 8px;
-            animation: matrix-scroll 3s linear infinite;
-            z-index: 1;
-        }
-        @keyframes matrix-scroll {
-            from { background-position: 0 0; }
-            to { background-position: 0 -40px; } /* 위로 무한 이동 */
-        }
-        
-        .ext-bg-typo .dark-box span {
-            position: relative; z-index: 2; /* 글자가 격자 위로 올라오게 처리 */
-        }
-
-        .ext-bg-typo-sym {
-            position: absolute; font-family: 'Montserrat', sans-serif; font-weight: 900;
-        }
-        .ext-bg-typo-sym.plus {
-            font-size: 65px; color: var(--dj-yellow);
-            top: -35px; right: -25px; transform: rotate(15deg);
-            text-shadow: 3px 3px 0 rgba(0,0,0,0.1);
-        }
-        .ext-bg-typo-sym.cross {
-            font-size: 55px; color: var(--dj-magenta);
-            bottom: -20px; right: -20px; /* 오른쪽 아래 구석으로 이동 */
-            transform: rotate(-10deg);
-            text-shadow: 3px 3px 0 rgba(0,0,0,0.1);
-            z-index: 3;
-        }
+        .ext-bg-typo .stroke { color: transparent; -webkit-text-stroke: 2px rgba(21, 22, 44, 0.1); }
+        .ext-bg-typo .fill { color: transparent; -webkit-text-stroke: 2px rgba(21, 22, 44, 0.1); margin-left: 20px; } 
 
         /* 🔥 작아지고 탭 위로 일렬 이동한 타이틀 디자인 (유튜브 박스와 하단 정렬) */
         .header-title-row { 
@@ -217,3 +178,386 @@
         .yt-box-mini:hover { transform: skewX(0deg); box-shadow: 6px 6px 0 var(--dj-cyan), -3px -3px 0 var(--dj-magenta); }
         .yt-box-mini iframe { width: 100%; height: 100%; transform: skewX(2deg); display: block; transition: transform 0.3s ease; }
         .yt-box-mini:hover iframe { transform: skewX(0deg); }
+
+        .tab-menu { display: flex; gap: 12px; margin-bottom: 15px; position: relative; z-index: 10;}
+        .tab-btn { 
+            flex: 1; padding: 12px; background: var(--white); border: 3px solid var(--dj-purple); box-shadow: 4px 4px 0 var(--dj-purple); 
+            font-size: 16px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif;
+            color: var(--dj-purple); cursor: pointer; transform: skewX(-8deg); transition: all 0.2s; position: relative; overflow: hidden;
+        }
+        .tab-btn span { display: inline-block; transform: skewX(8deg); position: relative; z-index: 2;}
+        .tab-btn::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(53, 28, 97, 0.05) 10px, rgba(53, 28, 97, 0.05) 20px);
+            transition: left 0.3s; z-index: 1;
+        }
+        .tab-btn:hover::before { left: 0; }
+        .tab-btn:hover { transform: skewX(-8deg) translateY(-2px); box-shadow: 5px 5px 0 var(--dj-magenta); color: var(--dj-magenta); border-color: var(--dj-magenta); }
+        .tab-btn.active { background: var(--dj-purple); color: var(--dj-yellow); box-shadow: 4px 4px 0 var(--dj-cyan); border-color: var(--dj-purple); }
+        .tab-btn#btnQuest.active { color: var(--dj-cyan); box-shadow: 4px 4px 0 var(--dj-cyan); }
+
+        /* -------------------------------------
+           랭킹 리스트 레이아웃 (반갈죽)
+        -------------------------------------- */
+        .list-container { 
+            display: flex; flex-direction: column; gap: 8px; 
+            flex: 1; overflow-y: auto; padding-right: 10px; padding-bottom: 5px;
+            position: relative; z-index: 10;
+        }
+        .list-container::-webkit-scrollbar { width: 8px; }
+        .list-container::-webkit-scrollbar-track { background: rgba(53, 28, 97, 0.05); border-radius: 4px; }
+        .list-container::-webkit-scrollbar-thumb { background: var(--dj-purple); border-radius: 4px; }
+
+        /* 가로로 나란히 서게 할 래퍼 박스 */
+        .item-wrapper {
+            display: flex; gap: 15px; width: 100%;
+        }
+
+        .rank-row, .comment-row { cursor: default !important; }
+        .rank-row *, .comment-row * { cursor: default !important; }
+
+        /* 왼쪽 랭킹표 / 오른쪽 코멘트표 공통 스타일 */
+        .rank-row, .comment-row { 
+            flex: 1; /* 가로 공간 절반씩 차지 */
+            display: flex; align-items: center; background: var(--white); 
+            border: 1px solid var(--dj-purple) !important; 
+            border-left: 6px solid var(--dj-purple) !important;
+            padding: 10px 15px; font-weight: 900;
+            transform: skewX(-2deg); 
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s, background-color 0.2s;
+            position: relative; overflow: hidden;
+        }
+        
+        .rank-row-top { display: flex; align-items: center; width: 100%; }
+        
+        .rank-row::after, .comment-row::after {
+            content: ''; position: absolute; right: 0; top: 0; height: 100%; width: 0;
+            background: linear-gradient(90deg, transparent, rgba(53, 28, 97, 0.05));
+            transition: width 0.3s ease; z-index: 0; pointer-events: none;
+        }
+        .rank-row:hover::after, .comment-row:hover::after { width: 100%; }
+        
+        /* 오른쪽 코멘트 전용 추가 스타일 */
+        .comment-row { 
+            justify-content: center; /* 텍스트 가운데 정렬 */
+            border-left-color: var(--dj-magenta) !important; /* 코멘트는 마젠타 테두리 */
+        }
+        .comment-text {
+            font-family: 'Jua', sans-serif;
+            font-size: 16px; color: var(--dj-navy);
+            transform: skewX(2deg); /* 글자는 똑바로 */
+            position: relative; z-index: 2;
+        }
+
+        .giver-list .rank-row { border-left-color: var(--dj-orange) !important; box-shadow: 2px 2px 0 var(--dj-orange); }
+        .quest-list .rank-row { border-left-color: var(--dj-cyan) !important; box-shadow: 2px 2px 0 var(--dj-cyan); }
+        .daily-list .rank-row { border-left-color: var(--dj-purple) !important; box-shadow: 2px 2px 0 var(--dj-purple); }
+        
+        .rank-row:hover { transform: skewX(-2deg) translateX(5px) translateY(-1px); box-shadow: -2px 4px 0 var(--dj-purple); }
+        .comment-row:hover { transform: skewX(-2deg) translateX(5px) translateY(-1px); box-shadow: -2px 4px 0 var(--dj-magenta); background: #fffcf7; }
+        
+        .giver-list .rank-row:hover { box-shadow: -2px 4px 0 var(--dj-orange); background: #fffcf7; }
+        .quest-list .rank-row:hover { box-shadow: -2px 4px 0 var(--dj-cyan); background: #f5ffff; }
+
+        .rank-row.top-1 { background: repeating-linear-gradient(-45deg, #fff9e6, #fff9e6 8px, #ffffff 8px, #ffffff 16px); border-color: #d4af37 !important; border-left-color: #d4af37 !important; box-shadow: 2px 2px 0 #d4af37; }
+        .rank-row.top-2 { background: repeating-linear-gradient(-45deg, #f5f5f5, #f5f5f5 8px, #ffffff 8px, #ffffff 16px); border-color: #a8a9ad !important; border-left-color: #a8a9ad !important; box-shadow: 2px 2px 0 #a8a9ad; }
+        .rank-row.top-3 { background: repeating-linear-gradient(-45deg, #fff0e6, #fff0e6 8px, #ffffff 8px, #ffffff 16px); border-color: #cd7f32 !important; border-left-color: #cd7f32 !important; box-shadow: 2px 2px 0 #cd7f32; }
+
+        .rank-num { font-size: 20px; color: #ccc; width: 45px; font-style: italic; font-family: 'Montserrat', sans-serif; white-space: nowrap; transform: skewX(2deg); position: relative; z-index: 2; }
+        .rank-row.top-1 .rank-num { color: #d4af37; width: 75px; text-shadow: 1px 1px 0 rgba(0,0,0,0.1); }
+        .rank-row.top-2 .rank-num { color: #a8a9ad; width: 75px; }
+        .rank-row.top-3 .rank-num { color: #cd7f32; width: 75px; text-shadow: 1px 1px 0 rgba(0,0,0,0.1); }
+        
+        .rank-name { flex: 1; font-size: 16px; color: var(--dj-purple); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 10px; transform: skewX(2deg); position: relative; z-index: 2; }
+        .rank-val { font-size: 18px; font-style: italic; font-family: 'Montserrat', sans-serif; text-align: right; white-space: nowrap; transform: skewX(2deg); position: relative; z-index: 2; }
+
+        .val-daily { color: var(--dj-magenta); }
+        .val-giver { color: var(--dj-orange); }
+        .val-quest { color: var(--dj-cyan); }
+
+        /* 모바일 코멘트 숨김 기본값 (데스크탑에선 안 보임) */
+        .mobile-comment { display: none; }
+
+        .content-bg-text {
+            position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%) rotate(-5deg);
+            font-size: 140px; font-weight: 900; font-family: 'Montserrat', sans-serif; color: transparent;
+            -webkit-text-stroke: 2px rgba(53, 28, 97, 0.05); white-space: nowrap; pointer-events: none;
+            z-index: 1; display: flex; flex-direction: column; align-items: center; line-height: 0.8; letter-spacing: -5px;
+        }
+        .content-bg-text .filled { color: rgba(248, 193, 23, 0.08); -webkit-text-stroke: 0; margin-right: 60px; }
+
+        .bouncy-text { display: inline-block; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s, text-shadow 0.2s; }
+        .rank-row:hover .rank-name .bouncy-text { color: var(--dj-magenta); transform: translateY(-3px) scale(1.05); text-shadow: 0 2px 4px rgba(217, 28, 73, 0.3); }
+        .rank-row:hover .rank-val .bouncy-text { color: var(--dj-purple); transform: translateY(-3px) scale(1.05); text-shadow: 0 2px 4px rgba(53, 28, 97, 0.3); }
+
+        .thank-you-msg { text-align: center; margin-top: auto; padding-top: 15px; font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 900; color: var(--dj-purple); letter-spacing: 3px; opacity: 0.6; text-transform: uppercase; position: relative; z-index: 10; }
+        
+        .marquee-wrap { position: absolute; bottom: 0; left: 0; width: 100%; height: 26px; background: var(--dj-navy); color: var(--dj-orange); display: flex; align-items: center; overflow: hidden; z-index: 20; font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 900; letter-spacing: 2px; border-top: 1px solid var(--dj-purple); }
+        .marquee-content { display: flex; white-space: nowrap; animation: scroll-left 15s linear infinite; }
+        .marquee-content span { padding: 0 30px; }
+        @keyframes scroll-left { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        @media (max-width: 700px) {
+            .djmax-bg-text { display: none; } 
+            .sym-3 { display: none; }
+            .game-frame { border-width: 6px; border-radius: 12px; }
+            .content-wrap { padding: 30px 15px 35px; }
+            .top-header-area { flex-direction: column; align-items: flex-start; gap: 15px; margin-bottom: 15px; }
+            
+            .header-titles { padding-top: 30px; width: 100%; height: auto; justify-content: flex-start; }
+            .top-subtitle { top: 0; left: 0; }
+            .ext-bg-typo { font-size: 60px; top: 30px; left: 10px; position: absolute; }
+            .ext-bg-typo .fill { margin-left: 20px; }
+            
+            .header-title-row { margin-top: 70px; }
+            .header-title-row h1 { font-size: 40px; gap: 8px; }
+            .header-title-row h1 span { text-shadow: 2px 2px 0 var(--dj-navy), 4px 4px 0 #c4c8d1, 6px 6px 0 rgba(0,0,0,0.1); }
+            .header-title-row:hover h1 { transform: translateY(-2px) scale(1.02); }
+            .header-title-row:hover h1 span { text-shadow: 3px 3px 0 var(--dj-navy), 6px 6px 0 #c4c8d1, 9px 9px 0 rgba(0,0,0,0.15); }
+            
+            .mini-block-navy { width: 20px; height: 10px; }
+            .mini-block-grey { width: 10px; height: 10px; }
+            
+            .deco-dot-matrix { left: 120px; top: 0px; width: 30px; height: 30px; background-size: 5px 5px; }
+            .deco-star { left: 180px; top: 20px; width: 15px; height: 15px; }
+            
+            .yt-box-mini { width: 100%; height: 180px; transform: skewX(0); box-shadow: 4px 4px 0 var(--dj-cyan), -2px -2px 0 var(--dj-magenta); }
+            .yt-box-mini iframe { transform: skewX(0); }
+            
+            .tab-menu { gap: 8px; margin-bottom: 12px; }
+            .tab-btn { font-size: 13px; padding: 10px; border-width: 2px; box-shadow: 2px 2px 0 var(--dj-purple); transform: skewX(-5deg); }
+            .tab-btn span { transform: skewX(5deg); }
+            
+            /* 🔥 모바일 1층, 2층 레이아웃 처리 */
+            .item-wrapper { flex-direction: column; gap: 0; }
+            .comment-row { display: none !important; } /* 데스크탑 전용 오른쪽 랭크박스 숨김 */
+            
+            .rank-row { flex-direction: column; align-items: stretch; padding: 8px 10px; transform: skewX(0); border-left-width: 4px !important; box-shadow: 2px 2px 0 var(--dj-purple) !important; }
+            .rank-row-top { transform: skewX(0); } /* 1층 찌그러짐 원상복구 */
+            
+            .rank-num, .rank-name, .rank-val { transform: skewX(0); font-size: 14px; }
+            .rank-num { width: 35px; }
+            .rank-val { min-width: 50px; }
+            .rank-row.top-1 .rank-num, .rank-row.top-2 .rank-num, .rank-row.top-3 .rank-num { font-size: 16px; width: 50px; }
+
+            /* 모바일 전용 2층 코멘트 디자인 */
+            .mobile-comment {
+                display: block; width: 100%; text-align: left;
+                font-family: 'Jua', sans-serif; font-size: 14px; color: var(--dj-navy);
+                margin-top: 6px; padding-top: 6px; border-top: 1px dashed rgba(53, 28, 97, 0.15);
+                padding-left: 35px; /* 순위 숫자 여백만큼 들여쓰기 */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-frame">
+        <div class="scanlines"></div>
+        
+        <div class="djmax-bg-text">
+            <span>STREAM</span>
+            <span class="hollow">ER</span>
+        </div>
+        
+        <div class="floating-sym sym-1">+</div>
+        <div class="floating-sym sym-2">X</div>
+        <div class="floating-sym sym-3">O</div>
+
+        <div class="hud-overlay">
+            <div class="hud-corner tl"></div><div class="hud-corner tr"></div>
+            <div class="hud-corner bl"></div><div class="hud-corner br"></div>
+            <div class="hud-top">
+                <div class="hud-badge">MINERAL STORAGE</div>
+                <div class="hud-line"></div>
+                <div class="eq-bars">
+                    <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
+                </div>
+                <div class="hud-cross">+</div>
+            </div>
+        </div>
+
+        <div class="content-bg-text">
+            <span>S T R E A M</span>
+            <span class="filled">E R</span>
+        </div>
+
+        <div class="content-wrap">
+            <div class="top-header-area">
+                <div class="header-titles">
+                    <!-- 데코 요소들 -->
+                    <div class="deco-dot-matrix" style="top: 10px; left: 280px; width: 80px; height: 80px; background-size: 10px 10px;"></div>
+                    <div class="deco-star" style="top: 35px; left: 400px; width: 40px; height: 40px;"></div>
+                    
+                    <div class="top-subtitle">
+                        <span>YGOSU</span>
+                        <span class="barcode">|||| || ||| |</span>
+                        <span>DATA ARCHIVE</span>
+                    </div>
+                    
+                    <!-- 빈 공간을 꽉 채우는 부우 감성 배경 타이포그래피 -->
+                    <div class="ext-bg-typo">
+                        <span class="stroke">BOO</span>
+                        <span class="fill">=_=</span>
+                    </div>
+
+                    <!-- DAILY QUEST 탭 바로 위로 작아진 타이틀 일렬 배치 -->
+                    <div class="header-title-row">
+                        <h1>
+                            <span style="color: var(--dj-yellow);">BOO</span>
+                            <span style="color: var(--white);">BOARD</span>
+                        </h1>
+                        <div class="mini-block-navy"></div>
+                        <div class="mini-block-grey"></div>
+                    </div>
+                </div>
+                
+                <div class="yt-box-mini">
+                    <iframe src="https://www.youtube.com/embed/upNRraLNEg4?si=Ttv8dI1ESsVc1Yx6&autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                </div>
+            </div>
+
+            <div class="tab-menu">
+                <button class="tab-btn active" id="btnDaily" onclick="show('daily')"><span class="bouncy-text">DAILY QUEST</span></button>
+                <button class="tab-btn" id="btnGiver" onclick="show('giver')"><span class="bouncy-text">DONATION</span></button>
+                <button class="tab-btn" id="btnQuest" onclick="show('quest')"><span class="bouncy-text">REWARDS</span></button>
+            </div>
+
+            <div id="daily" class="list-container daily-list"></div>
+            <div id="giver" class="list-container giver-list" style="display:none;"></div>
+            <div id="quest" class="list-container quest-list" style="display:none;"></div>
+
+            <div class="thank-you-msg">
+                ★ THANK YOU FOR COMPLETING THE DAILY QUEST! ★
+            </div>
+        </div>
+
+        <div class="marquee-wrap">
+            <div class="marquee-content">
+                <span>/// YGOSU BOO BOARD DATA ARCHIVE ///</span>
+                <span>DAILY QUEST ACHIEVERS</span>
+                <span>DONATION RANKING</span>
+                <span>MINERAL REWARDS</span>
+                <span>/// YGOSU BOO BOARD DATA ARCHIVE ///</span>
+                <span>DAILY QUEST ACHIEVERS</span>
+                <span>DONATION RANKING</span>
+                <span>MINERAL REWARDS</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const bgmList = ["upNRraLNEg4", "56jjrn5BpDk", "NzcJWgK2ZTI", "qZlu2j2SiBA", "ZbO9PBdFRdc", "BMA5fYUfXq0", "SNkeRWscPIo", "o9HKraQywf8", "i_Z4FMCgtPg"];
+
+        function setRandomBGM() {
+            const randomId = bgmList[Math.floor(Math.random() * bgmList.length)];
+            const iframe = document.querySelector('.yt-box-mini iframe');
+            iframe.src = `https://www.youtube.com/embed/${randomId}?si=iRSunb6wWGX7SGp5&autoplay=1&loop=1&playlist=${randomId}`;
+        }
+
+        function show(tab) {
+            document.getElementById('daily').style.display = 'none';
+            document.getElementById('giver').style.display = 'none';
+            document.getElementById('quest').style.display = 'none';
+
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            if (tab === 'daily') {
+                document.getElementById('daily').style.display = 'flex';
+                document.getElementById('btnDaily').classList.add('active');
+            } else if (tab === 'giver') {
+                document.getElementById('giver').style.display = 'flex';
+                document.getElementById('btnGiver').classList.add('active');
+            } else if (tab === 'quest') {
+                document.getElementById('quest').style.display = 'flex';
+                document.getElementById('btnQuest').classList.add('active');
+            }
+        }
+
+        function createRows(dataList, typeClass, tabType) {
+            if (!dataList || dataList.length === 0) {
+                return '<div style="text-align:center; padding:20px; color:#999; font-weight:900; z-index:2; position:relative;">조건을 달성한 사람이 아직 없습니다.</div>';
+            }
+
+            // 부우 게시판 맞춤 코멘트 (비율 조정 및 특별 멘트 추가)
+            const booTitles = [
+                "부우단 행동대장 =_=", "하랑이바라기", "충성충성 부우충성", "(숨참고 부우 다이브)",
+                "하랑아 나 죽어 =_=", "세상에서 제일 귀여운 =_=", "부우만 믿고 간다", "성덕이 될 거야",
+                "하랑이 미모 무슨 일 =_=", "YB 비주얼 담당 =_=", "부우 게시판 망령 =_=", "일퀘 깎는 장인",
+                "BOO=_=", "시그 장전 완료", "그 부탁...", "억까 멈춰! =_=",
+                "채팅창 핑퐁 장인", "오늘도 출첵 완료!", "부우가 우릴 용서해야지", "(부우 몰래 딴방 구경)",
+                "일퀘 스피드런 1위", "퇴근 후 부우방송", "오늘도 폼 미쳤다 =_=", "현생은 폼인가", "부우 각오 한마디",
+                "부우얀....=_=", "미네랄 폭격기", "부우 게시판 수호자", "미드 차이 =_=", "부우는 롤.. 좋아해 =_=", "부우 코인 탑승!",
+                "부우 용서할까", "넵! 알겠습니다!", "부우라고 하지좀마", "억까들 오ㅡㅡㅡㅡㅡㅡㅡ열"
+            ];
+
+            var html = "";
+            dataList.forEach(function(r, i) {
+                var rankClass = "";
+                var rankIcon = String(i + 1).padStart(2, '0');
+
+                if (i === 0) { rankClass = "top-1"; rankIcon = "🥇 01"; }
+                else if (i === 1) { rankClass = "top-2"; rankIcon = "🥈 02"; }
+                else if (i === 2) { rankClass = "top-3"; rankIcon = "🥉 03"; }
+
+                var nameHtml = '<span class="bouncy-text">' + r.name + '</span>';
+                var valHtml = tabType === 'daily' ? "CLEAR" : r.val.toLocaleString() + " MN";
+                
+                var randomTitle = booTitles[Math.floor(Math.random() * booTitles.length)];
+
+                // 전체 래퍼 시작
+                html += '<div class="item-wrapper">';
+
+                // 1. 왼쪽 랭킹표 박스
+                html += '<div class="rank-row ' + rankClass + '">' +
+                        '<div class="rank-row-top">' +
+                        '<div class="rank-num">' + rankIcon + '</div>' +
+                        '<div class="rank-name">' + nameHtml + '</div>' +
+                        '<div class="rank-val ' + typeClass + '"><span class="bouncy-text">' + valHtml + '</span></div>' +
+                        '</div>';
+                        
+                // 모바일에서만 나타나는 2층 코멘트 (일퀘 탭 전용)
+                if (tabType === 'daily') {
+                    html += '<div class="mobile-comment">" ' + randomTitle + ' "</div>';
+                }
+                
+                html += '</div>'; // 왼쪽 랭킹표 박스 끝
+
+                // 2. 오른쪽 똑같은 양식의 코멘트표 박스 (일퀘 탭 전용)
+                if (tabType === 'daily') {
+                    html += '<div class="comment-row">';
+                    html += '<div class="comment-text">" ' + randomTitle + ' "</div>';
+                    html += '</div>';
+                }
+
+                html += '</div>'; // 전체 래퍼 끝
+            });
+            return html;
+        }
+
+        function loadData() {
+            fetch('data.json?t=' + new Date().getTime())
+            .then(function(response) {
+                if (!response.ok) throw new Error('네트워크 응답 실패');
+                return response.json();
+            })
+            .then(function(data) {
+                document.getElementById('daily').innerHTML = createRows(data.quest_board, "val-daily", "daily");
+                document.getElementById('giver').innerHTML = createRows(data.donation_ranking, "val-giver", "giver");
+                document.getElementById('quest').innerHTML = createRows(data.quest_ranking, "val-quest", "quest");
+            })
+            .catch(function(error) {
+                console.error("데이터 로딩 오류:", error);
+                document.getElementById('daily').innerHTML = '<div style="text-align:center; padding:20px; color:#999;">데이터를 불러올 수 없습니다.</div>';
+                document.getElementById('giver').innerHTML = '<div style="text-align:center; padding:20px; color:#999;">데이터를 불러올 수 없습니다.</div>';
+                document.getElementById('quest').innerHTML = '<div style="text-align:center; padding:20px; color:#999;">데이터를 불러올 수 없습니다.</div>';
+            });
+        }
+
+        window.onload = function() {
+            show('daily');
+            loadData();
+            setRandomBGM(); 
+        };
+    </script>
+</body>
+</html>
