@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- 🔥 이 줄을 추가하세요! (외부 이미지 엑박 방지용) -->
     <meta name="referrer" content="no-referrer">
     
     <title>BOO BOARD DASHBOARD</title>
@@ -127,7 +126,6 @@
         .tab-btn:hover::before { left: 0; }
         .tab-btn:hover { transform: skewX(-8deg) translateY(-2px); box-shadow: 5px 5px 0 var(--dj-magenta); color: var(--dj-magenta); border-color: var(--dj-magenta); }
         .tab-btn.active { background: var(--dj-purple); color: var(--dj-yellow); box-shadow: 4px 4px 0 var(--dj-cyan); border-color: var(--dj-purple); }
-        /* 탭 색상 개별 커스텀 */
         .tab-btn#btnDonation.active { color: var(--dj-orange); box-shadow: 4px 4px 0 var(--dj-orange); }
         .tab-btn#btnPhoto.active { color: var(--dj-magenta); box-shadow: 4px 4px 0 var(--dj-magenta); }
 
@@ -177,44 +175,40 @@
         .rank-row:hover .rank-name .bouncy-text { color: var(--dj-magenta); transform: translateY(-3px) scale(1.05); text-shadow: 0 2px 4px rgba(217, 28, 73, 0.3); }
         .rank-row:hover .rank-val .bouncy-text { color: var(--dj-purple); transform: translateY(-3px) scale(1.05); text-shadow: 0 2px 4px rgba(53, 28, 97, 0.3); }
 
-        /* 🔥 포토카드 갤러리 영역 CSS (좌우 버튼 포함, 보관 케이스 효과 적용) */
+        /* 🔥 포토카드 갤러리 영역 CSS */
         .photo-gallery-wrapper {
             display: flex; flex-direction: row; align-items: center;
             width: 100%; height: 100%; min-height: 400px;
             overflow-x: auto; overflow-y: hidden;
             scroll-snap-type: x mandatory;
-            gap: 40px; /* 카드 간격 약간 넓힘 */
-            padding: 40px calc(50% - 135px); /* 그림자 잘리지 않게 패딩 증가 */
-            perspective: 1000px; /* 3D 공간 설정 */
+            gap: 40px; 
+            padding: 40px calc(50% - 135px); 
+            perspective: 1000px; 
         }
         .photo-gallery-wrapper::-webkit-scrollbar { height: 10px; }
         .photo-gallery-wrapper::-webkit-scrollbar-track { background: rgba(53, 28, 97, 0.05); border-radius: 5px; margin: 0 40px; }
         .photo-gallery-wrapper::-webkit-scrollbar-thumb { background: var(--dj-magenta); border-radius: 5px; border: 2px solid var(--white); }
 
         .photo-card {
-            flex-shrink: 0; width: 270px; height: 480px; /* 9:16 비율 */
+            flex-shrink: 0; width: 270px; height: 480px; 
             scroll-snap-align: center; 
-            border-radius: 16px; /* 모서리 더 둥글게 */
+            border-radius: 16px; 
             position: relative;
-            background: #e0e5ec; /* 밝은 케이스 배경색 */
-            /* 🔥 두꺼운 투명 아크릴 케이스 테두리 효과 */
+            background: #e0e5ec; 
             box-shadow: 
-                0 10px 20px rgba(0,0,0,0.1), /* 기본 그림자 */
-                inset 0 0 0 2px rgba(255,255,255,0.8), /* 안쪽 밝은 테두리 */
-                inset 0 0 0 10px rgba(255,255,255,0.4), /* 두꺼운 아크릴 느낌 */
-                inset 0 0 0 12px rgba(0,0,0,0.05); /* 카드 닿는 부분 미세한 선 */
+                0 10px 20px rgba(0,0,0,0.1), 
+                inset 0 0 0 2px rgba(255,255,255,0.8), 
+                inset 0 0 0 10px rgba(255,255,255,0.4), 
+                inset 0 0 0 12px rgba(0,0,0,0.05); 
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
             cursor: pointer; display: flex; justify-content: center; align-items: center;
             transform-style: preserve-3d;
         }
-        
         .photo-card img {
-            width: calc(100% - 24px); height: calc(100% - 24px); /* 케이스 안쪽에 쏙 들어가도록 크기 조절 */
+            width: calc(100% - 24px); height: calc(100% - 24px); 
             object-fit: cover; border-radius: 8px; display: block;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
-        
-        /* 3D 틸트 호버 효과 */
         .photo-card:hover {
             transform: translateY(-15px) rotateX(10deg) rotateY(-5deg) scale(1.05);
             box-shadow: 
@@ -224,28 +218,25 @@
                 inset 0 0 0 12px rgba(0,0,0,0.1);
             z-index: 10;
         }
-        
-        /* 🔥 홀로그램 무지개 반사광 효과 */
         .holo-glare {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 16px;
             background: linear-gradient(
                 105deg, 
                 transparent 20%, 
-                rgba(255, 182, 255, 0.4) 25%, /* 핑크빛 홀로그램 */
-                rgba(182, 255, 255, 0.4) 28%, /* 시안빛 홀로그램 */
-                rgba(255, 255, 182, 0.3) 31%, /* 노란빛 홀로그램 */
+                rgba(255, 182, 255, 0.4) 25%, 
+                rgba(182, 255, 255, 0.4) 28%, 
+                rgba(255, 255, 182, 0.3) 31%, 
                 transparent 35%
             );
             background-size: 200% 200%; background-position: 100% 100%;
             pointer-events: none; transition: background-position 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
-            mix-blend-mode: color-dodge; /* 색상 혼합 모드로 더 영롱하게 */
+            mix-blend-mode: color-dodge; 
             z-index: 5;
         }
-        
-        /* 마우스 올리면 홀로그램 빛이 스쳐지나감 */
         .photo-card:hover .holo-glare { background-position: 0% 0%; }
 
         .gallery-container { position: relative; width: 100%; height: 100%; display: flex; align-items: center; }
+        
         .gallery-nav-btn {
             position: absolute; top: 50%; transform: translateY(-50%) skewX(-10deg);
             background: var(--dj-purple); color: var(--dj-yellow);
@@ -259,6 +250,32 @@
         .gallery-nav-btn.next { right: 10px; border-color: var(--dj-magenta); box-shadow: 4px 4px 0 var(--dj-magenta); color: var(--white); }
         .gallery-nav-btn:hover { transform: translateY(-50%) skewX(-10deg) scale(1.1); }
         .gallery-nav-btn:active { transform: translateY(-50%) skewX(-10deg) translate(2px, 2px); box-shadow: 2px 2px 0 transparent; }
+
+        /* 🔥 포토카드 새로고침 버튼 디자인 */
+        .photo-refresh-btn {
+            position: absolute; top: 0px; right: 10px;
+            background: var(--white); color: var(--dj-purple);
+            border: 3px solid var(--dj-purple); box-shadow: 3px 3px 0 var(--dj-purple);
+            width: 45px; height: 45px; font-size: 22px; font-weight: 900;
+            border-radius: 8px; cursor: pointer; z-index: 30; transition: all 0.2s;
+            display: flex; justify-content: center; align-items: center;
+            transform: skewX(-5deg);
+        }
+        .photo-refresh-btn i { transform: skewX(5deg); display: inline-block; font-style: normal; }
+        .photo-refresh-btn:hover {
+            transform: skewX(-5deg) translateY(-2px);
+            box-shadow: 4px 4px 0 var(--dj-magenta);
+            border-color: var(--dj-magenta); color: var(--dj-magenta);
+        }
+        .photo-refresh-btn:active {
+            transform: skewX(-5deg) translate(2px, 2px);
+            box-shadow: 1px 1px 0 var(--dj-magenta);
+        }
+        .spin-anim i { animation: spin-icon 0.5s ease; }
+        @keyframes spin-icon {
+            from { transform: skewX(5deg) rotate(0deg); }
+            to { transform: skewX(5deg) rotate(360deg); }
+        }
 
         .thank-you-msg { text-align: center; margin-top: auto; padding-top: 15px; font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 900; color: var(--dj-purple); letter-spacing: 3px; opacity: 0.6; text-transform: uppercase; position: relative; z-index: 10; }
         .marquee-wrap { position: absolute; bottom: 0; left: 0; width: 100%; height: 26px; background: var(--dj-navy); color: var(--dj-orange); display: flex; align-items: center; overflow: hidden; z-index: 20; font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 900; letter-spacing: 2px; border-top: 1px solid var(--dj-purple); }
@@ -300,6 +317,7 @@
             .gallery-nav-btn { width: 35px; height: 45px; font-size: 16px; }
             .gallery-nav-btn.prev { left: 5px; }
             .gallery-nav-btn.next { right: 5px; }
+            .photo-refresh-btn { width: 35px; height: 35px; font-size: 18px; right: 5px; top: -10px; }
 
             .mobile-comment { display: block; width: 100%; text-align: left; font-family: 'Jua', sans-serif; font-size: 14px; color: var(--dj-navy); margin-top: 6px; padding-top: 6px; border-top: 1px dashed rgba(53, 28, 97, 0.15); padding-left: 35px; }
         }
@@ -349,6 +367,11 @@
             
             <div id="photo" class="list-container" style="display:none; padding-right:0;">
                 <div class="gallery-container">
+                    <!-- 🔥 포토카드 새로고침 버튼 추가 -->
+                    <button class="photo-refresh-btn" onclick="refreshPhotos()" title="새로운 카드 뽑기">
+                        <i>↻</i>
+                    </button>
+                    
                     <button class="gallery-nav-btn prev" onclick="scrollGallery(-1)"><span>◀</span></button>
                     <div class="photo-gallery-wrapper" id="photoGalleryWrapper">
                         <!-- JS에서 카드를 동적으로 렌더링합니다 -->
@@ -369,89 +392,108 @@
     </div>
 
     <script>
-        // ★ 본인 닉네임을 여기에 적어주세요. (일퀘 랭킹에서 숨겨집니다)
-        const myNickname = "팥쥐";
+        const myNickname = "여기에본인닉네임적으세요";
 
-        // 🔥 이미지 링크 추가 영역
+        // 🔥 요청해주신 97개의 와이고수 이미지/움짤 링크 리스트 전체 
         const photoList = [
-            "https://storage2.ygosu.com/?code=S6a52481b366e31.62272627",
-            "https://storage2.ygosu.com/?code=S6a52481b548f29.09693943",
-            "https://storage2.ygosu.com/?code=S6a52481b76ad42.17923663",
-            "https://storage2.ygosu.com/?code=S6a52481bc00cb1.07913577",
-            "https://storage2.ygosu.com/?code=S6a52481c0d87a4.60753765",
-            "https://storage2.ygosu.com/?code=S6a524825eb8bc0.23335587",
-            "https://storage2.ygosu.com/?code=S6a52482bcd9ca9.79885224",
-            "https://storage2.ygosu.com/?code=S6a52482fa79eb9.58105038",
-            "https://storage2.ygosu.com/?code=S6a524833bad588.19336659",
-            "https://storage2.ygosu.com/?code=S6a52483697dcd0.14593130",
-            "https://storage2.ygosu.com/?code=S6a52483b719e56.79266752",
-            "https://storage2.ygosu.com/?code=S6a524840ab9251.24954554",
-            "https://storage2.ygosu.com/?code=S6a524848400914.29194784",
-            "https://storage2.ygosu.com/?code=S6a52484ba9e594.23737279",
-            "https://storage2.ygosu.com/?code=S6a5248d58547d1.19438177",
-            "https://storage2.ygosu.com/?code=S6a5248e992c565.28783806",
-            "https://storage2.ygosu.com/?code=S6a5248f52a8607.22752145",
-            "https://storage2.ygosu.com/?code=S6a5248fbb779a2.37543230",
-            "https://storage2.ygosu.com/?code=S6a5248ff1e5a76.98955933",
-            "https://storage2.ygosu.com/?code=S6a524903b56bf8.48036233",
-            "https://storage2.ygosu.com/?code=S6a5249088a8317.31688281",
-            "https://storage2.ygosu.com/?code=S6a52490bda06e1.14548349",
-            "https://storage2.ygosu.com/?code=S6a52490e9f41f1.15880351",
-            "https://storage2.ygosu.com/?code=S6a5249112a0806.89520662",
-            "https://storage2.ygosu.com/?code=S6a524913cec492.53247019",
-            "https://storage2.ygosu.com/?code=S6a5249165ab888.40701987",
-            "https://storage2.ygosu.com/?code=S6a52491bd85490.28740154",
-            "https://storage2.ygosu.com/?code=S6a5249201849a3.06338758",
-            "https://storage2.ygosu.com/?code=S6a5249252a6574.26613370",
-            "https://storage2.ygosu.com/?code=S6a524929909a34.97251857",
-            "https://storage2.ygosu.com/?code=S6a524932695460.24678006",
-            "https://storage2.ygosu.com/?code=S6a5249373aaf27.57070820",
-            "https://storage2.ygosu.com/?code=S6a52493bb32b11.42872046",
-            "https://storage2.ygosu.com/?code=S6a52493f91fd78.26131779",
-            "https://storage2.ygosu.com/?code=S6a524946652f47.93114849",
-            "https://storage2.ygosu.com/?code=S6a52494caa1091.49750666",
-            "https://storage2.ygosu.com/?code=S6a52494f9e9207.68155829",
-            "https://storage2.ygosu.com/?code=S6a524952b4d4e4.86813676",
-            "https://storage2.ygosu.com/?code=S6a524956b93f88.80853743",
-            "https://storage2.ygosu.com/?code=S6a5249593077e3.72560964",
-            "https://storage2.ygosu.com/?code=S6a52495c62d7c7.77633739",
-            "https://storage2.ygosu.com/?code=S6a52495f44d6c4.63658753",
-            "https://storage2.ygosu.com/?code=S6a524966296c23.35643299",
-            "https://storage2.ygosu.com/?code=S6a52496bb36dd9.62254809",
-            "https://storage2.ygosu.com/?code=S6a52496e26fad8.42333856",
-            "https://storage2.ygosu.com/?code=S6a5249718fff88.97990560",
-            "https://storage2.ygosu.com/?code=S6a524974ce76f1.55058673",
-            "https://storage2.ygosu.com/?code=S6a52497c4d5dd1.72141665",
-            "https://storage2.ygosu.com/?code=S6a524980377096.64029116",
-            "https://storage2.ygosu.com/?code=S6a524986ea1df0.28806154",
-            "https://storage2.ygosu.com/?code=S6a52498a2dfe02.47765596",
-            "https://storage2.ygosu.com/?code=S6a52498c8e90e4.55977682",
-            "https://storage2.ygosu.com/?code=S6a52498eb8ec76.45990068",
-            "https://storage2.ygosu.com/?code=S6a524991679f73.16607862",
-            "https://storage2.ygosu.com/?code=S6a52499652b9f9.72284569",
-            "https://storage2.ygosu.com/?code=S6a52499cc15206.77795696",
-            "https://storage2.ygosu.com/?code=S6a5249a13c3096.02712544",
-            "https://storage2.ygosu.com/?code=S6a5249a50d1b97.68700392",
-            "https://storage2.ygosu.com/?code=S6a5249a8553e78.61431753",
-            "https://storage2.ygosu.com/?code=S6a5249ab258b73.67987287",
-            "https://storage2.ygosu.com/?code=S6a5249adb0ba48.71673508",
-            "https://storage2.ygosu.com/?code=S6a5249b0218247.56069653",
-            "https://storage2.ygosu.com/?code=S6a5249ba874963.86839873",
-            "https://storage2.ygosu.com/?code=S6a5249bd0ffff6.82408358",
-            "https://storage2.ygosu.com/?code=S6a5249bf42c0a1.63410332",
-            "https://storage2.ygosu.com/?code=S6a5249c4060d38.80978147",
-            "https://storage2.ygosu.com/?code=S6a5249cc0e32b9.53540436",
-            "https://storage2.ygosu.com/?code=S6a5249d10afa70.90765587",
-            "https://storage2.ygosu.com/?code=S6a5249d83ef444.98300123",
-            "https://storage2.ygosu.com/?code=S6a5249dba1e1a9.03543709",
-            "https://storage2.ygosu.com/?code=S6a5249df0d9c44.63813185",
-            "https://storage2.ygosu.com/?code=S6a5249e1bd67f7.87987385",
-            "https://storage2.ygosu.com/?code=S6a5249e435f408.80412834",
-            "https://storage2.ygosu.com/?code=S6a5249e67c8f57.04050612",
-            "https://storage2.ygosu.com/?code=S6a5249e9dba8a0.43222548"
+            "https://storage2.ygosu.com/?code=S6a52600d406803.40456741",
+            "https://storage2.ygosu.com/?code=S6a526063496265.91111120",
+            "https://storage2.ygosu.com/?code=S6a526068d772a4.44404065",
+            "https://storage2.ygosu.com/?code=S6a526069edcd77.69809610",
+            "https://storage2.ygosu.com/?code=S6a5260afc85705.48387953",
+            "https://storage2.ygosu.com/?code=S6a5260b10ca8e8.61551972",
+            "https://storage2.ygosu.com/?code=S6a5260e3845305.89010616",
+            "https://storage2.ygosu.com/?code=S6a5260e3a9e5e8.79083551",
+            "https://storage2.ygosu.com/?code=S6a5260e3ccd903.49995529",
+            "https://storage2.ygosu.com/?code=S6a5260e5c61f74.91786185",
+            "https://storage2.ygosu.com/?code=S6a5260e6180e68.94712950",
+            "https://storage2.ygosu.com/?code=S6a5260e623db27.91088264",
+            "https://storage2.ygosu.com/?code=S6a5260e635b567.24083113",
+            "https://storage2.ygosu.com/?code=S6a5260e6533ca1.52891334",
+            "https://storage2.ygosu.com/?code=S6a5260e71e2f04.01373203",
+            "https://storage2.ygosu.com/?code=S6a5260e7372275.81773306",
+            "https://storage2.ygosu.com/?code=S6a5260e75454b9.95566270",
+            "https://storage2.ygosu.com/?code=S6a5260e79cf383.86289475",
+            "https://storage2.ygosu.com/?code=S6a5260e7a7ed47.76793659",
+            "https://storage2.ygosu.com/?code=S6a5260e7b70700.29541492",
+            "https://storage2.ygosu.com/?code=S6a5260e7d660c7.21026604",
+            "https://storage2.ygosu.com/?code=S6a5260e8032b15.54642194",
+            "https://storage2.ygosu.com/?code=S6a5260e81182a2.29598873",
+            "https://storage2.ygosu.com/?code=S6a5260e83baa22.68403750",
+            "https://storage2.ygosu.com/?code=S6a5260e86101f9.10810313",
+            "https://storage2.ygosu.com/?code=S6a5260e88545c7.24892266",
+            "https://storage2.ygosu.com/?code=S6a5260e8c972a2.35506123",
+            "https://storage2.ygosu.com/?code=S6a5260e902cb00.27333101",
+            "https://storage2.ygosu.com/?code=S6a5260e912a935.11033737",
+            "https://storage2.ygosu.com/?code=S6a5260ea0340a6.62945614",
+            "https://storage2.ygosu.com/?code=S6a5260ea364c96.96525150",
+            "https://storage2.ygosu.com/?code=S6a5260ea50d391.18864904",
+            "https://storage2.ygosu.com/?code=S6a5260ea6994d6.64412899",
+            "https://storage2.ygosu.com/?code=S6a5260ea930511.96314435",
+            "https://storage2.ygosu.com/?code=S6a5260eab49ef1.83879990",
+            "https://storage2.ygosu.com/?code=S6a5260eac101f5.48234858",
+            "https://storage2.ygosu.com/?code=S6a5260eadbf6f8.60617552",
+            "https://storage2.ygosu.com/?code=S6a5260eb1bed35.23627518",
+            "https://storage2.ygosu.com/?code=S6a5260eb58fd77.59219624",
+            "https://storage2.ygosu.com/?code=S6a5260eb6e9045.91784742",
+            "https://storage2.ygosu.com/?code=S6a5260eb8cf620.64507447",
+            "https://storage2.ygosu.com/?code=S6a5260ebaca8e7.06060472",
+            "https://storage2.ygosu.com/?code=S6a5260ebccec51.52988574",
+            "https://storage2.ygosu.com/?code=S6a5260ebf0dec8.03419096",
+            "https://storage2.ygosu.com/?code=S6a5260ec131174.16790845",
+            "https://storage2.ygosu.com/?code=S6a5260ec3a0ff6.38794373",
+            "https://storage2.ygosu.com/?code=S6a5260f1174404.64098594",
+            "https://storage2.ygosu.com/?code=S6a52610b313ee8.83915139",
+            "https://storage2.ygosu.com/?code=S6a52610bc857f0.86805798",
+            "https://storage2.ygosu.com/?code=S6a52610c414223.77998337",
+            "https://storage2.ygosu.com/?code=S6a52610cd46ae3.71928641",
+            "https://storage2.ygosu.com/?code=S6a52610cea00b0.53202343",
+            "https://storage2.ygosu.com/?code=S6a52610d521651.23526810",
+            "https://storage2.ygosu.com/?code=S6a52610e1cb1b1.26908204",
+            "https://storage2.ygosu.com/?code=S6a52610e7cdb92.34171064",
+            "https://storage2.ygosu.com/?code=S6a52610e9c4049.08807135",
+            "https://storage2.ygosu.com/?code=S6a52610ec47685.27467691",
+            "https://storage2.ygosu.com/?code=S6a52610ee2f719.41571034",
+            "https://storage2.ygosu.com/?code=S6a525f8b9347b7.57261024",
+            "https://storage2.ygosu.com/?code=S6a525f8bf305f5.36084499",
+            "https://storage2.ygosu.com/?code=S6a525f8c57eac6.68377534",
+            "https://storage2.ygosu.com/?code=S6a525f8c6ba8e2.02427514",
+            "https://storage2.ygosu.com/?code=S6a525f8cb8eee6.97555589",
+            "https://storage2.ygosu.com/?code=S6a525f8d564822.43977318",
+            "https://storage2.ygosu.com/?code=S6a525f8db5d4c4.99788401",
+            "https://storage2.ygosu.com/?code=S6a525f98d88be4.08736882",
+            "https://storage2.ygosu.com/?code=S6a525f9aa0be32.59179073",
+            "https://storage2.ygosu.com/?code=S6a525f9c0f41c3.67561287",
+            "https://storage2.ygosu.com/?code=S6a525fb717bf08.41486600",
+            "https://storage2.ygosu.com/?code=S6a525fb7338462.12911640",
+            "https://storage2.ygosu.com/?code=S6a525fb8e56680.44665453",
+            "https://storage2.ygosu.com/?code=S6a525fba81f6e1.83339411",
+            "https://storage2.ygosu.com/?code=S6a525fbc10df51.74480803",
+            "https://storage2.ygosu.com/?code=S6a525fd09b8800.18555186",
+            "https://storage2.ygosu.com/?code=S6a525fd2d56860.13729898",
+            "https://storage2.ygosu.com/?code=S6a525fd68bef22.44342488",
+            "https://storage2.ygosu.com/?code=S6a525fd7a023f9.11394651",
+            "https://storage2.ygosu.com/?code=S6a525fdee95879.97774645",
+            "https://storage2.ygosu.com/?code=S6a525fe172a0d6.51150262",
+            "https://storage2.ygosu.com/?code=S6a525fe2bb1e22.04624921",
+            "https://storage2.ygosu.com/?code=S6a525fe676de25.91129373",
+            "https://storage2.ygosu.com/?code=S6a525fe839d713.26328700",
+            "https://storage2.ygosu.com/?code=S6a525fe9deb406.65964210",
+            "https://storage2.ygosu.com/?code=S6a525feae65831.76159709",
+            "https://storage2.ygosu.com/?code=S6a525fec7b3943.39539273",
+            "https://storage2.ygosu.com/?code=S6a525feda69948.15664669",
+            "https://storage2.ygosu.com/?code=S6a525ff52bd3f3.87154692",
+            "https://storage2.ygosu.com/?code=S6a525ff67b3b11.27567085",
+            "https://storage2.ygosu.com/?code=S6a525ff7e901b1.22699668",
+            "https://storage2.ygosu.com/?code=S6a525ff9ef67c8.85171628",
+            "https://storage2.ygosu.com/?code=S6a525ffb7498a0.98720006",
+            "https://storage2.ygosu.com/?code=S6a525ffd9c2882.81116861",
+            "https://storage2.ygosu.com/?code=S6a526003dea4c2.98380707",
+            "https://storage2.ygosu.com/?code=S6a525f8dd564b2.86678701",
+            "https://storage2.ygosu.com/?code=S6a52625bd8c562.14449637",
         ];
 
-const bgmList = [
+        const bgmList = [
             { id: "upNRraLNEg4", start: 0 },
             { id: "56jjrn5BpDk", start: 0 },
             { id: "NzcJWgK2ZTI", start: 1 },
@@ -464,7 +506,7 @@ const bgmList = [
             { id: "H-dcKU_3tbM", start: 65 },
             { id: "ug__WBnOEQ4", start: 0 },
         ];
-        
+
         function setRandomBGM() {
             const navEntries = performance.getEntriesByType("navigation");
             if ((navEntries.length > 0 && navEntries[0].type === "back_forward") || (window.performance && window.performance.navigation.type === 2)) return;
@@ -495,17 +537,16 @@ const bgmList = [
         function loadPhotos() {
             if (!photoList || photoList.length === 0) return;
 
-            // 1. 전체 이미지 배열을 무작위로 섞기 (피셔-예이츠 셔플)
+            // 배열 무작위 섞기 (피셔-예이츠 셔플)
             let shuffledPhotos = [...photoList];
             for (let i = shuffledPhotos.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [shuffledPhotos[i], shuffledPhotos[j]] = [shuffledPhotos[j], shuffledPhotos[i]];
             }
 
-            // 2. 섞인 배열에서 딱 5장만 자르기
+            // 섞인 배열에서 5장 자르기
             const selectedPhotos = shuffledPhotos.slice(0, 5);
 
-            // 3. 잘라낸 5장으로 HTML 생성
             let photoHtml = '';
             selectedPhotos.forEach(url => {
                 photoHtml += `
@@ -515,8 +556,24 @@ const bgmList = [
                 </div>`;
             });
 
-            // 4. 갤러리 영역에 넣기
             document.getElementById('photoGalleryWrapper').innerHTML = photoHtml;
+        }
+
+        // 🔥 포토카드 새로고침 버튼 함수
+        function refreshPhotos() {
+            const btn = document.querySelector('.photo-refresh-btn');
+            // 애니메이션 클래스 추가 후 제거 (빙글 도는 효과)
+            btn.classList.add('spin-anim');
+            setTimeout(() => { btn.classList.remove('spin-anim'); }, 500);
+            
+            // 새로운 5장 다시 렌더링
+            loadPhotos();
+            
+            // 스크롤 맨 처음으로 복구
+            const gallery = document.querySelector('.photo-gallery-wrapper');
+            if(gallery) {
+                gallery.scrollLeft = 0;
+            }
         }
 
         function scrollGallery(direction) {
