@@ -383,21 +383,34 @@
     </div>
 
     <script>
-        const bgmList = ["upNRraLNEg4", "56jjrn5BpDk", "NzcJWgK2ZTI", "qZlu2j2SiBA", "ZbO9PBdFRdc", "BMA5fYUfXq0", "SNkeRWscPIo", "o9HKraQywf8", "e-ykBkQlzjQ"];
+const bgmList = [
+            { id: "upNRraLNEg4", start: 0 },
+            { id: "56jjrn5BpDk", start: 0 },
+            { id: "NzcJWgK2ZTI", start: 1 },
+            { id: "qZlu2j2SiBA", start: 0 },
+            { id: "ZbO9PBdFRdc", start: 24 },
+            { id: "BMA5fYUfXq0", start: 26 },
+            { id: "SNkeRWscPIo", start: 0 },
+            { id: "o9HKraQywf8", start: 0 },
+            { id: "e-ykBkQlzjQ", start: 0 },
+            { id: "H-dcKU_3tbM", start: 65 },
+            { id: "ug__WBnOEQ4", start: 0 },
+        ];
 
         function setRandomBGM() {
-            // 🔥 뒤로가기 히스토리 꼬임 완벽 차단!
+            // 뒤로가기 시 중복 로딩(히스토리 꼬임) 방지
             const navEntries = performance.getEntriesByType("navigation");
             if ((navEntries.length > 0 && navEntries[0].type === "back_forward") || 
                 (window.performance && window.performance.navigation.type === 2)) {
-                return; // 뒤로가기로 왔으면 BGM 셔플 무시
+                return;
             }
 
-            const randomId = bgmList[Math.floor(Math.random() * bgmList.length)];
+            // 랜덤으로 뽑은 객체(영상 ID + 시작 시간)를 가져옵니다.
+            const randomItem = bgmList[Math.floor(Math.random() * bgmList.length)];
             const ytBox = document.querySelector('.yt-box-mini');
             
-            // src만 바꾸는게 아니라, 태그 자체를 통째로 심어버림 (히스토리 쓰레기 방지)
-            ytBox.innerHTML = `<iframe src="https://www.youtube.com/embed/${randomId}?si=iRSunb6wWGX7SGp5&autoplay=1&loop=1&playlist=${randomId}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
+            // iframe 태그를 통째로 교체하며 start 파라미터 적용
+            ytBox.innerHTML = `<iframe src="https://www.youtube.com/embed/${randomItem.id}?si=iRSunb6wWGX7SGp5&autoplay=1&loop=1&playlist=${randomItem.id}&start=${randomItem.start}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
         }
 
         function show(tab) {
