@@ -1,6 +1,11 @@
 {
-  "updated_at": "2026-07-11 06:24:14",
+  "updated_at": "2026-07-11 10:44:48",
   "quest_board": [
+    {
+      "mem_id": "647006",
+      "name": "팥쥐",
+      "val": "CLEAR"
+    },
     {
       "mem_id": "144953",
       "name": "피통왕통키",
@@ -47,6 +52,11 @@
       "val": "CLEAR"
     },
     {
+      "mem_id": "705225",
+      "name": "초우코송이",
+      "val": "CLEAR"
+    },
+    {
       "mem_id": "695222",
       "name": "염바다",
       "val": "CLEAR"
@@ -59,11 +69,6 @@
     {
       "mem_id": "701501",
       "name": "염보야놀자",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "705225",
-      "name": "초우코송이",
       "val": "CLEAR"
     }
   ],
