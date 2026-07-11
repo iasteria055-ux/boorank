@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 🔥 이 줄을 추가하세요! (외부 이미지 엑박 방지용) -->
     <meta name="referrer" content="no-referrer">
-
+    
     <title>BOO BOARD DASHBOARD</title>
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
@@ -369,7 +370,7 @@
 
     <script>
         // ★ 본인 닉네임을 여기에 적어주세요. (일퀘 랭킹에서 숨겨집니다)
-        const myNickname = "팥쥐", "YGOSU", "YGOSU2";
+        const myNickname = "팥쥐";
 
         // 🔥 이미지 링크 추가 영역
         const photoList = [
@@ -463,7 +464,7 @@ const bgmList = [
             { id: "H-dcKU_3tbM", start: 65 },
             { id: "ug__WBnOEQ4", start: 0 },
         ];
-
+        
         function setRandomBGM() {
             const navEntries = performance.getEntriesByType("navigation");
             if ((navEntries.length > 0 && navEntries[0].type === "back_forward") || (window.performance && window.performance.navigation.type === 2)) return;
