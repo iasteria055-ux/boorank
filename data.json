@@ -1,74 +1,9 @@
 {
-  "updated_at": "2026-07-11 14:37:50",
+  "updated_at": "2026-07-11 15:13:55",
   "quest_board": [
-    {
-      "mem_id": "647006",
-      "name": "팥쥐",
-      "val": "CLEAR"
-    },
     {
       "mem_id": "144953",
       "name": "피통왕통키",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "699575",
-      "name": "염보스",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "590525",
-      "name": "ㄹㅋㄹㅋㄹㅋ",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "692736",
-      "name": "조해",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "577520",
-      "name": "물소꺼져",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "707435",
-      "name": "구가구가",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "707444",
-      "name": "염바다2",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "706984",
-      "name": "최강내로남불",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "517711",
-      "name": "ㅇㅇ!",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "705225",
-      "name": "초우코송이",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "695222",
-      "name": "염바다",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "479340",
-      "name": "노무연",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "701501",
-      "name": "염보야놀자",
       "val": "CLEAR"
     }
   ],
