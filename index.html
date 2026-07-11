@@ -7,7 +7,7 @@
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,900;1,900&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap'); 
+        @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
         
         :root {
             --dj-purple: #351c61; 
@@ -19,30 +19,24 @@
             --dj-grid: #e8eaef; 
             --white: #ffffff; 
             --black: #111111;
-            --dj-navy: #15162c; 
+            --dj-navy: #15162c;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
+        /* 바깥 배경 */
         body { 
             font-family: 'Pretendard', sans-serif; 
             background-color: var(--dj-bg); 
-            background-image: repeating-linear-gradient(
-                -45deg, 
-                transparent, 
-                transparent 15px, 
-                rgba(53, 28, 97, 0.03) 15px, 
-                rgba(53, 28, 97, 0.03) 30px
-            );
+            background-image: repeating-linear-gradient(-45deg, transparent, transparent 15px, rgba(53, 28, 97, 0.03) 15px, rgba(53, 28, 97, 0.03) 30px);
             display: flex; justify-content: center; align-items: center;
             min-height: 100vh; padding: 2vh 10px; overflow: hidden;
         }
         
+        /* 메인 프레임 */
         .game-frame {
             width: 100%; max-width: 850px; height: 96vh;
             background-color: var(--white);
-            background-image: 
-                linear-gradient(var(--dj-grid) 1px, transparent 1px), 
-                linear-gradient(90deg, var(--dj-grid) 1px, transparent 1px);
+            background-image: linear-gradient(var(--dj-grid) 1px, transparent 1px), linear-gradient(90deg, var(--dj-grid) 1px, transparent 1px);
             background-size: 40px 40px;
             border: 10px solid var(--dj-navy);
             border-radius: 16px;
@@ -51,30 +45,37 @@
             display: flex; flex-direction: column;
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
         }
-        
         .game-frame:hover { transform: translateY(-2px); box-shadow: 0 20px 45px rgba(0,0,0,0.2), inset 0 0 0 4px #f0f2f5; }
+
         .scanlines { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(53,28,97,0.03) 50%, rgba(53,28,97,0.03)); background-size: 100% 4px; z-index: 1; pointer-events: none; }
+
+        /* 장식 기호 및 백그라운드 텍스트 */
         .djmax-bg-text { position: absolute; top: 20%; right: -5%; z-index: 0; display: flex; flex-direction: column; pointer-events: none; transform: rotate(-10deg); opacity: 0.05; }
         .djmax-bg-text span { font-family: 'Montserrat', sans-serif; font-size: 180px; font-weight: 900; line-height: 0.8; letter-spacing: -10px; color: var(--dj-purple); }
         .djmax-bg-text .hollow { color: transparent; -webkit-text-stroke: 4px var(--dj-purple); margin-left: 80px; font-style: italic; }
+
         .floating-sym { position: absolute; font-family: 'Montserrat', sans-serif; font-weight: 900; z-index: 1; opacity: 0.15; pointer-events: none; }
         .sym-1 { color: var(--dj-magenta); font-size: 120px; top: 5%; right: 10%; animation: float1 6s infinite alternate ease-in-out; }
         .sym-2 { color: var(--dj-cyan); font-size: 80px; bottom: 30%; left: 2%; transform: rotate(15deg); animation: float2 5s infinite alternate ease-in-out; }
         .sym-3 { color: var(--dj-yellow); font-size: 150px; top: 40%; left: 40%; animation: float3 8s infinite alternate ease-in-out; }
+        
         @keyframes float1 { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(30px) rotate(15deg); } }
         @keyframes float2 { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(-40px) scale(1.1); } }
         @keyframes float3 { 0% { transform: rotate(0deg) scale(0.9); } 100% { transform: rotate(45deg) scale(1.05); } }
-        
+
+        /* 상단 HUD */
         .hud-overlay { position: absolute; top: 15px; bottom: 15px; left: 15px; right: 15px; pointer-events: none; z-index: 5; border: 1px solid rgba(53, 28, 97, 0.1); }
         .hud-corner { position: absolute; width: 12px; height: 12px; border: 2px solid var(--dj-purple); }
         .hud-corner.tl { top: -2px; left: -2px; border-right: none; border-bottom: none; }
         .hud-corner.tr { top: -2px; right: -2px; border-left: none; border-bottom: none; }
         .hud-corner.bl { bottom: -2px; left: -2px; border-right: none; border-top: none; }
         .hud-corner.br { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+
         .hud-top { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; align-items: center; gap: 15px; }
         .hud-badge { border: 2px solid var(--dj-purple); padding: 3px 10px; font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 900; color: var(--dj-purple); background: var(--white); letter-spacing: 1px; }
         .hud-line { flex: 1; height: 1px; background: var(--dj-purple); opacity: 0.2; }
         .hud-cross { font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 900; color: var(--dj-magenta); }
+
         .eq-bars { display: flex; gap: 3px; align-items: flex-end; height: 14px; opacity: 0.8; }
         .eq-bar { width: 4px; background: var(--dj-cyan); border-radius: 2px; animation: eq-play 1s infinite alternate; }
         .eq-bar:nth-child(1) { background: var(--dj-magenta); animation-delay: 0.1s; }
@@ -84,24 +85,57 @@
         .eq-bar:nth-child(5) { background: var(--dj-purple); animation-delay: 0.2s; }
         @keyframes eq-play { 0% { height: 4px; } 100% { height: 14px; } }
 
+        /* 메인 컨텐츠 영역 */
         .content-wrap { position: relative; padding: 45px 30px 45px; z-index: 10; display: flex; flex-direction: column; flex: 1; min-height: 0; }
+
         .top-header-area { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; gap: 20px; position: relative; }
         .header-titles { display: flex; flex-direction: column; position: relative; flex: 1; height: 188px; justify-content: flex-end; padding-bottom: 2px; }
+        
         .deco-dot-matrix { position: absolute; width: 80px; height: 80px; background-image: radial-gradient(var(--dj-cyan) 20%, transparent 20%); background-size: 10px 10px; top: 10px; left: 280px; z-index: 0; opacity: 0.7; }
         .deco-star { position: absolute; width: 40px; height: 40px; background: var(--dj-magenta); clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); top: 35px; left: 400px; z-index: 2; animation: spin 8s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
+
         .top-subtitle { position: absolute; top: 10px; left: 5px; font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 900; color: var(--dj-purple); letter-spacing: 2px; opacity: 0.8; display: flex; align-items: center; gap: 15px; z-index: 2; }
         .top-subtitle .barcode { font-size: 18px; letter-spacing: 3px; color: var(--dj-cyan); opacity: 0.8; }
 
-        .ext-bg-typo { position: absolute; top: 35px; left: 10px; font-family: 'Montserrat', sans-serif; font-size: 65px; font-weight: 900; line-height: 1; letter-spacing: -2px; transform: skewX(-5deg) rotate(-2deg); pointer-events: none; user-select: none; z-index: 0; }
-        .ext-bg-typo .dark-box { position: relative; background: linear-gradient(135deg, #1d2242, #2c3258); color: var(--white); padding: 8px 25px; display: flex; flex-direction: row; gap: 15px; align-items: center; box-shadow: 6px 6px 0 rgba(21, 22, 44, 0.15); overflow: hidden; }
-        .ext-bg-typo .dark-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px); background-size: 8px 8px; animation: matrix-scroll 3s linear infinite; z-index: 1; }
+        /* BOO =_= 딥 네이비 박스 디자인 */
+        .ext-bg-typo {
+            position: absolute; top: 35px; left: 10px;
+            font-family: 'Montserrat', sans-serif; font-size: 65px; font-weight: 900;
+            line-height: 1; letter-spacing: -2px; transform: skewX(-5deg) rotate(-2deg);
+            pointer-events: none; user-select: none; z-index: 0;
+        }
+        .ext-bg-typo .dark-box {
+            position: relative; background: linear-gradient(135deg, #1d2242, #2c3258);
+            color: var(--white); padding: 8px 25px; display: flex; flex-direction: row; gap: 15px; align-items: center;
+            box-shadow: 6px 6px 0 rgba(21, 22, 44, 0.15); overflow: hidden;
+        }
+        .ext-bg-typo .dark-box::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px); background-size: 8px 8px;
+            animation: matrix-scroll 3s linear infinite; z-index: 1;
+        }
         @keyframes matrix-scroll { from { background-position: 0 0; } to { background-position: 0 -40px; } }
-        .ext-bg-typo .dark-box span { position: relative; z-index: 2; text-shadow: -1.5px -1.5px 0 var(--black), 1.5px -1.5px 0 var(--black), -1.5px 1.5px 0 var(--black), 1.5px 1.5px 0 var(--black); }
+        
+        .ext-bg-typo .dark-box span { 
+            position: relative; 
+            z-index: 2; 
+            /* B 폰트 모양 안 깨지도록 8방향 그림자로 테두리 구현 */
+            text-shadow: 
+                -1.5px -1.5px 0 var(--black),  
+                 1.5px -1.5px 0 var(--black),
+                -1.5px  1.5px 0 var(--black),
+                 1.5px  1.5px 0 var(--black),
+                 0px   -1.5px 0 var(--black),
+                 0px    1.5px 0 var(--black),
+                -1.5px  0px   0 var(--black),
+                 1.5px  0px   0 var(--black);
+        }
         .ext-bg-typo-sym { position: absolute; font-family: 'Montserrat', sans-serif; font-weight: 900; }
         .ext-bg-typo-sym.plus { font-size: 65px; color: var(--dj-yellow); top: -35px; right: -25px; transform: rotate(15deg); text-shadow: 3px 3px 0 rgba(0,0,0,0.1); }
         .ext-bg-typo-sym.cross { font-size: 55px; color: var(--dj-magenta); bottom: -20px; right: -20px; transform: rotate(-10deg); text-shadow: 3px 3px 0 rgba(0,0,0,0.1); z-index: 3; }
 
+        /* 하단 정렬된 BOO BOARD 타이틀 */
         .header-title-row { position: relative; display: flex; align-items: baseline; gap: 15px; margin-bottom: 0; margin-left: 5px; z-index: 10; cursor: default !important; }
         .header-title-row * { cursor: default !important; }
         .header-title-row h1 { font-size: 55px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif; text-transform: uppercase; line-height: 1; position: relative; z-index: 5; letter-spacing: -3px; margin: 0; display: flex; gap: 12px; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
@@ -109,14 +143,17 @@
         .header-title-row:hover h1 { transform: translateY(-2px) scale(1.02) rotate(-1deg); }
         .header-title-row:hover h1 span { text-shadow: 4px 4px 0 var(--dj-navy), 8px 8px 0 #c4c8d1, 12px 12px 0 rgba(0,0,0,0.15); }
         .header-title-row h1 span:hover { transform: translateY(-4px) scale(1.05) rotate(2deg); cursor: pointer !important;}
+        
         .mini-block-navy { width: 30px; height: 15px; background: var(--dj-navy); transform: skewX(-15deg); margin-bottom: 8px;}
         .mini-block-grey { width: 15px; height: 15px; background: #c4c8d1; border-radius: 50%; margin-bottom: 8px;}
 
+        /* 유튜브 플레이어 박스 */
         .yt-box-mini { width: 320px; height: 180px; flex-shrink: 0; background: var(--black); border: 4px solid var(--dj-navy); box-shadow: 5px 5px 0 var(--dj-cyan), -2px -2px 0 var(--dj-magenta); padding: 4px; overflow: hidden; transform: skewX(-2deg); transition: transform 0.3s ease; position: relative; z-index: 10; margin-top: 0; }
         .yt-box-mini:hover { transform: skewX(0deg); box-shadow: 6px 6px 0 var(--dj-cyan), -3px -3px 0 var(--dj-magenta); }
         .yt-box-mini iframe { width: 100%; height: 100%; transform: skewX(2deg); display: block; transition: transform 0.3s ease; }
         .yt-box-mini:hover iframe { transform: skewX(0deg); }
 
+        /* 탭 메뉴 */
         .tab-menu { display: flex; gap: 12px; margin-bottom: 15px; position: relative; z-index: 10;}
         .tab-btn { flex: 1; padding: 12px; background: var(--white); border: 3px solid var(--dj-purple); box-shadow: 4px 4px 0 var(--dj-purple); font-size: 16px; font-weight: 900; font-style: italic; font-family: 'Montserrat', sans-serif; color: var(--dj-purple); cursor: pointer; transform: skewX(-8deg); transition: all 0.2s; position: relative; overflow: hidden; }
         .tab-btn span { display: inline-block; transform: skewX(8deg); position: relative; z-index: 2;}
@@ -124,33 +161,33 @@
         .tab-btn:hover::before { left: 0; }
         .tab-btn:hover { transform: skewX(-8deg) translateY(-2px); box-shadow: 5px 5px 0 var(--dj-magenta); color: var(--dj-magenta); border-color: var(--dj-magenta); }
         .tab-btn.active { background: var(--dj-purple); color: var(--dj-yellow); box-shadow: 4px 4px 0 var(--dj-cyan); border-color: var(--dj-purple); }
-        /* 탭 색상 개별 커스텀 */
-        .tab-btn#btnDonation.active { color: var(--dj-orange); box-shadow: 4px 4px 0 var(--dj-orange); }
-        .tab-btn#btnPhoto.active { color: var(--dj-magenta); box-shadow: 4px 4px 0 var(--dj-magenta); }
+        .tab-btn#btnQuest.active { color: var(--dj-cyan); box-shadow: 4px 4px 0 var(--dj-cyan); }
 
+        /* 리스트 컨테이너 (좌우 반갈죽) */
         .list-container { display: flex; flex-direction: column; gap: 8px; flex: 1; overflow-y: auto; padding-right: 10px; padding-bottom: 5px; position: relative; z-index: 10; }
         .list-container::-webkit-scrollbar { width: 8px; }
         .list-container::-webkit-scrollbar-track { background: rgba(53, 28, 97, 0.05); border-radius: 4px; }
         .list-container::-webkit-scrollbar-thumb { background: var(--dj-purple); border-radius: 4px; }
-        
         .item-wrapper { display: flex; gap: 15px; width: 100%; }
-        .rank-row, .comment-row { cursor: default !important; flex: 1; display: flex; align-items: center; background: var(--white); border: 1px solid var(--dj-purple) !important; border-left: 6px solid var(--dj-purple) !important; padding: 10px 15px; font-weight: 900; transform: skewX(-2deg); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s, background-color 0.2s; position: relative; overflow: hidden; }
-        .rank-row * { cursor: default !important; }
+
+        .rank-row, .comment-row { cursor: default !important; }
+        .rank-row *, .comment-row * { cursor: default !important; }
+
+        .rank-row, .comment-row { flex: 1; display: flex; align-items: center; background: var(--white); border: 1px solid var(--dj-purple) !important; border-left: 6px solid var(--dj-purple) !important; padding: 10px 15px; font-weight: 900; transform: skewX(-2deg); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s, background-color 0.2s; position: relative; overflow: hidden; }
         .rank-row-top { display: flex; align-items: center; width: 100%; }
         .rank-row::after, .comment-row::after { content: ''; position: absolute; right: 0; top: 0; height: 100%; width: 0; background: linear-gradient(90deg, transparent, rgba(53, 28, 97, 0.05)); transition: width 0.3s ease; z-index: 0; pointer-events: none; }
         .rank-row:hover::after, .comment-row:hover::after { width: 100%; }
         
         .comment-row { justify-content: center; border-left-color: var(--dj-magenta) !important; }
         .comment-text { font-family: 'Jua', sans-serif; font-size: 16px; color: var(--dj-navy); transform: skewX(2deg); position: relative; z-index: 2; }
-        
-        .val-giver-row { border-left-color: var(--dj-orange) !important; box-shadow: 2px 2px 0 var(--dj-orange); }
-        .val-quest-row { border-left-color: var(--dj-cyan) !important; box-shadow: 2px 2px 0 var(--dj-cyan); }
-        .val-daily-row { border-left-color: var(--dj-purple) !important; box-shadow: 2px 2px 0 var(--dj-purple); }
-        
+
+        .giver-list .rank-row { border-left-color: var(--dj-orange) !important; box-shadow: 2px 2px 0 var(--dj-orange); }
+        .quest-list .rank-row { border-left-color: var(--dj-cyan) !important; box-shadow: 2px 2px 0 var(--dj-cyan); }
+        .daily-list .rank-row { border-left-color: var(--dj-purple) !important; box-shadow: 2px 2px 0 var(--dj-purple); }
         .rank-row:hover { transform: skewX(-2deg) translateX(5px) translateY(-1px); box-shadow: -2px 4px 0 var(--dj-purple); }
         .comment-row:hover { transform: skewX(-2deg) translateX(5px) translateY(-1px); box-shadow: -2px 4px 0 var(--dj-magenta); background: #fffcf7; }
-        .val-giver-row:hover { box-shadow: -2px 4px 0 var(--dj-orange) !important; background: #fffcf7; }
-        .val-quest-row:hover { box-shadow: -2px 4px 0 var(--dj-cyan) !important; background: #f5ffff; }
+        .giver-list .rank-row:hover { box-shadow: -2px 4px 0 var(--dj-orange); background: #fffcf7; }
+        .quest-list .rank-row:hover { box-shadow: -2px 4px 0 var(--dj-cyan); background: #f5ffff; }
 
         .rank-row.top-1 { background: repeating-linear-gradient(-45deg, #fff9e6, #fff9e6 8px, #ffffff 8px, #ffffff 16px); border-color: #d4af37 !important; border-left-color: #d4af37 !important; box-shadow: 2px 2px 0 #d4af37; }
         .rank-row.top-2 { background: repeating-linear-gradient(-45deg, #f5f5f5, #f5f5f5 8px, #ffffff 8px, #ffffff 16px); border-color: #a8a9ad !important; border-left-color: #a8a9ad !important; box-shadow: 2px 2px 0 #a8a9ad; }
@@ -163,6 +200,7 @@
         
         .rank-name { flex: 1; font-size: 16px; color: var(--dj-purple); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 10px; transform: skewX(2deg); position: relative; z-index: 2; }
         .rank-val { font-size: 18px; font-style: italic; font-family: 'Montserrat', sans-serif; text-align: right; white-space: nowrap; transform: skewX(2deg); position: relative; z-index: 2; }
+
         .val-daily { color: var(--dj-magenta); }
         .val-giver { color: var(--dj-orange); }
         .val-quest { color: var(--dj-cyan); }
@@ -174,280 +212,177 @@
         .rank-row:hover .rank-name .bouncy-text { color: var(--dj-magenta); transform: translateY(-3px) scale(1.05); text-shadow: 0 2px 4px rgba(217, 28, 73, 0.3); }
         .rank-row:hover .rank-val .bouncy-text { color: var(--dj-purple); transform: translateY(-3px) scale(1.05); text-shadow: 0 2px 4px rgba(53, 28, 97, 0.3); }
 
-        /* 🔥 포토카드 갤러리 영역 CSS (좌우 버튼 포함, 보관 케이스 효과 적용) */
-        .photo-gallery-wrapper {
-            display: flex; flex-direction: row; align-items: center;
-            width: 100%; height: 100%; min-height: 400px;
-            overflow-x: auto; overflow-y: hidden;
-            scroll-snap-type: x mandatory;
-            gap: 40px; /* 카드 간격 약간 넓힘 */
-            padding: 40px calc(50% - 135px); /* 그림자 잘리지 않게 패딩 증가 */
-            perspective: 1000px; /* 3D 공간 설정 */
-        }
-        .photo-gallery-wrapper::-webkit-scrollbar { height: 10px; }
-        .photo-gallery-wrapper::-webkit-scrollbar-track { background: rgba(53, 28, 97, 0.05); border-radius: 5px; margin: 0 40px; }
-        .photo-gallery-wrapper::-webkit-scrollbar-thumb { background: var(--dj-magenta); border-radius: 5px; border: 2px solid var(--white); }
-
-        .photo-card {
-            flex-shrink: 0; width: 270px; height: 480px; /* 9:16 비율 */
-            scroll-snap-align: center; 
-            border-radius: 16px; /* 모서리 더 둥글게 */
-            position: relative;
-            background: #e0e5ec; /* 밝은 케이스 배경색 */
-            /* 🔥 두꺼운 투명 아크릴 케이스 테두리 효과 */
-            box-shadow: 
-                0 10px 20px rgba(0,0,0,0.1), /* 기본 그림자 */
-                inset 0 0 0 2px rgba(255,255,255,0.8), /* 안쪽 밝은 테두리 */
-                inset 0 0 0 10px rgba(255,255,255,0.4), /* 두꺼운 아크릴 느낌 */
-                inset 0 0 0 12px rgba(0,0,0,0.05); /* 카드 닿는 부분 미세한 선 */
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
-            cursor: pointer; display: flex; justify-content: center; align-items: center;
-            transform-style: preserve-3d;
-        }
-        
-        .photo-card img {
-            width: calc(100% - 24px); height: calc(100% - 24px); /* 케이스 안쪽에 쏙 들어가도록 크기 조절 */
-            object-fit: cover; border-radius: 8px; display: block;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        
-        /* 3D 틸트 호버 효과 */
-        .photo-card:hover {
-            transform: translateY(-15px) rotateX(10deg) rotateY(-5deg) scale(1.05);
-            box-shadow: 
-                -10px 20px 30px rgba(0,0,0,0.2), 
-                inset 0 0 0 2px rgba(255,255,255,1), 
-                inset 0 0 0 10px rgba(255,255,255,0.6), 
-                inset 0 0 0 12px rgba(0,0,0,0.1);
-            z-index: 10;
-        }
-        
-        /* 🔥 홀로그램 무지개 반사광 효과 */
-        .holo-glare {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 16px;
-            background: linear-gradient(
-                105deg, 
-                transparent 20%, 
-                rgba(255, 182, 255, 0.4) 25%, /* 핑크빛 홀로그램 */
-                rgba(182, 255, 255, 0.4) 28%, /* 시안빛 홀로그램 */
-                rgba(255, 255, 182, 0.3) 31%, /* 노란빛 홀로그램 */
-                transparent 35%
-            );
-            background-size: 200% 200%; background-position: 100% 100%;
-            pointer-events: none; transition: background-position 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
-            mix-blend-mode: color-dodge; /* 색상 혼합 모드로 더 영롱하게 */
-            z-index: 5;
-        }
-        
-        /* 마우스 올리면 홀로그램 빛이 스쳐지나감 */
-        .photo-card:hover .holo-glare { background-position: 0% 0%; }
-
-        .gallery-container { position: relative; width: 100%; height: 100%; display: flex; align-items: center; }
-        .gallery-nav-btn {
-            position: absolute; top: 50%; transform: translateY(-50%) skewX(-10deg);
-            background: var(--dj-purple); color: var(--dj-yellow);
-            border: 3px solid var(--dj-cyan); box-shadow: 4px 4px 0 var(--dj-cyan);
-            width: 45px; height: 55px; font-size: 20px; font-weight: 900;
-            cursor: pointer; z-index: 20; transition: all 0.2s;
-            display: flex; justify-content: center; align-items: center;
-        }
-        .gallery-nav-btn span { transform: skewX(10deg); display: inline-block; }
-        .gallery-nav-btn.prev { left: 10px; }
-        .gallery-nav-btn.next { right: 10px; border-color: var(--dj-magenta); box-shadow: 4px 4px 0 var(--dj-magenta); color: var(--white); }
-        .gallery-nav-btn:hover { transform: translateY(-50%) skewX(-10deg) scale(1.1); }
-        .gallery-nav-btn:active { transform: translateY(-50%) skewX(-10deg) translate(2px, 2px); box-shadow: 2px 2px 0 transparent; }
-
         .thank-you-msg { text-align: center; margin-top: auto; padding-top: 15px; font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 900; color: var(--dj-purple); letter-spacing: 3px; opacity: 0.6; text-transform: uppercase; position: relative; z-index: 10; }
         .marquee-wrap { position: absolute; bottom: 0; left: 0; width: 100%; height: 26px; background: var(--dj-navy); color: var(--dj-orange); display: flex; align-items: center; overflow: hidden; z-index: 20; font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 900; letter-spacing: 2px; border-top: 1px solid var(--dj-purple); }
         .marquee-content { display: flex; white-space: nowrap; animation: scroll-left 15s linear infinite; }
         .marquee-content span { padding: 0 30px; }
         @keyframes scroll-left { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
+        /* ====================================================
+           모바일 최적화 (겹침 버그 완벽 해결)
+           ==================================================== */
         @media (max-width: 700px) {
-            .djmax-bg-text, .sym-3 { display: none; }
+            .djmax-bg-text { display: none; } 
+            .sym-3 { display: none; }
             .game-frame { border-width: 6px; border-radius: 12px; }
-            .content-wrap { padding: 30px 15px 35px; }
-            .top-header-area { flex-direction: column; align-items: flex-start; gap: 15px; margin-bottom: 15px; }
-            .header-titles { padding-top: 30px; width: 100%; height: auto; justify-content: flex-start; }
-            .top-subtitle { top: 0; left: 0; position: relative; margin-bottom: 15px; }
-            .ext-bg-typo { transform: scale(0.6) skewX(-5deg) rotate(-2deg); top: 15px; left: 0px; transform-origin: left top; position: relative; }
-            .header-title-row { margin-top: 10px; }
+            
+            /* 1. HUD와의 겹침을 방지하기 위해 컨텐츠 상단 여백을 대폭 늘림 */
+            .content-wrap { padding: 60px 15px 35px; }
+            .top-header-area { flex-direction: column; align-items: flex-start; gap: 20px; margin-bottom: 15px; }
+            
+            /* 2. 타이틀들이 강제로 겹치지 않고 '위에서 아래로 차곡차곡(flex-column)' 쌓이도록 변경 */
+            .header-titles { padding-top: 0; width: 100%; height: auto; display: flex; flex-direction: column; justify-content: flex-start; gap: 10px; }
+            
+            /* 3. absolute 속성을 해제하고 relative로 배치하여 자연스러운 흐름 생성 */
+            .top-subtitle { position: relative; top: 0; left: 0; font-size: 11px; margin-bottom: 0; width: 100%; }
+            .top-subtitle .barcode { font-size: 14px; }
+            
+            .ext-bg-typo { 
+                position: relative; top: 0; left: 0; width: 100%;
+                transform: scale(0.65) skewX(-5deg) rotate(-2deg); 
+                transform-origin: left top; 
+                margin-top: 5px; margin-bottom: -15px; /* 박스 사이 여백 밸런스 패치 */
+            }
+            
+            .header-title-row { margin-top: 0; margin-left: 0; }
             .header-title-row h1 { font-size: 40px; gap: 8px; }
             .header-title-row h1 span { text-shadow: 2px 2px 0 var(--dj-navy), 4px 4px 0 #c4c8d1, 6px 6px 0 rgba(0,0,0,0.1); }
+            
             .mini-block-navy { width: 20px; height: 10px; }
             .mini-block-grey { width: 10px; height: 10px; }
-            .deco-dot-matrix { left: 120px; top: 0px; width: 30px; height: 30px; background-size: 5px 5px; }
-            .deco-star { left: 180px; top: 20px; width: 15px; height: 15px; }
+            
+            /* 데코 요소들은 모바일 화면에 맞춰 우측으로 밀어줌 */
+            .deco-dot-matrix { left: auto; right: 10px; top: -10px; width: 40px; height: 40px; background-size: 8px 8px; }
+            .deco-star { left: auto; right: 40px; top: 15px; width: 15px; height: 15px; }
+            
             .yt-box-mini { width: 100%; height: 180px; transform: skewX(0); box-shadow: 4px 4px 0 var(--dj-cyan), -2px -2px 0 var(--dj-magenta); }
             .yt-box-mini iframe { transform: skewX(0); }
             
             .tab-menu { gap: 8px; margin-bottom: 12px; }
-            .tab-btn { font-size: 12px; padding: 10px 5px; border-width: 2px; box-shadow: 2px 2px 0 var(--dj-purple); transform: skewX(-5deg); }
+            .tab-btn { font-size: 13px; padding: 10px; border-width: 2px; box-shadow: 2px 2px 0 var(--dj-purple); transform: skewX(-5deg); }
             .tab-btn span { transform: skewX(5deg); }
             
+            /* 모바일 1층, 2층 레이아웃 처리 (유지) */
             .item-wrapper { flex-direction: column; gap: 0; }
-            .comment-row { display: none !important; } 
+            .comment-row { display: none !important; }
+            
             .rank-row { flex-direction: column; align-items: stretch; padding: 8px 10px; transform: skewX(0); border-left-width: 4px !important; box-shadow: 2px 2px 0 var(--dj-purple) !important; }
             .rank-row-top { transform: skewX(0); }
+            
             .rank-num, .rank-name, .rank-val { transform: skewX(0); font-size: 14px; }
             .rank-num { width: 35px; }
             .rank-val { min-width: 50px; }
             .rank-row.top-1 .rank-num, .rank-row.top-2 .rank-num, .rank-row.top-3 .rank-num { font-size: 16px; width: 50px; }
-            
-            .gallery-nav-btn { width: 35px; height: 45px; font-size: 16px; }
-            .gallery-nav-btn.prev { left: 5px; }
-            .gallery-nav-btn.next { right: 5px; }
 
-            .mobile-comment { display: block; width: 100%; text-align: left; font-family: 'Jua', sans-serif; font-size: 14px; color: var(--dj-navy); margin-top: 6px; padding-top: 6px; border-top: 1px dashed rgba(53, 28, 97, 0.15); padding-left: 35px; }
+            .mobile-comment {
+                display: block; width: 100%; text-align: left;
+                font-family: 'Jua', sans-serif; font-size: 14px; color: var(--dj-navy);
+                margin-top: 6px; padding-top: 6px; border-top: 1px dashed rgba(53, 28, 97, 0.15);
+                padding-left: 35px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="game-frame">
         <div class="scanlines"></div>
-        <div class="djmax-bg-text"><span>STREAM</span><span class="hollow">ER</span></div>
-        <div class="floating-sym sym-1">+</div><div class="floating-sym sym-2">X</div><div class="floating-sym sym-3">O</div>
+        
+        <div class="djmax-bg-text">
+            <span>STREAM</span>
+            <span class="hollow">ER</span>
+        </div>
+        
+        <div class="floating-sym sym-1">+</div>
+        <div class="floating-sym sym-2">X</div>
+        <div class="floating-sym sym-3">O</div>
 
         <div class="hud-overlay">
             <div class="hud-corner tl"></div><div class="hud-corner tr"></div>
             <div class="hud-corner bl"></div><div class="hud-corner br"></div>
-            <div class="hud-top"><div class="hud-badge">MINERAL STORAGE</div><div class="hud-line"></div>
-                <div class="eq-bars"><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div></div>
+            <div class="hud-top">
+                <div class="hud-badge">MINERAL STORAGE</div>
+                <div class="hud-line"></div>
+                <div class="eq-bars">
+                    <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
+                </div>
                 <div class="hud-cross">+</div>
             </div>
         </div>
-        <div class="content-bg-text"><span>S T R E A M</span><span class="filled">E R</span></div>
+
+        <div class="content-bg-text">
+            <span>S T R E A M</span>
+            <span class="filled">E R</span>
+        </div>
 
         <div class="content-wrap">
             <div class="top-header-area">
                 <div class="header-titles">
-                    <div class="deco-dot-matrix"></div><div class="deco-star"></div>
-                    <div class="top-subtitle"><span>YGOSU</span><span class="barcode">|||| || ||| |</span><span>DATA ARCHIVE</span></div>
-                    <div class="ext-bg-typo">
-                        <div class="dark-box"><span>BOO</span><span>=_=</span></div>
-                        <div class="ext-bg-typo-sym plus">+</div><div class="ext-bg-typo-sym cross">X</div>
+                    <!-- 데코 요소들 -->
+                    <div class="deco-dot-matrix"></div>
+                    <div class="deco-star"></div>
+                    
+                    <div class="top-subtitle">
+                        <span>YGOSU</span>
+                        <span class="barcode">|||| || ||| |</span>
+                        <span>DATA ARCHIVE</span>
                     </div>
+                    
+                    <!-- 빈 공간을 꽉 채우는 부우 감성 배경 타이포그래피 (박스 & 기호) -->
+                    <div class="ext-bg-typo">
+                        <div class="dark-box">
+                            <span>BOO</span>
+                            <span>=_=</span>
+                        </div>
+                        <div class="ext-bg-typo-sym plus">+</div>
+                        <div class="ext-bg-typo-sym cross">X</div>
+                    </div>
+
+                    <!-- DAILY QUEST 탭 바로 위로 작아진 타이틀 일렬 배치 -->
                     <div class="header-title-row">
-                        <h1><span style="color: var(--dj-yellow);">BOO</span><span style="color: var(--white);">BOARD</span></h1>
-                        <div class="mini-block-navy"></div><div class="mini-block-grey"></div>
+                        <h1>
+                            <span style="color: var(--dj-yellow);">BOO</span>
+                            <span style="color: var(--white);">BOARD</span>
+                        </h1>
+                        <div class="mini-block-navy"></div>
+                        <div class="mini-block-grey"></div>
                     </div>
                 </div>
-                <div class="yt-box-mini"></div>
+                
+                <div class="yt-box-mini">
+                    <!-- JS에서 <iframe>을 직접 렌더링하도록 비워둠 -->
+                </div>
             </div>
 
             <div class="tab-menu">
                 <button class="tab-btn active" id="btnDaily" onclick="show('daily')"><span class="bouncy-text">DAILY QUEST</span></button>
-                <button class="tab-btn" id="btnDonation" onclick="show('donation')"><span class="bouncy-text">DONA & RWD</span></button>
-                <button class="tab-btn" id="btnPhoto" onclick="show('photo')"><span class="bouncy-text">PHOTO CARD</span></button>
+                <button class="tab-btn" id="btnGiver" onclick="show('giver')"><span class="bouncy-text">DONATION</span></button>
+                <button class="tab-btn" id="btnQuest" onclick="show('quest')"><span class="bouncy-text">REWARDS</span></button>
             </div>
 
             <div id="daily" class="list-container daily-list"></div>
-            <div id="donation" class="list-container" style="display:none;"></div>
-            
-            <div id="photo" class="list-container" style="display:none; padding-right:0;">
-                <div class="gallery-container">
-                    <button class="gallery-nav-btn prev" onclick="scrollGallery(-1)"><span>◀</span></button>
-                    <div class="photo-gallery-wrapper" id="photoGalleryWrapper">
-                        <!-- JS에서 카드를 동적으로 렌더링합니다 -->
-                    </div>
-                    <button class="gallery-nav-btn next" onclick="scrollGallery(1)"><span>▶</span></button>
-                </div>
-            </div>
+            <div id="giver" class="list-container giver-list" style="display:none;"></div>
+            <div id="quest" class="list-container quest-list" style="display:none;"></div>
 
-            <div class="thank-you-msg">★ THANK YOU FOR COMPLETING THE DAILY QUEST! ★</div>
+            <div class="thank-you-msg">
+                ★ THANK YOU FOR COMPLETING THE DAILY QUEST! ★
+            </div>
         </div>
 
         <div class="marquee-wrap">
             <div class="marquee-content">
-                <span>/// YGOSU BOO BOARD DATA ARCHIVE ///</span><span>DAILY QUEST ACHIEVERS</span><span>DONATION RANKING</span><span>MINERAL REWARDS</span>
-                <span>/// YGOSU BOO BOARD DATA ARCHIVE ///</span><span>DAILY QUEST ACHIEVERS</span><span>DONATION RANKING</span><span>MINERAL REWARDS</span>
+                <span>/// YGOSU BOO BOARD DATA ARCHIVE ///</span>
+                <span>DAILY QUEST ACHIEVERS</span>
+                <span>DONATION RANKING</span>
+                <span>MINERAL REWARDS</span>
+                <span>/// YGOSU BOO BOARD DATA ARCHIVE ///</span>
+                <span>DAILY QUEST ACHIEVERS</span>
+                <span>DONATION RANKING</span>
+                <span>MINERAL REWARDS</span>
             </div>
         </div>
     </div>
 
     <script>
-        // ★ 본인 닉네임을 여기에 적어주세요. (일퀘 랭킹에서 숨겨집니다)
-        const myNickname = "여기에본인닉네임적으세요";
-
-        // 🔥 이미지 링크 추가 영역
-        const photoList = [
-            "https://storage2.ygosu.com/?code=S6a52481b366e31.62272627",
-            "https://storage2.ygosu.com/?code=S6a52481b548f29.09693943",
-            "https://storage2.ygosu.com/?code=S6a52481b76ad42.17923663",
-            "https://storage2.ygosu.com/?code=S6a52481bc00cb1.07913577",
-            "https://storage2.ygosu.com/?code=S6a52481c0d87a4.60753765",
-            "https://storage2.ygosu.com/?code=S6a524825eb8bc0.23335587",
-            "https://storage2.ygosu.com/?code=S6a52482bcd9ca9.79885224",
-            "https://storage2.ygosu.com/?code=S6a52482fa79eb9.58105038",
-            "https://storage2.ygosu.com/?code=S6a524833bad588.19336659",
-            "https://storage2.ygosu.com/?code=S6a52483697dcd0.14593130",
-            "https://storage2.ygosu.com/?code=S6a52483b719e56.79266752",
-            "https://storage2.ygosu.com/?code=S6a524840ab9251.24954554",
-            "https://storage2.ygosu.com/?code=S6a524848400914.29194784",
-            "https://storage2.ygosu.com/?code=S6a52484ba9e594.23737279",
-            "https://storage2.ygosu.com/?code=S6a5248d58547d1.19438177",
-            "https://storage2.ygosu.com/?code=S6a5248e992c565.28783806",
-            "https://storage2.ygosu.com/?code=S6a5248f52a8607.22752145",
-            "https://storage2.ygosu.com/?code=S6a5248fbb779a2.37543230",
-            "https://storage2.ygosu.com/?code=S6a5248ff1e5a76.98955933",
-            "https://storage2.ygosu.com/?code=S6a524903b56bf8.48036233",
-            "https://storage2.ygosu.com/?code=S6a5249088a8317.31688281",
-            "https://storage2.ygosu.com/?code=S6a52490bda06e1.14548349",
-            "https://storage2.ygosu.com/?code=S6a52490e9f41f1.15880351",
-            "https://storage2.ygosu.com/?code=S6a5249112a0806.89520662",
-            "https://storage2.ygosu.com/?code=S6a524913cec492.53247019",
-            "https://storage2.ygosu.com/?code=S6a5249165ab888.40701987",
-            "https://storage2.ygosu.com/?code=S6a52491bd85490.28740154",
-            "https://storage2.ygosu.com/?code=S6a5249201849a3.06338758",
-            "https://storage2.ygosu.com/?code=S6a5249252a6574.26613370",
-            "https://storage2.ygosu.com/?code=S6a524929909a34.97251857",
-            "https://storage2.ygosu.com/?code=S6a524932695460.24678006",
-            "https://storage2.ygosu.com/?code=S6a5249373aaf27.57070820",
-            "https://storage2.ygosu.com/?code=S6a52493bb32b11.42872046",
-            "https://storage2.ygosu.com/?code=S6a52493f91fd78.26131779",
-            "https://storage2.ygosu.com/?code=S6a524946652f47.93114849",
-            "https://storage2.ygosu.com/?code=S6a52494caa1091.49750666",
-            "https://storage2.ygosu.com/?code=S6a52494f9e9207.68155829",
-            "https://storage2.ygosu.com/?code=S6a524952b4d4e4.86813676",
-            "https://storage2.ygosu.com/?code=S6a524956b93f88.80853743",
-            "https://storage2.ygosu.com/?code=S6a5249593077e3.72560964",
-            "https://storage2.ygosu.com/?code=S6a52495c62d7c7.77633739",
-            "https://storage2.ygosu.com/?code=S6a52495f44d6c4.63658753",
-            "https://storage2.ygosu.com/?code=S6a524966296c23.35643299",
-            "https://storage2.ygosu.com/?code=S6a52496bb36dd9.62254809",
-            "https://storage2.ygosu.com/?code=S6a52496e26fad8.42333856",
-            "https://storage2.ygosu.com/?code=S6a5249718fff88.97990560",
-            "https://storage2.ygosu.com/?code=S6a524974ce76f1.55058673",
-            "https://storage2.ygosu.com/?code=S6a52497c4d5dd1.72141665",
-            "https://storage2.ygosu.com/?code=S6a524980377096.64029116",
-            "https://storage2.ygosu.com/?code=S6a524986ea1df0.28806154",
-            "https://storage2.ygosu.com/?code=S6a52498a2dfe02.47765596",
-            "https://storage2.ygosu.com/?code=S6a52498c8e90e4.55977682",
-            "https://storage2.ygosu.com/?code=S6a52498eb8ec76.45990068",
-            "https://storage2.ygosu.com/?code=S6a524991679f73.16607862",
-            "https://storage2.ygosu.com/?code=S6a52499652b9f9.72284569",
-            "https://storage2.ygosu.com/?code=S6a52499cc15206.77795696",
-            "https://storage2.ygosu.com/?code=S6a5249a13c3096.02712544",
-            "https://storage2.ygosu.com/?code=S6a5249a50d1b97.68700392",
-            "https://storage2.ygosu.com/?code=S6a5249a8553e78.61431753",
-            "https://storage2.ygosu.com/?code=S6a5249ab258b73.67987287",
-            "https://storage2.ygosu.com/?code=S6a5249adb0ba48.71673508",
-            "https://storage2.ygosu.com/?code=S6a5249b0218247.56069653",
-            "https://storage2.ygosu.com/?code=S6a5249ba874963.86839873",
-            "https://storage2.ygosu.com/?code=S6a5249bd0ffff6.82408358",
-            "https://storage2.ygosu.com/?code=S6a5249bf42c0a1.63410332",
-            "https://storage2.ygosu.com/?code=S6a5249c4060d38.80978147",
-            "https://storage2.ygosu.com/?code=S6a5249cc0e32b9.53540436",
-            "https://storage2.ygosu.com/?code=S6a5249d10afa70.90765587",
-            "https://storage2.ygosu.com/?code=S6a5249d83ef444.98300123",
-            "https://storage2.ygosu.com/?code=S6a5249dba1e1a9.03543709",
-            "https://storage2.ygosu.com/?code=S6a5249df0d9c44.63813185",
-            "https://storage2.ygosu.com/?code=S6a5249e1bd67f7.87987385",
-            "https://storage2.ygosu.com/?code=S6a5249e435f408.80412834",
-            "https://storage2.ygosu.com/?code=S6a5249e67c8f57.04050612",
-            "https://storage2.ygosu.com/?code=S6a5249e9dba8a0.43222548"
-        ];
-
 const bgmList = [
             { id: "upNRraLNEg4", start: 0 },
             { id: "56jjrn5BpDk", start: 0 },
@@ -463,92 +398,60 @@ const bgmList = [
         ];
 
         function setRandomBGM() {
+            // 뒤로가기 시 중복 로딩(히스토리 꼬임) 방지
             const navEntries = performance.getEntriesByType("navigation");
-            if ((navEntries.length > 0 && navEntries[0].type === "back_forward") || (window.performance && window.performance.navigation.type === 2)) return;
+            if ((navEntries.length > 0 && navEntries[0].type === "back_forward") || 
+                (window.performance && window.performance.navigation.type === 2)) {
+                return;
+            }
+
+            // 랜덤으로 뽑은 객체(영상 ID + 시작 시간)를 가져옵니다.
             const randomItem = bgmList[Math.floor(Math.random() * bgmList.length)];
             const ytBox = document.querySelector('.yt-box-mini');
+            
+            // iframe 태그를 통째로 교체하며 start 파라미터 적용
             ytBox.innerHTML = `<iframe src="https://www.youtube.com/embed/${randomItem.id}?si=iRSunb6wWGX7SGp5&autoplay=1&loop=1&playlist=${randomItem.id}&start=${randomItem.start}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
         }
 
         function show(tab) {
             document.getElementById('daily').style.display = 'none';
-            document.getElementById('donation').style.display = 'none';
-            document.getElementById('photo').style.display = 'none';
+            document.getElementById('giver').style.display = 'none';
+            document.getElementById('quest').style.display = 'none';
+
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
 
             if (tab === 'daily') {
                 document.getElementById('daily').style.display = 'flex';
                 document.getElementById('btnDaily').classList.add('active');
-            } else if (tab === 'donation') {
-                document.getElementById('donation').style.display = 'flex';
-                document.getElementById('btnDonation').classList.add('active');
-            } else if (tab === 'photo') {
-                document.getElementById('photo').style.display = 'flex';
-                document.getElementById('btnPhoto').classList.add('active');
+            } else if (tab === 'giver') {
+                document.getElementById('giver').style.display = 'flex';
+                document.getElementById('btnGiver').classList.add('active');
+            } else if (tab === 'quest') {
+                document.getElementById('quest').style.display = 'flex';
+                document.getElementById('btnQuest').classList.add('active');
             }
         }
 
-        // 🔥 포토카드 동적 생성 (랜덤 5장 제한)
-        function loadPhotos() {
-            if (!photoList || photoList.length === 0) return;
-
-            // 1. 전체 이미지 배열을 무작위로 섞기 (피셔-예이츠 셔플)
-            let shuffledPhotos = [...photoList];
-            for (let i = shuffledPhotos.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [shuffledPhotos[i], shuffledPhotos[j]] = [shuffledPhotos[j], shuffledPhotos[i]];
+        function createRows(dataList, typeClass, tabType) {
+            if (!dataList || dataList.length === 0) {
+                return '<div style="text-align:center; padding:20px; color:#999; font-weight:900; z-index:2; position:relative;">조건을 달성한 사람이 아직 없습니다.</div>';
             }
-
-            // 2. 섞인 배열에서 딱 5장만 자르기
-            const selectedPhotos = shuffledPhotos.slice(0, 5);
-
-            // 3. 잘라낸 5장으로 HTML 생성
-            let photoHtml = '';
-            selectedPhotos.forEach(url => {
-                photoHtml += `
-                <div class="photo-card">
-                    <img src="${url}" alt="Boo Photo Card">
-                    <div class="holo-glare"></div>
-                </div>`;
-            });
-
-            // 4. 갤러리 영역에 넣기
-            document.getElementById('photoGalleryWrapper').innerHTML = photoHtml;
-        }
-
-        function scrollGallery(direction) {
-            const gallery = document.querySelector('.photo-gallery-wrapper');
-            const scrollAmount = 310; // 카드 너비 + 간격 맞춰서 스크롤 양 조절
-            gallery.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
-        }
-
-        function buildRankBox(item, index, typeClass) {
-            var rankClass = "";
-            var rankIcon = String(index + 1).padStart(2, '0');
-            if (index === 0) { rankClass = "top-1"; rankIcon = "🥇 01"; }
-            else if (index === 1) { rankClass = "top-2"; rankIcon = "🥈 02"; }
-            else if (index === 2) { rankClass = "top-3"; rankIcon = "🥉 03"; }
-
-            var nameHtml = '<span class="bouncy-text">' + item.name + '</span>';
-            var valHtml = (typeClass === 'val-daily') ? "CLEAR" : item.val.toLocaleString() + " MN";
             
-            return `<div class="rank-row ${typeClass}-row ${rankClass}">
-                        <div class="rank-row-top">
-                            <div class="rank-num">${rankIcon}</div>
-                            <div class="rank-name">${nameHtml}</div>
-                            <div class="rank-val ${typeClass}"><span class="bouncy-text">${valHtml}</span></div>
-                        </div>
-                    </div>`;
-        }
+            // 🔥 [일퀘 탭 전용] 관리자(본인) 랭킹 강제 제외 로직
+            if (tabType === 'daily') {
+                // 아래 배열 안에 제외하고 싶은 본인 닉네임을 정확히 적어주세요. (여러 명 추가 가능)
+                const excludeNames = ["팥쥐", "운영자", "YGOSU", "YGOSU2"]; 
+                
+                dataList = dataList.filter(function(r) {
+                    return !excludeNames.includes(r.name);
+                });
+            }
 
-        function loadData() {
-            fetch('data.json?t=' + new Date().getTime())
-            .then(function(response) {
-                if (!response.ok) throw new Error('네트워크 응답 실패');
-                return response.json();
-            })
-            .then(function(data) {
-                let dailyData = data.quest_board ? data.quest_board.filter(r => r.name !== myNickname) : [];
+            // 본인을 제외하고 났더니 리스트가 비어버릴 경우를 대비한 방어 코드
+            if (dataList.length === 0) {
+                return '<div style="text-align:center; padding:20px; color:#999; font-weight:900; z-index:2; position:relative;">조건을 달성한 사람이 아직 없습니다.</div>';
+            }
+            
             const booTitles = [
                 "부우단 행동대장 =_=", "하랑이바라기", "충성충성 부우충성", "(숨참고 부우 다이브)", "YB 공주에서 다음은..?!", "안냐세여", "주글라공 그징 부우니까 봐주는거야",
                 "하랑아 나 죽어 =_=", "세상에서 제일 귀여운 =_=", "부우만 믿고 간다", "난.. 원수가 될 거야", "월말 결산 기대해도 될까..?",
@@ -560,59 +463,86 @@ const bgmList = [
                 "부우 용서할까", "넵! 알겠습니다!", "부우라고 하지좀마", "억까들 오ㅡㅡㅡㅡㅡㅡㅡ열"
             ];
 
-                let availableTitles = [...booTitles];
-                for (let i = availableTitles.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [availableTitles[i], availableTitles[j]] = [availableTitles[j], availableTitles[i]];
-                }
+            // 🔥 코멘트를 무작위로 섞어둘 배열 생성
+            let availableTitles = [...booTitles];
+            for (let i = availableTitles.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [availableTitles[i], availableTitles[j]] = [availableTitles[j], availableTitles[i]];
+            }
 
-                var dailyHtml = "";
-                dailyData.forEach(function(r, i) {
-                    if (availableTitles.length === 0) {
-                        availableTitles = [...booTitles];
-                        for (let j = availableTitles.length - 1; j > 0; j--) {
-                            const k = Math.floor(Math.random() * (j + 1));
-                            [availableTitles[j], availableTitles[k]] = [availableTitles[k], availableTitles[j]];
-                        }
-                    }
-                    var randomTitle = availableTitles.pop();
-                    dailyHtml += '<div class="item-wrapper">';
-                    
-                    dailyHtml += buildRankBox(r, i, "val-daily");
-                    dailyHtml = dailyHtml.replace('</div></div>', `<div class="mobile-comment">" ${randomTitle} "</div></div></div>`); 
-                    
-                    dailyHtml += `<div class="comment-row"><div class="comment-text">" ${randomTitle} "</div></div>`;
-                    dailyHtml += '</div>';
-                });
-                document.getElementById('daily').innerHTML = dailyHtml || '<div style="text-align:center; padding:20px; color:#999; font-weight:900;">조건을 달성한 사람이 아직 없습니다.</div>';
+            var html = "";
+            dataList.forEach(function(r, i) {
+                var rankClass = "";
+                var rankIcon = String(i + 1).padStart(2, '0');
 
-                let donData = data.donation_ranking || [];
-                let reqData = data.quest_ranking || [];
-                let dualHtml = "";
-                let maxLen = Math.max(donData.length, reqData.length);
+                if (i === 0) { rankClass = "top-1"; rankIcon = "🥇 01"; }
+                else if (i === 1) { rankClass = "top-2"; rankIcon = "🥈 02"; }
+                else if (i === 2) { rankClass = "top-3"; rankIcon = "🥉 03"; }
+
+                var nameHtml = '<span class="bouncy-text">' + r.name + '</span>';
+                var valHtml = tabType === 'daily' ? "CLEAR" : r.val.toLocaleString() + " MN";
                 
-                for(let i = 0; i < maxLen; i++) {
-                    dualHtml += '<div class="item-wrapper">';
-                    if(donData[i]) dualHtml += buildRankBox(donData[i], i, "val-giver");
-                    else dualHtml += '<div class="rank-row" style="visibility:hidden"></div>';
-                    
-                    if(reqData[i]) dualHtml += buildRankBox(reqData[i], i, "val-quest");
-                    else dualHtml += '<div class="rank-row" style="visibility:hidden"></div>';
-                    
-                    dualHtml += '</div>';
+                // 🔥 중복 없이 하나씩 뽑고, 다 떨어지면 다시 채워서 섞기
+                if (availableTitles.length === 0) {
+                    availableTitles = [...booTitles];
+                    for (let j = availableTitles.length - 1; j > 0; j--) {
+                        const k = Math.floor(Math.random() * (j + 1));
+                        [availableTitles[j], availableTitles[k]] = [availableTitles[k], availableTitles[j]];
+                    }
                 }
-                document.getElementById('donation').innerHTML = dualHtml || '<div style="text-align:center; padding:20px; color:#999; font-weight:900;">데이터가 없습니다.</div>';
+                var randomTitle = availableTitles.pop();
+
+                html += '<div class="item-wrapper">';
+
+                // 1. 왼쪽 랭킹표 박스
+                html += '<div class="rank-row ' + rankClass + '">' +
+                        '<div class="rank-row-top">' +
+                        '<div class="rank-num">' + rankIcon + '</div>' +
+                        '<div class="rank-name">' + nameHtml + '</div>' +
+                        '<div class="rank-val ' + typeClass + '"><span class="bouncy-text">' + valHtml + '</span></div>' +
+                        '</div>';
+                        
+                // 모바일에서만 나타나는 2층 코멘트
+                if (tabType === 'daily') {
+                    html += '<div class="mobile-comment">" ' + randomTitle + ' "</div>';
+                }
+                html += '</div>';
+
+                // 2. 오른쪽 코멘트표 박스 (데스크탑)
+                if (tabType === 'daily') {
+                    html += '<div class="comment-row">';
+                    html += '<div class="comment-text">" ' + randomTitle + ' "</div>';
+                    html += '</div>';
+                }
+
+                html += '</div>'; 
+            });
+            return html;
+        }
+
+        function loadData() {
+            fetch('data.json?t=' + new Date().getTime())
+            .then(function(response) {
+                if (!response.ok) throw new Error('네트워크 응답 실패');
+                return response.json();
+            })
+            .then(function(data) {
+                document.getElementById('daily').innerHTML = createRows(data.quest_board, "val-daily", "daily");
+                document.getElementById('giver').innerHTML = createRows(data.donation_ranking, "val-giver", "giver");
+                document.getElementById('quest').innerHTML = createRows(data.quest_ranking, "val-quest", "quest");
             })
             .catch(function(error) {
                 console.error("데이터 로딩 오류:", error);
+                document.getElementById('daily').innerHTML = '<div style="text-align:center; padding:20px; color:#999;">데이터를 불러올 수 없습니다.</div>';
+                document.getElementById('giver').innerHTML = '<div style="text-align:center; padding:20px; color:#999;">데이터를 불러올 수 없습니다.</div>';
+                document.getElementById('quest').innerHTML = '<div style="text-align:center; padding:20px; color:#999;">데이터를 불러올 수 없습니다.</div>';
             });
         }
 
         window.onload = function() {
+            setRandomBGM(); 
             show('daily');
             loadData();
-            loadPhotos(); 
-            setRandomBGM(); 
         };
     </script>
 </body>
