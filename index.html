@@ -436,7 +436,22 @@ const bgmList = [
             if (!dataList || dataList.length === 0) {
                 return '<div style="text-align:center; padding:20px; color:#999; font-weight:900; z-index:2; position:relative;">조건을 달성한 사람이 아직 없습니다.</div>';
             }
+            
+            // 🔥 [일퀘 탭 전용] 관리자(본인) 랭킹 강제 제외 로직
+            if (tabType === 'daily') {
+                // 아래 배열 안에 제외하고 싶은 본인 닉네임을 정확히 적어주세요. (여러 명 추가 가능)
+                const excludeNames = ["팥쥐", "운영자", "YGOSU", "YGOSU2"]; 
+                
+                dataList = dataList.filter(function(r) {
+                    return !excludeNames.includes(r.name);
+                });
+            }
 
+            // 본인을 제외하고 났더니 리스트가 비어버릴 경우를 대비한 방어 코드
+            if (dataList.length === 0) {
+                return '<div style="text-align:center; padding:20px; color:#999; font-weight:900; z-index:2; position:relative;">조건을 달성한 사람이 아직 없습니다.</div>';
+            }
+            
             const booTitles = [
                 "부우단 행동대장 =_=", "하랑이바라기", "충성충성 부우충성", "(숨참고 부우 다이브)", "YB 공주에서 다음은..?!", "안냐세여", "주글라공 그징 부우니까 봐주는거야",
                 "하랑아 나 죽어 =_=", "세상에서 제일 귀여운 =_=", "부우만 믿고 간다", "난.. 원수가 될 거야", "월말 결산 기대해도 될까..?",
