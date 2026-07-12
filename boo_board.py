@@ -100,7 +100,9 @@ def get_comments_from_post(post_url):
         res = requests.get(post_url, headers=HEADERS, timeout=10)
         soup = BeautifulSoup(res.text, 'html.parser')
         today_comments = []
-        for li in soup.find_all('li', class_='normal_reply'):
+        
+        # 🔥 여기서 일반 댓글과 대댓글을 모두 포함하는 .tbl_replist 내의 li 태그들을 찾습니다.
+        for li in soup.select('.tbl_replist li'):
             time_div = li.find('div', class_='time')
             if not time_div:
                 continue
@@ -108,9 +110,15 @@ def get_comments_from_post(post_url):
             if not any(kw in time_text for kw in ['전', '방금', ':']):
                 continue
 
-            a_tag = li.find('a', onclick=re.compile(r'show_nick_dropdown'))
+            # 🔥 .nick 클래스 내의 a 태그를 찾아 닉네임을 추출합니다.
+            nick_div = li.find('div', class_='nick')
+            if not nick_div:
+                continue
+            
+            a_tag = nick_div.find('a', onclick=re.compile(r'show_nick_dropdown'))
             if not a_tag:
                 continue
+            
             onclick = a_tag.get('onclick', '')
             match = re.search(r"show_nick_dropdown\([^,]+,\s*'[^']*',\s*'([^']+)'", onclick)
             if match:
@@ -179,6 +187,7 @@ def get_quest_achievers():
     # 4. 정렬: 게시글 작성 시간이 빠른 순서 (먼저 작성된 게시글에서 활동한 사람이 1등)
     achievers.sort(key=lambda x: x["earliest"])
     return [{"mem_id": a["mem_id"], "name": a["name"], "val": "CLEAR"} for a in achievers]
+
 # ========== FULL 모드 (미네랄 창고 → 기부왕, 일퀘왕) ==========
 def fetch_storage_page(page_num):
     url = f"https://ygosu.com/board/pan_boo/?mode=mineral_storage&page={page_num}"
@@ -294,7 +303,7 @@ def main():
         data['donation_ranking'] = donations
         data['quest_ranking'] = quests
 
-# 1. 일퀘 달성자들을 시간 순으로 정렬 (데이터 들어온 순서 상관없음)
+    # 1. 일퀘 달성자들을 시간 순으로 정렬 (데이터 들어온 순서 상관없음)
     data['quest_board'] = sorted(
         data['quest_board'], 
         key=lambda x: x.get('time', '23:59:59')
