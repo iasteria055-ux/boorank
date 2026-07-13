@@ -218,56 +218,43 @@
         .theme-default:hover { box-shadow: -10px 20px 30px rgba(0,0,0,0.2), inset 0 0 0 2px rgba(255,255,255,1), inset 0 0 0 10px rgba(255,255,255,0.6), inset 0 0 0 12px rgba(0,0,0,0.1); }
         .theme-default > img { width: calc(100% - 24px); height: calc(100% - 24px); object-fit: cover; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
 
-        /* 2. 두꺼운 투명 아크릴 키링 감성 (팔각형) */
+        /* 2. 아크릴 챰 키링 감성 (인물 모양을 살린 느낌의 꼼수 구현) */
         .theme-keyring {
             background: transparent;
             display: flex; justify-content: center; align-items: center;
+            /* 아크릴의 입체감을 주기 위한 드롭 섀도우 연타 */
+            filter: drop-shadow(0px 10px 15px rgba(0,0,0,0.2)) drop-shadow(0px 0px 2px rgba(255,255,255,0.8));
         }
-        /* 상단 키링 고리 탭 */
+        /* 메탈 키링 연결부 (사이버펑크 느낌) */
         .theme-keyring::before {
-            content: ''; position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
-            width: 50px; height: 30px; 
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.6); border-bottom: none;
-            border-radius: 8px 8px 0 0;
-            box-shadow: inset 0 5px 10px rgba(255,255,255,0.8), 0 -2px 5px rgba(0,0,0,0.05);
-            z-index: 1;
+            content: ''; position: absolute; top: -35px; left: 50%; transform: translateX(-50%);
+            width: 25px; height: 35px; 
+            border: 4px solid #b0b5bd; border-radius: 12px 12px 4px 4px;
+            background: linear-gradient(135deg, transparent 30%, rgba(255,255,255,0.9) 40%, transparent 50%);
+            box-shadow: inset 1px 1px 3px rgba(0,0,0,0.3), 1px 2px 3px rgba(0,0,0,0.2);
+            z-index: -1;
         }
-        /* 실제 금속 링 */
-        .theme-keyring::after {
-            content: ''; position: absolute; top: -45px; left: 50%; transform: translateX(-50%);
-            width: 30px; height: 40px;
-            border: 5px solid #d4d4d4; border-radius: 50%;
-            background: transparent;
-            box-shadow: inset 1px 1px 3px rgba(0,0,0,0.3), 2px 2px 4px rgba(0,0,0,0.2), inset -1px -1px 3px rgba(255,255,255,0.8);
-            z-index: 0;
-        }
-        /* 투명 아크릴 바디 (팔각형 컷팅) */
-        .keyring-body {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            clip-path: polygon(15% 0, 85% 0, 100% 10%, 100% 90%, 85% 100%, 15% 100%, 0 90%, 0 10%);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 
-                inset 0 0 0 2px rgba(255,255,255,0.9),
-                inset 5px 5px 15px rgba(255,255,255,0.7),
-                inset -5px -5px 15px rgba(0,0,0,0.1),
-                5px 10px 20px rgba(0,0,0,0.15);
-            z-index: 2;
-        }
-        /* 내부 사진 (팔각형 컷팅) */
+        /* 실제 사진 & 아크릴 바디 합체 */
         .keyring-img-wrap {
-            width: calc(100% - 30px); height: calc(100% - 30px);
-            clip-path: polygon(12% 0, 88% 0, 100% 8%, 100% 92%, 88% 100%, 12% 100%, 0 92%, 0 8%);
-            overflow: hidden; background: #fff; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            z-index: 3; position: relative;
+            width: 100%; height: 100%; position: relative; overflow: hidden;
+            /* 아크릴의 불규칙한 컷팅 느낌을 살짝 주기 위해 외곽 깎기 */
+            clip-path: polygon(10% 0, 90% 0, 100% 5%, 100% 95%, 90% 100%, 10% 100%, 0 95%, 0 5%);
+            background: rgba(255, 255, 255, 0.4); /* 뒷면이 살짝 비치는 반투명 아크릴 느낌 */
+            backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
         }
-        .keyring-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
-        
-        /* 3. 인스타그램 피드 업로드 감성 */
+        .keyring-img-wrap img { 
+            width: 100%; height: 100%; object-fit: cover; display: block;
+            /* 사진 안쪽으로 반투명 흰색을 강하게 넣어 아크릴 절단면처럼 보이게 함 */
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.8)); 
+        }
+        /* 아크릴 앞면 광택 */
+        .keyring-img-wrap::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            box-shadow: inset 0 0 0 3px rgba(255,255,255,0.7), inset 0 0 20px rgba(255,255,255,0.4);
+            pointer-events: none; z-index: 2;
+        }
+
+        /* 3. 인스타그램 피드 업로드 감성 (빨간 하트 & 랜덤 코멘트 반영) */
         .theme-insta {
             border-radius: 12px; background: #ffffff; padding: 0;
             display: flex; flex-direction: column; overflow: hidden;
@@ -283,7 +270,9 @@
         .insta-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
         .insta-footer { padding: 12px; background: #fff; }
         .insta-icons { display: flex; gap: 12px; margin-bottom: 8px; }
-        .insta-icon { width: 22px; height: 22px; }
+        .insta-icon { width: 24px; height: 24px; cursor: pointer; }
+        /* 빨간 하트 스타일 */
+        .insta-icon.heart svg { fill: #ed4956; stroke: #ed4956; } 
         .insta-icon svg { width: 100%; height: 100%; fill: none; stroke: #262626; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
         .insta-likes { font-family: -apple-system, sans-serif; font-size: 12px; font-weight: 600; color: #262626; margin-bottom: 4px; }
         .insta-caption { font-family: -apple-system, sans-serif; font-size: 12px; color: #262626; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -362,18 +351,14 @@
             
             .mobile-comment { display: block; width: 100%; text-align: left; font-family: 'Jua', sans-serif; font-size: 14px; color: var(--dj-navy); margin-top: 6px; padding-top: 6px; border-top: 1px dashed rgba(53, 28, 97, 0.15); padding-left: 35px; }
 
-            /* 🔥 모바일 포토카드 사이즈 & 패딩 완벽 조절 (비율 유지 축소) */
+            /* 🔥 모바일 포토카드 최적화 */
             .photo-gallery-wrapper { min-height: 320px; padding: 20px calc(50% - 85px); gap: 15px; }
             .photo-card { width: 170px; height: 302px; border-radius: 12px; }
-            .theme-default > img { width: calc(100% - 16px); height: calc(100% - 16px); border-radius: 6px; }
+            .theme-default > img { width: calc(100% - 16px); height: calc(100% - 16px); }
             
-            /* 모바일 키링 스케일 조정 */
-            .theme-keyring::before { top: -10px; width: 35px; height: 20px; border-radius: 6px 6px 0 0; border-width: 1px; }
-            .theme-keyring::after { top: -30px; width: 20px; height: 28px; border-width: 3px; }
-            .keyring-body { clip-path: polygon(15% 0, 85% 0, 100% 10%, 100% 90%, 85% 100%, 15% 100%, 0 90%, 0 10%); }
-            .keyring-img-wrap { width: calc(100% - 16px); height: calc(100% - 16px); clip-path: polygon(12% 0, 88% 0, 100% 8%, 100% 92%, 88% 100%, 12% 100%, 0 92%, 0 8%); }
-            
-            /* 모바일 인스타 스케일 조정 */
+            .theme-keyring::before { top: -20px; width: 18px; height: 25px; border-width: 3px; }
+            .keyring-img-wrap { clip-path: polygon(10% 0, 90% 0, 100% 8%, 100% 92%, 90% 100%, 10% 100%, 0 92%, 0 8%); }
+
             .theme-insta { border-radius: 8px; }
             .insta-header { height: 35px; padding: 0 8px; }
             .insta-pf { width: 20px; height: 20px; padding: 1px; }
@@ -385,7 +370,6 @@
             .insta-likes { font-size: 10px; margin-bottom: 3px; }
             .insta-caption { font-size: 10px; }
 
-            /* 버튼 크기 및 위치 조정 */
             .gallery-nav-btn { width: 30px; height: 40px; font-size: 14px; }
             .gallery-nav-btn.prev { left: 5px; }
             .gallery-nav-btn.next { right: 5px; }
@@ -519,6 +503,18 @@
             { id: "H-dcKU_3tbM", start: 65 },
         ];
 
+        // 🔥 코멘트 목록을 밖으로 빼서 인스타 멘트에서도 재활용 가능하도록 수정
+        const booTitles = [
+            "부우단 행동대장 =_=", "하랑이바라기", "충성충성 부우충성", "(숨참고 부우 다이브)", "YB 공주에서 다음은..?!", "안냐세여", "주글라공 그징 부우니까 봐주는거야",
+            "하랑아 나 죽어 =_=", "세상에서 제일 귀여운 =_=", "부우만 믿고 간다", "난.. 원수가 될 거야", "월말 결산 기대해도 될까..?",
+            "하랑이 미모 무슨 일 =_=", "YB 비주얼 담당 =_=", "부우 게시판 망령 =_=", "일퀘 깎는 장인", "랄좀 랄좀 ㅋㅋ",
+            "BOO=_=", "시그 장전 완료", "그 부탁...", "억까 멈춰! =_=", "안녕하세요 종합 스트리머 윤하랑입니다✨",
+            "채팅창 핑퐁 장인", "오늘도 출첵 완료!", "부우가 우릴 용서해야지", "(부우 몰래 딴방 구경)", "안녕하세요 게임 스트리머 윤하랑입니다🕹️",
+            "일퀘 스피드런 1위", "퇴근 후 부우방송", "오늘도 폼 미쳤다 =_=", "부우는 종겜 좋아해", "부우 각오 한마디", "안녕하세요 보라 스트리머 윤하랑입니다💞",
+            "부우얀....=_=", "미네랄 폭격기", "부우 게시판 수호자", "미드 차이 =_=", "부우는 롤.. 좋아해 =_=", "부우 코인 탑승!",
+            "부우 용서할까", "넵! 알겠습니다!", "부우라고 하지좀마", "억까들 오ㅡㅡㅡㅡㅡㅡㅡ열"
+        ];
+
         function setRandomBGM() {
             const navEntries = performance.getEntriesByType("navigation");
             if ((navEntries.length > 0 && navEntries[0].type === "back_forward") || (window.performance && window.performance.navigation.type === 2)) return;
@@ -545,7 +541,6 @@
             }
         }
 
-        // 🔥 3가지 테마가 섞여서 나오는 새로운 포토카드 렌더링 로직
         function loadPhotos() {
             if (!photoList || photoList.length === 0) return;
             let shuffledPhotos = [...photoList];
@@ -557,7 +552,6 @@
             let photoHtml = '';
             
             selectedPhotos.forEach((url, idx) => {
-                // 3가지 테마 중 하나를 무작위로 선택
                 const themes = ['theme-default', 'theme-keyring', 'theme-insta'];
                 const theme = themes[Math.floor(Math.random() * themes.length)];
                 
@@ -570,13 +564,16 @@
                     `;
                 } else if (theme === 'theme-keyring') {
                     cardInnerHtml = `
-                        <div class="keyring-body"></div>
                         <div class="keyring-img-wrap">
                             <img src="${url}" alt="Boo Photo Card">
                         </div>
-                        <div class="holo-glare" style="clip-path: polygon(15% 0, 85% 0, 100% 10%, 100% 90%, 85% 100%, 15% 100%, 0 90%, 0 10%);"></div>
+                        <div class="holo-glare" style="clip-path: polygon(10% 0, 90% 0, 100% 5%, 100% 95%, 90% 100%, 10% 100%, 0 95%, 0 5%);"></div>
                     `;
                 } else if (theme === 'theme-insta') {
+                    // 🔥 랜덤 좋아요 숫자 (1000 ~ 9999) 및 랜덤 코멘트 생성
+                    const randomLikes = (Math.floor(Math.random() * 9000) + 1000).toLocaleString();
+                    const randomComment = booTitles[Math.floor(Math.random() * booTitles.length)];
+
                     cardInnerHtml = `
                         <div class="insta-header">
                             <div class="insta-pf">
@@ -590,12 +587,14 @@
                         </div>
                         <div class="insta-footer">
                             <div class="insta-icons">
-                                <div class="insta-icon"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></div>
+                                <div class="insta-icon heart">
+                                    <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                                </div>
                                 <div class="insta-icon"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg></div>
                                 <div class="insta-icon"><svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg></div>
                             </div>
-                            <div class="insta-likes">좋아요 9,999개</div>
-                            <div class="insta-caption"><span style="font-weight: 600;">y_ha.rang_</span> 오늘도 부우방송 많관부! 😎</div>
+                            <div class="insta-likes">좋아요 ${randomLikes}개</div>
+                            <div class="insta-caption"><span style="font-weight: 600;">y_ha.rang_</span> ${randomComment}</div>
                         </div>
                         <div class="holo-glare"></div>
                     `;
@@ -658,16 +657,6 @@
             })
             .then(function(data) {
                 let dailyData = data.quest_board ? data.quest_board.filter(r => !excludedNicknames.includes(r.name)) : [];
-                const booTitles = [
-                    "부우단 행동대장 =_=", "하랑이바라기", "충성충성 부우충성", "(숨참고 부우 다이브)", "YB 공주에서 다음은..?!", "안냐세여", "주글라공 그징 부우니까 봐주는거야",
-                    "하랑아 나 죽어 =_=", "세상에서 제일 귀여운 =_=", "부우만 믿고 간다", "난.. 원수가 될 거야", "월말 결산 기대해도 될까..?",
-                    "하랑이 미모 무슨 일 =_=", "YB 비주얼 담당 =_=", "부우 게시판 망령 =_=", "일퀘 깎는 장인", "랄좀 랄좀 ㅋㅋ",
-                    "BOO=_=", "시그 장전 완료", "그 부탁...", "억까 멈춰! =_=", "안녕하세요 종합 스트리머 윤하랑입니다✨",
-                    "채팅창 핑퐁 장인", "오늘도 출첵 완료!", "부우가 우릴 용서해야지", "(부우 몰래 딴방 구경)", "안녕하세요 게임 스트리머 윤하랑입니다🕹️",
-                    "일퀘 스피드런 1위", "퇴근 후 부우방송", "오늘도 폼 미쳤다 =_=", "부우는 종겜 좋아해", "부우 각오 한마디", "안녕하세요 보라 스트리머 윤하랑입니다💞",
-                    "부우얀....=_=", "미네랄 폭격기", "부우 게시판 수호자", "미드 차이 =_=", "부우는 롤.. 좋아해 =_=", "부우 코인 탑승!",
-                    "부우 용서할까", "넵! 알겠습니다!", "부우라고 하지좀마", "억까들 오ㅡㅡㅡㅡㅡㅡㅡ열"
-                ];
 
                 let availableTitles = [...booTitles];
                 for (let i = availableTitles.length - 1; i > 0; i--) {
