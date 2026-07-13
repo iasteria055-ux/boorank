@@ -175,65 +175,118 @@
         .rank-row:hover .rank-name .bouncy-text { color: var(--dj-magenta); transform: translateY(-3px) scale(1.05); text-shadow: 0 2px 4px rgba(217, 28, 73, 0.3); }
         .rank-row:hover .rank-val .bouncy-text { color: var(--dj-purple); transform: translateY(-3px) scale(1.05); text-shadow: 0 2px 4px rgba(53, 28, 97, 0.3); }
 
-        /* 🔥 포토카드 갤러리 영역 CSS */
+        /* ==========================================================
+           🔥 포토카드 갤러리 영역 (3가지 랜덤 테마 디자인)
+           ========================================================== */
         .photo-gallery-wrapper {
             display: flex; flex-direction: row; align-items: center;
             width: 100%; height: 100%; min-height: 400px;
             overflow-x: auto; overflow-y: hidden;
-            scroll-snap-type: x mandatory;
-            gap: 40px; 
-            padding: 40px calc(50% - 135px); 
-            perspective: 1000px; 
+            scroll-snap-type: x mandatory; gap: 40px; 
+            padding: 40px calc(50% - 135px); perspective: 1000px; 
         }
         .photo-gallery-wrapper::-webkit-scrollbar { height: 10px; }
         .photo-gallery-wrapper::-webkit-scrollbar-track { background: rgba(53, 28, 97, 0.05); border-radius: 5px; margin: 0 40px; }
         .photo-gallery-wrapper::-webkit-scrollbar-thumb { background: var(--dj-magenta); border-radius: 5px; border: 2px solid var(--white); }
 
+        /* 공통 포토카드 규격 & 3D 이펙트 */
         .photo-card {
             flex-shrink: 0; width: 270px; height: 480px; 
-            scroll-snap-align: center; 
-            border-radius: 16px; 
-            position: relative;
-            background: #e0e5ec; 
-            box-shadow: 
-                0 10px 20px rgba(0,0,0,0.1), 
-                inset 0 0 0 2px rgba(255,255,255,0.8), 
-                inset 0 0 0 10px rgba(255,255,255,0.4), 
-                inset 0 0 0 12px rgba(0,0,0,0.05); 
+            scroll-snap-align: center; position: relative;
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
-            cursor: pointer; display: flex; justify-content: center; align-items: center;
-            transform-style: preserve-3d;
-        }
-        .photo-card img {
-            width: calc(100% - 24px); height: calc(100% - 24px); 
-            object-fit: cover; border-radius: 8px; display: block;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            cursor: pointer; transform-style: preserve-3d;
         }
         .photo-card:hover {
-            transform: translateY(-15px) rotateX(10deg) rotateY(-5deg) scale(1.05);
-            box-shadow: 
-                -10px 20px 30px rgba(0,0,0,0.2), 
-                inset 0 0 0 2px rgba(255,255,255,1), 
-                inset 0 0 0 10px rgba(255,255,255,0.6), 
-                inset 0 0 0 12px rgba(0,0,0,0.1);
-            z-index: 10;
+            transform: translateY(-15px) rotateX(10deg) rotateY(-5deg) scale(1.05); z-index: 10;
         }
+
+        /* 공통 홀로그램 빛 반사 효과 (모든 카드에 최상단 배치) */
         .holo-glare {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 16px;
-            background: linear-gradient(
-                105deg, 
-                transparent 20%, 
-                rgba(255, 182, 255, 0.4) 25%, 
-                rgba(182, 255, 255, 0.4) 28%, 
-                rgba(255, 255, 182, 0.3) 31%, 
-                transparent 35%
-            );
-            background-size: 200% 200%; background-position: 100% 100%;
-            pointer-events: none; transition: background-position 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
-            mix-blend-mode: color-dodge; 
-            z-index: 5;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: inherit;
+            background: linear-gradient(105deg, transparent 20%, rgba(255, 182, 255, 0.4) 25%, rgba(182, 255, 255, 0.4) 28%, rgba(255, 255, 182, 0.3) 31%, transparent 35%);
+            background-size: 200% 200%; background-position: 100% 100%; pointer-events: none; 
+            transition: background-position 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); mix-blend-mode: color-dodge; z-index: 20;
         }
         .photo-card:hover .holo-glare { background-position: 0% 0%; }
+
+        /* 1. 기본 DJMAX 테마 (보관 케이스 느낌) */
+        .theme-default {
+            border-radius: 16px; background: #e0e5ec; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1), inset 0 0 0 2px rgba(255,255,255,0.8), inset 0 0 0 10px rgba(255,255,255,0.4), inset 0 0 0 12px rgba(0,0,0,0.05); 
+            display: flex; justify-content: center; align-items: center;
+        }
+        .theme-default:hover { box-shadow: -10px 20px 30px rgba(0,0,0,0.2), inset 0 0 0 2px rgba(255,255,255,1), inset 0 0 0 10px rgba(255,255,255,0.6), inset 0 0 0 12px rgba(0,0,0,0.1); }
+        .theme-default > img { width: calc(100% - 24px); height: calc(100% - 24px); object-fit: cover; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+
+        /* 2. 두꺼운 투명 아크릴 키링 감성 (팔각형) */
+        .theme-keyring {
+            background: transparent;
+            display: flex; justify-content: center; align-items: center;
+        }
+        /* 상단 키링 고리 탭 */
+        .theme-keyring::before {
+            content: ''; position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
+            width: 50px; height: 30px; 
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.6); border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            box-shadow: inset 0 5px 10px rgba(255,255,255,0.8), 0 -2px 5px rgba(0,0,0,0.05);
+            z-index: 1;
+        }
+        /* 실제 금속 링 */
+        .theme-keyring::after {
+            content: ''; position: absolute; top: -45px; left: 50%; transform: translateX(-50%);
+            width: 30px; height: 40px;
+            border: 5px solid #d4d4d4; border-radius: 50%;
+            background: transparent;
+            box-shadow: inset 1px 1px 3px rgba(0,0,0,0.3), 2px 2px 4px rgba(0,0,0,0.2), inset -1px -1px 3px rgba(255,255,255,0.8);
+            z-index: 0;
+        }
+        /* 투명 아크릴 바디 (팔각형 컷팅) */
+        .keyring-body {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            clip-path: polygon(15% 0, 85% 0, 100% 10%, 100% 90%, 85% 100%, 15% 100%, 0 90%, 0 10%);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 
+                inset 0 0 0 2px rgba(255,255,255,0.9),
+                inset 5px 5px 15px rgba(255,255,255,0.7),
+                inset -5px -5px 15px rgba(0,0,0,0.1),
+                5px 10px 20px rgba(0,0,0,0.15);
+            z-index: 2;
+        }
+        /* 내부 사진 (팔각형 컷팅) */
+        .keyring-img-wrap {
+            width: calc(100% - 30px); height: calc(100% - 30px);
+            clip-path: polygon(12% 0, 88% 0, 100% 8%, 100% 92%, 88% 100%, 12% 100%, 0 92%, 0 8%);
+            overflow: hidden; background: #fff; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 3; position: relative;
+        }
+        .keyring-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* 3. 인스타그램 피드 업로드 감성 */
+        .theme-insta {
+            border-radius: 12px; background: #ffffff; padding: 0;
+            display: flex; flex-direction: column; overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.05);
+        }
+        .theme-insta:hover { box-shadow: -10px 20px 30px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.05); }
+        .insta-header { display: flex; align-items: center; height: 50px; padding: 0 12px; background: #fff; }
+        .insta-pf { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); padding: 2px; }
+        .insta-pf-inner { width: 100%; height: 100%; border-radius: 50%; background-color: var(--white); border: 1px solid #fff; background-image: url('https://storage2.ygosu.com/?code=S6a525feae65831.76159709'); background-size: cover; background-position: center; }
+        .insta-id { margin-left: 10px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 600; color: #262626; flex: 1; }
+        .insta-more { font-weight: bold; color: #262626; letter-spacing: 1px; font-size: 14px; }
+        .insta-img-wrap { flex: 1; width: 100%; overflow: hidden; background: #fafafa; display: flex; align-items: center; justify-content: center; border-top: 1px solid #efefef; border-bottom: 1px solid #efefef; }
+        .insta-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+        .insta-footer { padding: 12px; background: #fff; }
+        .insta-icons { display: flex; gap: 12px; margin-bottom: 8px; }
+        .insta-icon { width: 22px; height: 22px; }
+        .insta-icon svg { width: 100%; height: 100%; fill: none; stroke: #262626; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        .insta-likes { font-family: -apple-system, sans-serif; font-size: 12px; font-weight: 600; color: #262626; margin-bottom: 4px; }
+        .insta-caption { font-family: -apple-system, sans-serif; font-size: 12px; color: #262626; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         .gallery-container { position: relative; width: 100%; height: 100%; display: flex; align-items: center; }
         
@@ -261,20 +314,10 @@
             transform: skewX(-5deg);
         }
         .photo-refresh-btn i { transform: skewX(5deg); display: inline-block; font-style: normal; }
-        .photo-refresh-btn:hover {
-            transform: skewX(-5deg) translateY(-2px);
-            box-shadow: 4px 4px 0 var(--dj-magenta);
-            border-color: var(--dj-magenta); color: var(--dj-magenta);
-        }
-        .photo-refresh-btn:active {
-            transform: skewX(-5deg) translate(2px, 2px);
-            box-shadow: 1px 1px 0 var(--dj-magenta);
-        }
+        .photo-refresh-btn:hover { transform: skewX(-5deg) translateY(-2px); box-shadow: 4px 4px 0 var(--dj-magenta); border-color: var(--dj-magenta); color: var(--dj-magenta); }
+        .photo-refresh-btn:active { transform: skewX(-5deg) translate(2px, 2px); box-shadow: 1px 1px 0 var(--dj-magenta); }
         .spin-anim i { animation: spin-icon 0.5s ease; }
-        @keyframes spin-icon {
-            from { transform: skewX(5deg) rotate(0deg); }
-            to { transform: skewX(5deg) rotate(360deg); }
-        }
+        @keyframes spin-icon { from { transform: skewX(5deg) rotate(0deg); } to { transform: skewX(5deg) rotate(360deg); } }
 
         .thank-you-msg { text-align: center; margin-top: auto; padding-top: 15px; font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 900; color: var(--dj-purple); letter-spacing: 3px; opacity: 0.6; text-transform: uppercase; position: relative; z-index: 10; }
         .marquee-wrap { position: absolute; bottom: 0; left: 0; width: 100%; height: 26px; background: var(--dj-navy); color: var(--dj-orange); display: flex; align-items: center; overflow: hidden; z-index: 20; font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 900; letter-spacing: 2px; border-top: 1px solid var(--dj-purple); }
@@ -282,6 +325,9 @@
         .marquee-content span { padding: 0 30px; }
         @keyframes scroll-left { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
+        /* ==========================================================
+           📱 모바일 최적화 영역 
+           ========================================================== */
         @media (max-width: 700px) {
             .djmax-bg-text, .sym-3 { display: none; }
             .game-frame { border-width: 6px; border-radius: 12px; }
@@ -319,7 +365,25 @@
             /* 🔥 모바일 포토카드 사이즈 & 패딩 완벽 조절 (비율 유지 축소) */
             .photo-gallery-wrapper { min-height: 320px; padding: 20px calc(50% - 85px); gap: 15px; }
             .photo-card { width: 170px; height: 302px; border-radius: 12px; }
-            .photo-card img { width: calc(100% - 16px); height: calc(100% - 16px); border-radius: 6px; }
+            .theme-default > img { width: calc(100% - 16px); height: calc(100% - 16px); border-radius: 6px; }
+            
+            /* 모바일 키링 스케일 조정 */
+            .theme-keyring::before { top: -10px; width: 35px; height: 20px; border-radius: 6px 6px 0 0; border-width: 1px; }
+            .theme-keyring::after { top: -30px; width: 20px; height: 28px; border-width: 3px; }
+            .keyring-body { clip-path: polygon(15% 0, 85% 0, 100% 10%, 100% 90%, 85% 100%, 15% 100%, 0 90%, 0 10%); }
+            .keyring-img-wrap { width: calc(100% - 16px); height: calc(100% - 16px); clip-path: polygon(12% 0, 88% 0, 100% 8%, 100% 92%, 88% 100%, 12% 100%, 0 92%, 0 8%); }
+            
+            /* 모바일 인스타 스케일 조정 */
+            .theme-insta { border-radius: 8px; }
+            .insta-header { height: 35px; padding: 0 8px; }
+            .insta-pf { width: 20px; height: 20px; padding: 1px; }
+            .insta-id { font-size: 10px; margin-left: 6px; }
+            .insta-more { font-size: 10px; }
+            .insta-footer { padding: 8px; }
+            .insta-icons { gap: 8px; margin-bottom: 5px; }
+            .insta-icon { width: 16px; height: 16px; }
+            .insta-likes { font-size: 10px; margin-bottom: 3px; }
+            .insta-caption { font-size: 10px; }
 
             /* 버튼 크기 및 위치 조정 */
             .gallery-nav-btn { width: 30px; height: 40px; font-size: 14px; }
@@ -394,7 +458,6 @@
     </div>
 
     <script>
-        // 🔥 자바스크립트 문법(Syntax Error) 수정 완료
         const excludedNicknames = ["팥쥐", "YGOSU", "YGOSU2"];
 
         const photoList = [
@@ -482,6 +545,7 @@
             }
         }
 
+        // 🔥 3가지 테마가 섞여서 나오는 새로운 포토카드 렌더링 로직
         function loadPhotos() {
             if (!photoList || photoList.length === 0) return;
             let shuffledPhotos = [...photoList];
@@ -491,11 +555,55 @@
             }
             const selectedPhotos = shuffledPhotos.slice(0, 5);
             let photoHtml = '';
-            selectedPhotos.forEach(url => {
+            
+            selectedPhotos.forEach((url, idx) => {
+                // 3가지 테마 중 하나를 무작위로 선택
+                const themes = ['theme-default', 'theme-keyring', 'theme-insta'];
+                const theme = themes[Math.floor(Math.random() * themes.length)];
+                
+                let cardInnerHtml = '';
+
+                if (theme === 'theme-default') {
+                    cardInnerHtml = `
+                        <img src="${url}" alt="Boo Photo Card">
+                        <div class="holo-glare"></div>
+                    `;
+                } else if (theme === 'theme-keyring') {
+                    cardInnerHtml = `
+                        <div class="keyring-body"></div>
+                        <div class="keyring-img-wrap">
+                            <img src="${url}" alt="Boo Photo Card">
+                        </div>
+                        <div class="holo-glare" style="clip-path: polygon(15% 0, 85% 0, 100% 10%, 100% 90%, 85% 100%, 15% 100%, 0 90%, 0 10%);"></div>
+                    `;
+                } else if (theme === 'theme-insta') {
+                    cardInnerHtml = `
+                        <div class="insta-header">
+                            <div class="insta-pf">
+                                <div class="insta-pf-inner"></div>
+                            </div>
+                            <span class="insta-id">y_ha.rang_</span>
+                            <span class="insta-more">•••</span>
+                        </div>
+                        <div class="insta-img-wrap">
+                            <img src="${url}" alt="Boo Photo Card">
+                        </div>
+                        <div class="insta-footer">
+                            <div class="insta-icons">
+                                <div class="insta-icon"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></div>
+                                <div class="insta-icon"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg></div>
+                                <div class="insta-icon"><svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg></div>
+                            </div>
+                            <div class="insta-likes">좋아요 9,999개</div>
+                            <div class="insta-caption"><span style="font-weight: 600;">y_ha.rang_</span> 오늘도 부우방송 많관부! 😎</div>
+                        </div>
+                        <div class="holo-glare"></div>
+                    `;
+                }
+
                 photoHtml += `
-                <div class="photo-card">
-                    <img src="${url}" alt="Boo Photo Card">
-                    <div class="holo-glare"></div>
+                <div class="photo-card ${theme}">
+                    ${cardInnerHtml}
                 </div>`;
             });
             document.getElementById('photoGalleryWrapper').innerHTML = photoHtml;
@@ -549,7 +657,6 @@
                 return response.json();
             })
             .then(function(data) {
-                // 🔥 배열에 등록된 닉네임들을 정확히 제외하도록 필터링
                 let dailyData = data.quest_board ? data.quest_board.filter(r => !excludedNicknames.includes(r.name)) : [];
                 const booTitles = [
                     "부우단 행동대장 =_=", "하랑이바라기", "충성충성 부우충성", "(숨참고 부우 다이브)", "YB 공주에서 다음은..?!", "안냐세여", "주글라공 그징 부우니까 봐주는거야",
@@ -617,5 +724,3 @@
     </script>
 </body>
 </html>
-
-
