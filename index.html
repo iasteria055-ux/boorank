@@ -227,7 +227,11 @@
             will-change: transform;
             /* 기본 호버 끄기 (잡고 흔드는 물리엔진 적용) */
         }
-        
+        .photo-card.theme-keyring:hover {
+            transform: none; /* 빙글빙글 돌 때 호버 효과(기울어짐) 간섭 방지 */
+            z-index: 10;
+        }
+
         /* 쇠고리 (스플릿 링) */
         .theme-keyring .metal-ring {
             width: 55px; height: 55px;
@@ -539,7 +543,7 @@
         }
 
         function loadPhotos() {
-            if (typeof photoList === 'undefined' || photoList.length === 0) return;
+            // 외부 photos.js 파일에서 photoList를 정상적으로 읽어왔는지 확인
             let shuffledPhotos = [...photoList];
             for (let i = shuffledPhotos.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -604,45 +608,74 @@
             attachKeyringPhysics();
         }
 
-        // 🌟 잡고 좌우로 흔드는 (Grab & Swing) 물리 엔진 구현
+        // 🌟 잡고 빙글빙글 돌리는 (Spin) 3D 물리 엔진 구현
         function attachKeyringPhysics() {
             const keyrings = document.querySelectorAll('.theme-keyring');
             keyrings.forEach(card => {
                 let isDragging = false;
                 let startX = 0;
+                let currentRotateY = 0;
+                let lastRotateY = 0;
+                let velocity = 0;
+                let lastX = 0;
+                let lastTime = 0;
 
                 const startDrag = (e) => {
                     isDragging = true;
                     startX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
-                    card.style.transition = 'none'; // 흔들 때 딜레이 제거
+                    lastX = startX;
+                    lastTime = Date.now();
+                    card.style.transition = 'none'; // 드래그 중일 땐 딜레이 즉시 제거
                     card.style.cursor = 'grabbing';
                 };
 
                 const doDrag = (e) => {
                     if (!isDragging) return;
                     const x = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+                    const now = Date.now();
+                    
                     const deltaX = x - startX;
-                    // 좌우 이동 값에 비례하여 회전 각도 계산 (최대 60도)
-                    const rotateAngle = Math.max(-60, Math.min(60, deltaX * 0.4));
-                    card.style.transform = `rotate(${rotateAngle}deg)`;
+                    // 마우스 이동 속도(px/ms)를 계산하여 관성력(스핀 횟수)에 적용
+                    velocity = (x - lastX) / Math.max(1, (now - lastTime)); 
+                    
+                    lastX = x;
+                    lastTime = now;
+                    
+                    // 좌우(X축 방향) 이동 값을 Y축(가로 회전축) 360도 회전에 매핑
+                    currentRotateY = lastRotateY + deltaX * 1.5; 
+                    card.style.transform = `rotateY(${currentRotateY}deg)`;
                 };
 
                 const endDrag = () => {
                     if (!isDragging) return;
                     isDragging = false;
                     card.style.cursor = 'grab';
-                    // 놓았을 때 띠용~ 하고 제자리로 돌아오는 탄성(Spring) 애니메이션
-                    card.style.transition = 'transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
-                    card.style.transform = `rotate(0deg)`;
+                    
+                    // 드래그 속도(가속도)에 따라 빙글빙글 더 도는 스핀 효과 추가
+                    let extraSpin = velocity * 500; 
+                    let targetRotateY = currentRotateY + extraSpin;
+                    
+                    // 빙글빙글 돌다가 무조건 앞면(360도의 배수)이 보이게 딱 맞춰서 스냅(Snap)
+                    targetRotateY = Math.round(targetRotateY / 360) * 360;
+                    
+                    // 스르륵~ 하고 부드럽게 멈추는 감속 애니메이션
+                    card.style.transition = 'transform 1.2s cubic-bezier(0.1, 0.9, 0.2, 1)';
+                    card.style.transform = `rotateY(${targetRotateY}deg)`;
+                    
+                    // 다음 드래그 시 튕기지 않게 상태 저장
+                    lastRotateY = targetRotateY;
                 };
 
                 card.addEventListener('mousedown', startDrag);
                 window.addEventListener('mousemove', (e) => { if(isDragging) doDrag(e); });
                 window.addEventListener('mouseup', endDrag);
+                card.addEventListener('mouseleave', endDrag); // 마우스가 밖으로 나가도 드래그 정상 종료
 
+                // 모바일 터치 이벤트
                 card.addEventListener('touchstart', startDrag, {passive: true});
                 window.addEventListener('touchmove', (e) => { if(isDragging) doDrag(e); }, {passive: true});
                 window.addEventListener('touchend', endDrag);
+                card.addEventListener('touchcancel', endDrag);
 
                 card.style.cursor = 'grab';
             });
