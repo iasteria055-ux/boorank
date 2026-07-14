@@ -218,33 +218,43 @@
         .theme-default:hover { box-shadow: -10px 20px 30px rgba(0,0,0,0.2), inset 0 0 0 2px rgba(255,255,255,1), inset 0 0 0 10px rgba(255,255,255,0.6), inset 0 0 0 12px rgba(0,0,0,0.1); }
         .theme-default > img { width: calc(100% - 24px); height: calc(100% - 24px); object-fit: cover; object-position: center top; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
 
-        /* 2. 아크릴 챰 키링 감성 (인물 모양을 살린 느낌의 꼼수 구현) */
+        /* 2. 아크릴 챰 키링 감성 (확실한 고리 & 아크릴 디테일) */
         .theme-keyring {
             background: transparent;
-            display: flex; justify-content: center; align-items: center;
-            /* 아크릴의 입체감을 주기 위한 드롭 섀도우 연타 */
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
             filter: drop-shadow(0px 10px 15px rgba(0,0,0,0.2)) drop-shadow(0px 0px 2px rgba(255,255,255,0.8));
+            padding-bottom: 10px;
         }
-        /* 메탈 키링 연결부 (사이버펑크 느낌) */
-        .theme-keyring::before {
-            content: ''; position: absolute; top: -35px; left: 50%; transform: translateX(-50%);
-            width: 25px; height: 35px; 
-            border: 4px solid #b0b5bd; border-radius: 12px 12px 4px 4px;
-            background: linear-gradient(135deg, transparent 30%, rgba(255,255,255,0.9) 40%, transparent 50%);
-            box-shadow: inset 1px 1px 3px rgba(0,0,0,0.3), 1px 2px 3px rgba(0,0,0,0.2);
+        /* 메탈 스플릿 링 (큰 열쇠고리) */
+        .theme-keyring .ring {
+            position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
+            width: 60px; height: 60px;
+            border: 6px solid #dcdcdc; border-radius: 50%;
+            background: transparent;
+            box-shadow: inset 1px 1px 4px rgba(0,0,0,0.4), 2px 2px 5px rgba(0,0,0,0.3);
             z-index: -1;
         }
-        /* 실제 사진 & 아크릴 바디 합체 */
+        /* 고리 연결부 */
+        .theme-keyring .connector {
+            position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
+            width: 15px; height: 25px;
+            border: 4px solid #b0b5bd; border-radius: 8px;
+            background: transparent;
+            box-shadow: 1px 2px 3px rgba(0,0,0,0.3);
+            z-index: 1;
+        }
+        /* 아크릴 본체 (팔각형 컷팅) */
         .keyring-img-wrap {
-            width: 100%; height: 100%; position: relative; overflow: hidden;
-            /* 아크릴의 불규칙한 컷팅 느낌을 살짝 주기 위해 외곽 깎기 */
-            clip-path: polygon(10% 0, 90% 0, 100% 5%, 100% 95%, 90% 100%, 10% 100%, 0 95%, 0 5%);
-            background: rgba(255, 255, 255, 0.4); /* 뒷면이 살짝 비치는 반투명 아크릴 느낌 */
+            position: relative;
+            width: 240px; height: 380px; margin-top: 40px; 
+            clip-path: polygon(15% 0, 85% 0, 100% 10%, 100% 90%, 85% 100%, 15% 100%, 0 90%, 0 10%);
+            background: rgba(255, 255, 255, 0.4);
             backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+            overflow: hidden;
         }
         .keyring-img-wrap img { 
-            width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block;
-            /* 사진 안쪽으로 반투명 흰색을 강하게 넣어 아크릴 절단면처럼 보이게 함 */
+            width: 100%; height: 100%; object-fit: cover; object-position: center 10%; display: block;
+            /* 사진 안쪽으로 아크릴 절단면 느낌 부여 */
             filter: drop-shadow(0 0 10px rgba(255,255,255,0.8)); 
         }
         /* 아크릴 앞면 광택 */
@@ -254,7 +264,7 @@
             pointer-events: none; z-index: 2;
         }
 
-        /* 3. 인스타그램 피드 업로드 감성 (비율 고정 적용) */
+        /* 3. 인스타그램 피드 감성 (얼굴 안 잘리게 비율/초점 고정) */
         .theme-insta {
             border-radius: 12px; background: #ffffff; padding: 0;
             display: flex; flex-direction: column; overflow: hidden;
@@ -267,9 +277,9 @@
         .insta-id { margin-left: 10px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 600; color: #262626; flex: 1; }
         .insta-more { font-weight: bold; color: #262626; letter-spacing: 1px; font-size: 14px; }
         
-        /* 🔥 비율 유지를 위해 contain 적용 및 배경을 검은색으로 변경 */
-        .insta-img-wrap { flex: 1; width: 100%; overflow: hidden; background: #000000; display: flex; align-items: center; justify-content: center; }
-        .insta-img-wrap img { width: 100%; height: 100%; object-fit: contain; }
+        /* 🔥 꽉 차게 채우되(cover) 상단 15% 초점(center 15%)을 맞춰 얼굴 보호 & 여백 깔끔하게 흰색 배경 */
+        .insta-img-wrap { flex: 1; width: 100%; overflow: hidden; background: #fafafa; display: flex; align-items: center; justify-content: center; }
+        .insta-img-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: center 15%; }
         
         .insta-footer { padding: 12px; background: #fff; }
         .insta-icons { display: flex; gap: 12px; margin-bottom: 8px; }
@@ -353,13 +363,16 @@
             
             .mobile-comment { display: block; width: 100%; text-align: left; font-family: 'Jua', sans-serif; font-size: 14px; color: var(--dj-navy); margin-top: 6px; padding-top: 6px; border-top: 1px dashed rgba(53, 28, 97, 0.15); padding-left: 35px; }
 
-            /* 🔥 모바일 포토카드 최적화 */
+            /* 🔥 모바일 3가지 테마 포토카드 사이즈 동기화 및 링 최적화 */
             .photo-gallery-wrapper { min-height: 320px; padding: 20px calc(50% - 85px); gap: 15px; }
             .photo-card { width: 170px; height: 302px; border-radius: 12px; }
+            
             .theme-default > img { width: calc(100% - 16px); height: calc(100% - 16px); }
             
-            .theme-keyring::before { top: -20px; width: 18px; height: 25px; border-width: 3px; }
-            .keyring-img-wrap { clip-path: polygon(10% 0, 90% 0, 100% 8%, 100% 92%, 90% 100%, 10% 100%, 0 92%, 0 8%); }
+            /* 키링 모바일 사이즈 */
+            .keyring-img-wrap { width: 140px; height: 230px; margin-top: 30px; clip-path: polygon(15% 0, 85% 0, 100% 10%, 100% 90%, 85% 100%, 15% 100%, 0 90%, 0 10%); }
+            .theme-keyring .ring { width: 40px; height: 40px; top: -10px; border-width: 4px; }
+            .theme-keyring .connector { width: 10px; height: 18px; top: 22px; border-width: 3px; }
 
             .theme-insta { border-radius: 8px; }
             .insta-header { height: 35px; padding: 0 8px; }
@@ -443,13 +456,11 @@
         </div>
     </div>
 
-    <!-- 🔥 방금 만든 사진 리스트 파일(photos.js)을 불러옵니다! -->
+    <!-- 🔥 따로 빼둔 사진 리스트 파일을 불러옵니다! -->
     <script src="photos.js"></script>
 
     <script>
         const excludedNicknames = ["팥쥐", "YGOSU", "YGOSU2"];
-
-        // (여기 있던 긴 photoList 덩어리는 이제 지워도 됩니다. 깔끔!)
 
         const bgmList = [
             { id: "upNRraLNEg4", start: 0 }, { id: "56jjrn5BpDk", start: 0 }, { id: "NzcJWgK2ZTI", start: 1 },
@@ -458,7 +469,6 @@
             { id: "H-dcKU_3tbM", start: 65 },
         ];
 
-        // 🔥 코멘트 목록을 밖으로 빼서 인스타 멘트에서도 재활용 가능하도록 수정
         const booTitles = [
             "부우단 행동대장 =_=", "하랑이바라기", "충성충성 부우충성", "(숨참고 부우 다이브)", "YB 공주에서 다음은..?!", "안냐세여", "주글라공 그징 부우니까 봐주는거야",
             "하랑아 나 죽어 =_=", "세상에서 제일 귀여운 =_=", "부우만 믿고 간다", "난.. 원수가 될 거야", "월말 결산 기대해도 될까..?",
@@ -497,7 +507,8 @@
         }
 
         function loadPhotos() {
-            if (!photoList || photoList.length === 0) return;
+            // 외부 photos.js 파일에서 photoList를 정상적으로 읽어왔는지 확인
+            if (typeof photoList === 'undefined' || photoList.length === 0) return;
             let shuffledPhotos = [...photoList];
             for (let i = shuffledPhotos.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -519,13 +530,14 @@
                     `;
                 } else if (theme === 'theme-keyring') {
                     cardInnerHtml = `
+                        <div class="ring"></div>
+                        <div class="connector"></div>
                         <div class="keyring-img-wrap">
                             <img src="${url}" alt="Boo Photo Card">
+                            <div class="holo-glare"></div>
                         </div>
-                        <div class="holo-glare" style="clip-path: polygon(10% 0, 90% 0, 100% 5%, 100% 95%, 90% 100%, 10% 100%, 0 95%, 0 5%);"></div>
                     `;
                 } else if (theme === 'theme-insta') {
-                    // 🔥 랜덤 좋아요 숫자 (1000 ~ 9999) 및 랜덤 코멘트 생성
                     const randomLikes = (Math.floor(Math.random() * 9000) + 1000).toLocaleString();
                     const randomComment = booTitles[Math.floor(Math.random() * booTitles.length)];
 
