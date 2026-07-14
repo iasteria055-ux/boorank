@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-07-14 12:03:53",
+  "updated_at": "2026-07-14 12:18:08",
   "quest_board": [
     {
       "mem_id": "647006",
@@ -84,6 +84,11 @@
     {
       "mem_id": "693671",
       "name": "JTONG",
+      "val": "CLEAR"
+    },
+    {
+      "mem_id": "688241",
+      "name": "군손",
       "val": "CLEAR"
     }
   ],
