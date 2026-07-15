@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-07-15 15:11:39",
+  "updated_at": "2026-07-15 15:16:26",
   "quest_board": [
     {
       "mem_id": "688241",
@@ -14,6 +14,26 @@
     {
       "mem_id": "692736",
       "name": "조해",
+      "val": "CLEAR"
+    },
+    {
+      "mem_id": "705225",
+      "name": "초우코송이",
+      "val": "CLEAR"
+    },
+    {
+      "mem_id": "695222",
+      "name": "염바다",
+      "val": "CLEAR"
+    },
+    {
+      "mem_id": "517711",
+      "name": "ㅇㅇ!",
+      "val": "CLEAR"
+    },
+    {
+      "mem_id": "707435",
+      "name": "구가구가",
       "val": "CLEAR"
     }
   ],
