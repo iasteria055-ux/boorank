@@ -1,9 +1,19 @@
 {
-  "updated_at": "2026-07-16 15:02:01",
+  "updated_at": "2026-07-16 15:05:15",
   "quest_board": [
     {
       "mem_id": "577520",
       "name": "물소꺼져",
+      "val": "CLEAR"
+    },
+    {
+      "mem_id": "688241",
+      "name": "군손",
+      "val": "CLEAR"
+    },
+    {
+      "mem_id": "144953",
+      "name": "피통왕통키",
       "val": "CLEAR"
     }
   ],
