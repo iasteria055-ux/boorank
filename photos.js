@@ -113,5 +113,5 @@ const photoList = [
     "https://storage2.ygosu.com/?code=S6a55b6bcea3324.82828554",
     "https://storage2.ygosu.com/?code=S6a55b6bd2aa402.29446699",
     "https://storage2.ygosu.com/?code=S6a55b6bd599a68.36854180",
-    "https://storage2.ygosu.com/?code=S6a55b6bd7a9564.96436589"
+    "https://storage2.ygosu.com/?code=S6a55b6bd7a9564.96436589", "https://storage2.ygosu.com/?code=S6a589490f32fb2.13994249",
 ];
