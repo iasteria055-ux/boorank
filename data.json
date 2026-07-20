@@ -1,14 +1,9 @@
 {
-  "updated_at": "2026-07-20 08:52:17",
+  "updated_at": "2026-07-20 15:32:55",
   "quest_board": [
     {
       "mem_id": "144953",
       "name": "피통왕통키",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "705225",
-      "name": "초우코송이",
       "val": "CLEAR"
     },
     {
@@ -17,33 +12,8 @@
       "val": "CLEAR"
     },
     {
-      "mem_id": "590525",
-      "name": "ㄹㅋㄹㅋㄹㅋ",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "517711",
-      "name": "ㅇㅇ!",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "479340",
-      "name": "노무연",
-      "val": "CLEAR"
-    },
-    {
       "mem_id": "577520",
       "name": "물소꺼져",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "701501",
-      "name": "염보야놀자",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "699575",
-      "name": "염보스",
       "val": "CLEAR"
     },
     {
@@ -52,13 +22,18 @@
       "val": "CLEAR"
     },
     {
-      "mem_id": "695222",
-      "name": "염바다",
+      "mem_id": "479340",
+      "name": "노무연",
       "val": "CLEAR"
     },
     {
-      "mem_id": "701428",
-      "name": "죽빵",
+      "mem_id": "705225",
+      "name": "초우코송이",
+      "val": "CLEAR"
+    },
+    {
+      "mem_id": "699575",
+      "name": "염보스",
       "val": "CLEAR"
     }
   ],
