@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-07-21 12:11:51",
+  "updated_at": "2026-07-21 17:01:38",
   "quest_board": [
     {
       "mem_id": "144953",
@@ -12,13 +12,8 @@
       "val": "CLEAR"
     },
     {
-      "mem_id": "577520",
-      "name": "물소꺼져",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "706984",
-      "name": "최강내로남불",
+      "mem_id": "699575",
+      "name": "염보스",
       "val": "CLEAR"
     },
     {
@@ -27,18 +22,8 @@
       "val": "CLEAR"
     },
     {
-      "mem_id": "705225",
-      "name": "초우코송이",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "699575",
-      "name": "염보스",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "517711",
-      "name": "ㅇㅇ!",
+      "mem_id": "577520",
+      "name": "물소꺼져",
       "val": "CLEAR"
     },
     {
@@ -47,8 +32,8 @@
       "val": "CLEAR"
     },
     {
-      "mem_id": "674033",
-      "name": "무찌-ㅅ-",
+      "mem_id": "706984",
+      "name": "최강내로남불",
       "val": "CLEAR"
     },
     {
@@ -57,13 +42,8 @@
       "val": "CLEAR"
     },
     {
-      "mem_id": "701428",
-      "name": "죽빵",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "704250",
-      "name": "아사람",
+      "mem_id": "517711",
+      "name": "ㅇㅇ!",
       "val": "CLEAR"
     }
   ],
