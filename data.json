@@ -1,22 +1,6 @@
 {
-  "updated_at": "2026-07-23 13:13:42",
-  "quest_board": [
-    {
-      "mem_id": "144953",
-      "name": "피통왕통키",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "695222",
-      "name": "염바다",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "517711",
-      "name": "ㅇㅇ!",
-      "val": "CLEAR"
-    }
-  ],
+  "updated_at": "2026-07-23 18:01:51",
+  "quest_board": [],
   "donation_ranking": [
     {
       "name": "팥쥐",
