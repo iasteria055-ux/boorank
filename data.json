@@ -1,6 +1,12 @@
 {
-  "updated_at": "2026-08-01 20:02:37",
-  "quest_board": [],
+  "updated_at": "2026-08-01 23:43:23",
+  "quest_board": [
+    {
+      "mem_id": "705225",
+      "name": "초우코송이",
+      "val": "CLEAR"
+    }
+  ],
   "donation_ranking": [
     {
       "name": "팥쥐",
