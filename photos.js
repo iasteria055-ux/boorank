@@ -139,5 +139,6 @@ const photoList = [
     "https://storage2.ygosu.com/?code=S6a6f4ea5931fc6.42624854", "https://storage2.ygosu.com/?code=S6a6f4ea5a09880.07714093",
     "https://storage2.ygosu.com/?code=S6a6f4ea5affb78.71426806", "https://storage2.ygosu.com/?code=S6a6f4ea5c0cb76.78363120",
     "https://storage2.ygosu.com/?code=S6a6f4ea5cbc184.28506291", "https://storage2.ygosu.com/?code=S6a6f4ea5de1a19.19321656",
-    "https://storage2.ygosu.com/?code=S6a6f4ea5ea8f49.34625545"
+    "https://storage2.ygosu.com/?code=S6a6f4ea5ea8f49.34625545", "https://storage2.ygosu.com/?code=S6a6f52b8405e50.07795787",
+    "https://storage2.ygosu.com/?code=S6a6f52c1b79e40.08647618",
 ];
