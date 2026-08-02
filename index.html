@@ -178,83 +178,86 @@
         .rank-row:hover .rank-val .bouncy-text { color: var(--dj-purple); transform: translateY(-3px) scale(1.05); text-shadow: 0 2px 4px rgba(53, 28, 97, 0.3); }
 
         /* ==========================================================
-           🔥 포토카드 갤러리 영역 (시즌2 투명 슬리브 포토카드)
+           🔥 포토카드 갤러리 영역 (리얼 탑로더 + 가죽 배경 감성)
            ========================================================== */
+        /* 검은색 가죽 텍스처 배경 */
         .photo-gallery-wrapper {
             display: flex; flex-direction: row; align-items: center;
-            width: 100%; height: 100%; min-height: 440px;
+            width: 100%; height: 100%; min-height: 480px;
             overflow-x: auto; overflow-y: hidden;
-            scroll-snap-type: x mandatory; gap: 40px; 
-            padding: 40px calc(50% - 135px); perspective: 1200px; 
+            scroll-snap-type: x mandatory; gap: 60px; 
+            padding: 40px calc(50% - 145px); perspective: 1200px; 
+            background-color: #1a1a1c; /* 짙은 차콜/블랙 베이스 */
+            background-image: 
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E"), /* 가죽 노이즈 패턴 */
+                linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 50%, rgba(0,0,0,0.2) 100%);
+            border-radius: 12px;
+            box-shadow: inset 0 10px 20px rgba(0,0,0,0.5), inset 0 0 40px rgba(0,0,0,0.3);
+            border: 2px solid #2a2a2d;
+            position: relative; /* 화살표 버튼 위치 기준 */
         }
         .photo-gallery-wrapper::-webkit-scrollbar { height: 10px; }
-        .photo-gallery-wrapper::-webkit-scrollbar-track { background: rgba(53, 28, 97, 0.05); border-radius: 5px; margin: 0 40px; }
-        .photo-gallery-wrapper::-webkit-scrollbar-thumb { background: var(--dj-magenta); border-radius: 5px; border: 2px solid var(--white); }
+        .photo-gallery-wrapper::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); border-radius: 5px; margin: 0 40px; }
+        .photo-gallery-wrapper::-webkit-scrollbar-thumb { background: #444; border-radius: 5px; border: 1px solid #1a1a1c; }
 
-        /* 단일 테마: 투명 슬리브(OPP) 포토카드 */
-        .photo-card {
-            flex-shrink: 0; width: 270px; height: 440px; 
+        /* 겉면 투명 플라스틱 케이스 (탑로더) */
+        .photo-card-toploader {
+            flex-shrink: 0; width: 290px; height: 420px; 
             scroll-snap-align: center; position: relative;
             cursor: pointer; transform-style: preserve-3d;
-            border-radius: 12px;
-            /* 투명 슬리브의 질감: 비닐이 살짝 뜬 느낌의 다중 그림자 */
-            background: #fdfdfd;
+            border-radius: 8px; /* 탑로더 모서리 둥글게 */
+            
+            /* 투명 플라스틱 케이스 질감 (이중 테두리와 그림자) */
+            background: rgba(255, 255, 255, 0.05); /* 약간 불투명한 플라스틱 베이스 */
+            border: 2px solid rgba(255, 255, 255, 0.4); /* 플라스틱 외곽 빛 반사 */
             box-shadow: 
-                0 10px 25px rgba(0,0,0,0.15), 
-                inset 0 0 0 1px rgba(255,255,255,0.9), 
-                inset 0 0 0 4px rgba(255,255,255,0.3), 
-                inset 0 0 15px rgba(0,0,0,0.05);
-            /* 마우스 움직임에 따른 3D 틸팅 애니메이션 */
-            transition: transform 0.1s ease-out, box-shadow 0.3s ease;
+                0 25px 40px rgba(0,0,0,0.6), /* 전체 그림자 (가죽 위로 뜬 느낌) */
+                inset 0 0 0 4px rgba(255, 255, 255, 0.1), /* 내부 플라스틱 두께 */
+                inset 0 0 15px rgba(0,0,0,0.2); /* 케이스 내부 깊이감 */
+            
+            display: flex; justify-content: center; align-items: center;
+            transition: transform 0.2s ease-out, box-shadow 0.3s ease;
         }
 
-        .photo-card:hover { z-index: 10; }
+        .photo-card-toploader:hover { 
+            z-index: 10; 
+            transform: scale(1.02) translateY(-5px);
+            box-shadow: 0 35px 50px rgba(0,0,0,0.8), inset 0 0 0 4px rgba(255, 255, 255, 0.1), inset 0 0 15px rgba(0,0,0,0.2);
+        }
 
-        /* 내부 사진 이미지 */
-        .photo-card > img {
-            width: calc(100% - 16px); height: calc(100% - 16px); 
-            margin: 8px; /* 슬리브 여백 */
+        /* 내부에 비스듬히 들어간 실제 사진 */
+        .photo-card-toploader > img {
+            width: calc(100% - 16px); /* 탑로더 내부 여백 */
+            height: calc(100% - 16px); 
             object-fit: cover; object-position: center 15%; 
-            border-radius: 6px; 
+            border-radius: 4px; /* 실제 인화 사진 모서리 */
             pointer-events: none;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            
+            /* 🔥 삐딱하게 들어간 각도 부여 (-2도 회전) */
+            transform: rotate(-2.5deg) scale(0.98); 
+            transform-origin: center;
+            
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4); /* 사진 자체의 그림자 */
+            background-color: #fff; /* 뒷면(여백)이 보일 경우 흰색 종이 느낌 */
+            z-index: 1;
         }
 
-        /* 슬리브 비닐 빛 반사 (글레어 효과) */
-        .sleeve-glare {
+        /* 탑로더 표면 빛 반사 (글레어 효과) */
+        .toploader-glare {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            border-radius: 12px;
+            border-radius: inherit;
             background: linear-gradient(
-                125deg, 
-                transparent 15%, 
-                rgba(255, 255, 255, 0.4) 30%, 
-                rgba(255, 255, 255, 0.8) 45%, 
-                transparent 55%
+                115deg, 
+                rgba(255,255,255,0.7) 0%, 
+                rgba(255,255,255,0.1) 15%, 
+                transparent 30%, 
+                transparent 60%, 
+                rgba(255,255,255,0.05) 80%, 
+                rgba(255,255,255,0.3) 100%
             );
-            background-size: 250% 250%; background-position: 100% 100%; 
-            pointer-events: none; mix-blend-mode: overlay; z-index: 20;
-            transition: background-position 0.1s ease;
+            pointer-events: none; z-index: 5;
+            mix-blend-mode: overlay;
         }
-
-        /* 🖋️ 마커펜 사인 멘트 영역 */
-        .signature-overlay {
-            position: absolute; bottom: 25px; left: 15px;
-            display: flex; flex-direction: column; gap: 5px;
-            z-index: 15; pointer-events: none;
-            transform: rotate(-3deg); /* 살짝 삐딱하게 쓴 손글씨 느낌 */
-            filter: drop-shadow(1px 1px 1px rgba(255,255,255,0.7)); /* 배경이 어두울 때 대비용 흰 테두리 */
-        }
-        
-        .sig-text {
-            font-family: 'Nanum Pen Script', cursive; /* 리얼 손글씨 폰트 */
-            color: #111111; /* 검은색 마커 */
-            line-height: 1; margin: 0;
-            text-shadow: 0px 0px 2px rgba(0,0,0,0.8); /* 잉크가 번진듯한 살짝 두꺼운 느낌 */
-        }
-        
-        .sig-title { font-size: 42px; font-weight: normal; }
-        .sig-to { font-size: 28px; padding-left: 20px; }
-
 
         .gallery-container { position: relative; width: 100%; height: 100%; display: flex; align-items: center; }
         
@@ -274,16 +277,16 @@
 
         .photo-refresh-btn {
             position: absolute; top: 0px; right: 10px;
-            background: var(--white); color: var(--dj-purple);
-            border: 3px solid var(--dj-purple); box-shadow: 3px 3px 0 var(--dj-purple);
-            width: 45px; height: 45px; font-size: 22px; font-weight: 900;
+            background: var(--black); color: #ccc;
+            border: 2px solid #555; box-shadow: 2px 2px 0 #000;
+            width: 40px; height: 40px; font-size: 20px; font-weight: 900;
             border-radius: 8px; cursor: pointer; z-index: 30; transition: all 0.2s;
             display: flex; justify-content: center; align-items: center;
             transform: skewX(-5deg);
         }
         .photo-refresh-btn i { transform: skewX(5deg); display: inline-block; font-style: normal; }
-        .photo-refresh-btn:hover { transform: skewX(-5deg) translateY(-2px); box-shadow: 4px 4px 0 var(--dj-magenta); border-color: var(--dj-magenta); color: var(--dj-magenta); }
-        .photo-refresh-btn:active { transform: skewX(-5deg) translate(2px, 2px); box-shadow: 1px 1px 0 var(--dj-magenta); }
+        .photo-refresh-btn:hover { transform: skewX(-5deg) translateY(-2px); border-color: var(--white); color: var(--white); }
+        .photo-refresh-btn:active { transform: skewX(-5deg) translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
         .spin-anim i { animation: spin-icon 0.5s ease; }
         @keyframes spin-icon { from { transform: skewX(5deg) rotate(0deg); } to { transform: skewX(5deg) rotate(360deg); } }
 
@@ -330,13 +333,10 @@
             
             .mobile-comment { display: block; width: 100%; text-align: left; font-family: 'Jua', sans-serif; font-size: 14px; color: var(--dj-navy); margin-top: 6px; padding-top: 6px; border-top: 1px dashed rgba(53, 28, 97, 0.15); padding-left: 35px; }
 
-            /* 모바일 슬리브 포토카드 사이즈 조절 */
-            .photo-gallery-wrapper { min-height: 380px; padding: 20px calc(50% - 95px); gap: 20px; }
-            .photo-card { width: 190px; height: 320px; border-radius: 10px; }
-            .photo-card > img { width: calc(100% - 12px); height: calc(100% - 12px); margin: 6px; }
-            .signature-overlay { bottom: 15px; left: 10px; gap: 2px; }
-            .sig-title { font-size: 32px; }
-            .sig-to { font-size: 20px; padding-left: 15px; }
+            /* 모바일 탑로더 사이즈 조절 */
+            .photo-gallery-wrapper { min-height: 400px; padding: 20px calc(50% - 100px); gap: 30px; }
+            .photo-card-toploader { width: 200px; height: 290px; }
+            .photo-card-toploader > img { width: calc(100% - 12px); height: calc(100% - 12px); }
 
             .gallery-nav-btn { width: 30px; height: 40px; font-size: 14px; }
             .gallery-nav-btn.prev { left: 5px; }
@@ -389,11 +389,11 @@
             
             <div id="photo" class="list-container" style="display:none; padding-right:0;">
                 <div class="gallery-container">
+                    <div class="photo-gallery-wrapper" id="photoGalleryWrapper">
+                        <!-- JS에서 탑로더 포토카드를 동적으로 렌더링합니다 -->
+                    </div>
                     <button class="photo-refresh-btn" onclick="refreshPhotos()" title="새로운 카드 뽑기"><i>↻</i></button>
                     <button class="gallery-nav-btn prev" onclick="scrollGallery(-1)"><span>◀</span></button>
-                    <div class="photo-gallery-wrapper" id="photoGalleryWrapper">
-                        <!-- JS에서 카드를 동적으로 렌더링합니다 -->
-                    </div>
                     <button class="gallery-nav-btn next" onclick="scrollGallery(1)"><span>▶</span></button>
                 </div>
             </div>
@@ -467,55 +467,50 @@
             let photoHtml = '';
             
             selectedPhotos.forEach((url, idx) => {
-                // 단일 테마(슬리브 비닐 + 마커펜 사인) 렌더링
+                // 각도 랜덤성을 조금씩 주어 더 자연스럽게 (-3도 ~ -1도 사이)
+                const randomRotate = (Math.random() * -2) - 1; 
+                
                 let cardInnerHtml = `
-                    <img src="${url}" alt="Boo Photo Card">
-                    <div class="signature-overlay">
-                        <h2 class="sig-text sig-title">BOO =_=</h2>
-                        <h3 class="sig-text sig-to">To. 부우 게시판</h3>
-                    </div>
-                    <div class="sleeve-glare"></div>
+                    <img src="${url}" alt="Boo Photo Card" style="transform: rotate(${randomRotate}deg) scale(0.98);">
+                    <div class="toploader-glare"></div>
                 `;
-                photoHtml += `<div class="photo-card">${cardInnerHtml}</div>`;
+                photoHtml += `<div class="photo-card-toploader">${cardInnerHtml}</div>`;
             });
             document.getElementById('photoGalleryWrapper').innerHTML = photoHtml;
             
-            // 🔥 마우스를 따라다니는 3D 틸팅 이펙트 적용
+            // 3D 틸트 이펙트 재적용
             attach3DTiltEffect();
         }
 
-        // 🌟 3D 마우스 틸팅(Tilting) 호버 효과 구현
+        // 🌟 3D 마우스 틸팅(Tilting) 호버 효과 구현 (탑로더 적용)
         function attach3DTiltEffect() {
-            const cards = document.querySelectorAll('.photo-card');
+            const cards = document.querySelectorAll('.photo-card-toploader');
             
             cards.forEach(card => {
                 card.addEventListener('mousemove', (e) => {
                     const rect = card.getBoundingClientRect();
-                    const x = e.clientX - rect.left; // 카드 내 마우스 X 좌표
-                    const y = e.clientY - rect.top;  // 카드 내 마우스 Y 좌표
+                    const x = e.clientX - rect.left; 
+                    const y = e.clientY - rect.top;  
                     
-                    // 중앙 기준 -1 ~ 1 사이의 비율 값 도출
                     const xNorm = (x / rect.width - 0.5) * 2; 
                     const yNorm = (y / rect.height - 0.5) * 2;
                     
-                    // 최대 회전 각도 설정 (15도)
-                    const maxRotate = 15; 
+                    const maxRotate = 10; 
                     const rotateX = -yNorm * maxRotate; 
                     const rotateY = xNorm * maxRotate;
 
-                    card.style.transform = `perspective(1200px) scale(1.05) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                    card.style.transform = `perspective(1200px) scale(1.05) translateY(-5px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
                     
-                    // 마우스 위치에 따라 슬리브 빛 반사(glare) 그라데이션 위치 동적 이동
-                    const glare = card.querySelector('.sleeve-glare');
+                    // 글레어(빛 반사) 위치도 마우스 따라 움직이게 수정
+                    const glare = card.querySelector('.toploader-glare');
                     if (glare) {
                         glare.style.backgroundPosition = `${xNorm * 50 + 50}% ${yNorm * 50 + 50}%`;
                     }
                 });
 
-                // 마우스가 카드 밖으로 나가면 원상복구
                 card.addEventListener('mouseleave', () => {
-                    card.style.transform = `perspective(1200px) scale(1) rotateX(0deg) rotateY(0deg)`;
-                    const glare = card.querySelector('.sleeve-glare');
+                    card.style.transform = `perspective(1200px) scale(1) translateY(0) rotateX(0deg) rotateY(0deg)`;
+                    const glare = card.querySelector('.toploader-glare');
                     if (glare) {
                         glare.style.backgroundPosition = `100% 100%`;
                     }
