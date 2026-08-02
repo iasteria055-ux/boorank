@@ -1,9 +1,14 @@
 {
-  "updated_at": "2026-08-02 11:47:16",
+  "updated_at": "2026-08-02 14:07:48",
   "quest_board": [
     {
       "mem_id": "705225",
       "name": "초우코송이",
+      "val": "CLEAR"
+    },
+    {
+      "mem_id": "623038",
+      "name": "부동생",
       "val": "CLEAR"
     }
   ],
