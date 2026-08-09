@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-09 15:36:22",
+  "updated_at": "2026-08-09 15:50:49",
   "quest_board": [
     {
       "mem_id": "577520",
@@ -17,6 +17,11 @@
       "val": "CLEAR"
     },
     {
+      "mem_id": "699575",
+      "name": "염보스",
+      "val": "CLEAR"
+    },
+    {
       "mem_id": "387136",
       "name": "카나비",
       "val": "CLEAR"
@@ -24,6 +29,21 @@
     {
       "mem_id": "695623",
       "name": "뷰지쥬지",
+      "val": "CLEAR"
+    },
+    {
+      "mem_id": "695222",
+      "name": "염바다",
+      "val": "CLEAR"
+    },
+    {
+      "mem_id": "695509",
+      "name": "메옹",
+      "val": "CLEAR"
+    },
+    {
+      "mem_id": "706984",
+      "name": "최강내로남불",
       "val": "CLEAR"
     }
   ],
