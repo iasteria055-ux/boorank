@@ -1,64 +1,14 @@
 {
-  "updated_at": "2026-08-10 14:06:40",
+  "updated_at": "2026-08-10 15:17:56",
   "quest_board": [
-    {
-      "mem_id": "577520",
-      "name": "물소꺼져",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "708091",
-      "name": "지아영",
-      "val": "CLEAR"
-    },
     {
       "mem_id": "144953",
       "name": "피통왕통키",
       "val": "CLEAR"
     },
     {
-      "mem_id": "699575",
-      "name": "염보스",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "387136",
-      "name": "카나비",
-      "val": "CLEAR"
-    },
-    {
       "mem_id": "695623",
       "name": "뷰지쥬지",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "695222",
-      "name": "염바다",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "695509",
-      "name": "메옹",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "706984",
-      "name": "최강내로남불",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "687890",
-      "name": "느작없는새끼",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "705225",
-      "name": "초우코송이",
-      "val": "CLEAR"
-    },
-    {
-      "mem_id": "692736",
-      "name": "조해",
       "val": "CLEAR"
     }
   ],
