@@ -1,6 +1,12 @@
 {
-  "updated_at": "2026-08-20 20:47:44",
-  "quest_board": [],
+  "updated_at": "2026-08-20 21:44:46",
+  "quest_board": [
+    {
+      "mem_id": "695623",
+      "name": "뷰지쥬지",
+      "val": "CLEAR"
+    }
+  ],
   "donation_ranking": [
     {
       "name": "팥쥐",
