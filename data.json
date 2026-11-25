@@ -1,6 +1,12 @@
 {
-  "updated_at": "2026-11-25 02:48:25",
-  "quest_board": [],
+  "updated_at": "2026-11-25 12:59:47",
+  "quest_board": [
+    {
+      "mem_id": "647006",
+      "name": "팥쥐",
+      "val": "CLEAR"
+    }
+  ],
   "donation_ranking": [],
   "quest_ranking": []
 }
